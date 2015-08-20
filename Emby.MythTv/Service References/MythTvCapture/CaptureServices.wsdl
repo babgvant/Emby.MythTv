@@ -1,0 +1,336 @@
+<?xml version="1.0" encoding="utf-8"?>
+<definitions xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://mythtv.org" xmlns:xs="http://www.w3.org/2001/XMLSchema" name="CaptureServices" targetNamespace="http://mythtv.org" xmlns="http://schemas.xmlsoap.org/wsdl/">
+  <types>
+    <xs:schema targetNamespace="http://MythTV.org/Imports">
+      <xs:import schemaLocation="http://hungrymythtv:6544/Capture/xsd?type=CaptureCard" namespace="http://mythtv.org" />
+      <xs:import schemaLocation="http://hungrymythtv:6544/Capture/xsd?type=CaptureCardList" namespace="http://mythtv.org" />
+    </xs:schema>
+    <xs:schema elementFormDefault="qualified" targetNamespace="http://mythtv.org">
+      <xs:element name="AddCaptureCard">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" name="VideoDevice" nillable="true" type="xs:string" />
+            <xs:element minOccurs="0" name="AudioDevice" nillable="true" type="xs:string" />
+            <xs:element minOccurs="0" name="VBIDevice" nillable="true" type="xs:string" />
+            <xs:element minOccurs="0" name="CardType" nillable="true" type="xs:string" />
+            <xs:element minOccurs="0" name="AudioRateLimit" nillable="true" type="xs:unsignedInt" />
+            <xs:element minOccurs="0" name="HostName" nillable="true" type="xs:string" />
+            <xs:element minOccurs="0" name="DVBSWFilter" nillable="true" type="xs:unsignedInt" />
+            <xs:element minOccurs="0" name="DVBSatType" nillable="true" type="xs:unsignedInt" />
+            <xs:element minOccurs="0" name="DVBWaitForSeqStart" nillable="true" type="xs:boolean" />
+            <xs:element minOccurs="0" name="SkipBTAudio" nillable="true" type="xs:boolean" />
+            <xs:element minOccurs="0" name="DVBOnDemand" nillable="true" type="xs:boolean" />
+            <xs:element minOccurs="0" name="DVBDiSEqCType" nillable="true" type="xs:unsignedInt" />
+            <xs:element minOccurs="0" name="FirewireSpeed" nillable="true" type="xs:unsignedInt" />
+            <xs:element minOccurs="0" name="FirewireModel" nillable="true" type="xs:string" />
+            <xs:element minOccurs="0" name="FirewireConnection" nillable="true" type="xs:unsignedInt" />
+            <xs:element minOccurs="0" name="SignalTimeout" nillable="true" type="xs:unsignedInt" />
+            <xs:element minOccurs="0" name="ChannelTimeout" nillable="true" type="xs:unsignedInt" />
+            <xs:element minOccurs="0" name="DVBTuningDelay" nillable="true" type="xs:unsignedInt" />
+            <xs:element minOccurs="0" name="Contrast" nillable="true" type="xs:unsignedInt" />
+            <xs:element minOccurs="0" name="Brightness" nillable="true" type="xs:unsignedInt" />
+            <xs:element minOccurs="0" name="Colour" nillable="true" type="xs:unsignedInt" />
+            <xs:element minOccurs="0" name="Hue" nillable="true" type="xs:unsignedInt" />
+            <xs:element minOccurs="0" name="DiSEqCId" nillable="true" type="xs:unsignedInt" />
+            <xs:element minOccurs="0" name="DVBEITScan" nillable="true" type="xs:boolean" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="AddCaptureCardResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" name="AddCaptureCardResult" nillable="true" type="xs:int" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="AddCardInput">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" name="CardId" nillable="true" type="xs:unsignedInt" />
+            <xs:element minOccurs="0" name="SourceId" nillable="true" type="xs:unsignedInt" />
+            <xs:element minOccurs="0" name="InputName" nillable="true" type="xs:string" />
+            <xs:element minOccurs="0" name="ExternalCommand" nillable="true" type="xs:string" />
+            <xs:element minOccurs="0" name="ChangerDevice" nillable="true" type="xs:string" />
+            <xs:element minOccurs="0" name="ChangerModel" nillable="true" type="xs:string" />
+            <xs:element minOccurs="0" name="HostName" nillable="true" type="xs:string" />
+            <xs:element minOccurs="0" name="TuneChan" nillable="true" type="xs:string" />
+            <xs:element minOccurs="0" name="StartChan" nillable="true" type="xs:string" />
+            <xs:element minOccurs="0" name="DisplayName" nillable="true" type="xs:string" />
+            <xs:element minOccurs="0" name="DishnetEIT" nillable="true" type="xs:boolean" />
+            <xs:element minOccurs="0" name="RecPriority" nillable="true" type="xs:unsignedInt" />
+            <xs:element minOccurs="0" name="Quicktune" nillable="true" type="xs:unsignedInt" />
+            <xs:element minOccurs="0" name="SchedOrder" nillable="true" type="xs:unsignedInt" />
+            <xs:element minOccurs="0" name="LiveTVOrder" nillable="true" type="xs:unsignedInt" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="AddCardInputResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" name="AddCardInputResult" nillable="true" type="xs:int" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="GetCaptureCard">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" name="CardId" nillable="true" type="xs:int" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="GetCaptureCardResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" name="GetCaptureCardResult" nillable="true" type="tns:CaptureCard" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="GetCaptureCardList">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" name="HostName" nillable="true" type="xs:string" />
+            <xs:element minOccurs="0" name="CardType" nillable="true" type="xs:string" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="GetCaptureCardListResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" name="GetCaptureCardListResult" nillable="true" type="tns:CaptureCardList" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="RemoveCaptureCard">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" name="CardId" nillable="true" type="xs:int" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="RemoveCaptureCardResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" name="RemoveCaptureCardResult" nillable="true" type="xs:boolean" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="RemoveCardInput">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" name="CardInputId" nillable="true" type="xs:int" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="RemoveCardInputResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" name="RemoveCardInputResult" nillable="true" type="xs:boolean" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="UpdateCaptureCard">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" name="CardId" nillable="true" type="xs:int" />
+            <xs:element minOccurs="0" name="Setting" nillable="true" type="xs:string" />
+            <xs:element minOccurs="0" name="Value" nillable="true" type="xs:string" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="UpdateCaptureCardResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" name="UpdateCaptureCardResult" nillable="true" type="xs:boolean" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="UpdateCardInput">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" name="CardInputId" nillable="true" type="xs:int" />
+            <xs:element minOccurs="0" name="Setting" nillable="true" type="xs:string" />
+            <xs:element minOccurs="0" name="Value" nillable="true" type="xs:string" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="UpdateCardInputResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" name="UpdateCardInputResult" nillable="true" type="xs:boolean" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:schema>
+  </types>
+  <message name="Capture_AddCaptureCard_InputMessage">
+    <part name="parameters" element="tns:AddCaptureCard" />
+  </message>
+  <message name="Capture_AddCaptureCard_OutputMessage">
+    <part name="parameters" element="tns:AddCaptureCardResponse" />
+  </message>
+  <message name="Capture_AddCardInput_InputMessage">
+    <part name="parameters" element="tns:AddCardInput" />
+  </message>
+  <message name="Capture_AddCardInput_OutputMessage">
+    <part name="parameters" element="tns:AddCardInputResponse" />
+  </message>
+  <message name="Capture_GetCaptureCard_InputMessage">
+    <part name="parameters" element="tns:GetCaptureCard" />
+  </message>
+  <message name="Capture_GetCaptureCard_OutputMessage">
+    <part name="parameters" element="tns:GetCaptureCardResponse" />
+  </message>
+  <message name="Capture_GetCaptureCardList_InputMessage">
+    <part name="parameters" element="tns:GetCaptureCardList" />
+  </message>
+  <message name="Capture_GetCaptureCardList_OutputMessage">
+    <part name="parameters" element="tns:GetCaptureCardListResponse" />
+  </message>
+  <message name="Capture_RemoveCaptureCard_InputMessage">
+    <part name="parameters" element="tns:RemoveCaptureCard" />
+  </message>
+  <message name="Capture_RemoveCaptureCard_OutputMessage">
+    <part name="parameters" element="tns:RemoveCaptureCardResponse" />
+  </message>
+  <message name="Capture_RemoveCardInput_InputMessage">
+    <part name="parameters" element="tns:RemoveCardInput" />
+  </message>
+  <message name="Capture_RemoveCardInput_OutputMessage">
+    <part name="parameters" element="tns:RemoveCardInputResponse" />
+  </message>
+  <message name="Capture_UpdateCaptureCard_InputMessage">
+    <part name="parameters" element="tns:UpdateCaptureCard" />
+  </message>
+  <message name="Capture_UpdateCaptureCard_OutputMessage">
+    <part name="parameters" element="tns:UpdateCaptureCardResponse" />
+  </message>
+  <message name="Capture_UpdateCardInput_InputMessage">
+    <part name="parameters" element="tns:UpdateCardInput" />
+  </message>
+  <message name="Capture_UpdateCardInput_OutputMessage">
+    <part name="parameters" element="tns:UpdateCardInputResponse" />
+  </message>
+  <portType name="Capture">
+    <operation name="AddCaptureCard">
+      <documentation>POST </documentation>
+      <input wsaw:Action="http://mythtv.org/Capture/AddCaptureCard" message="tns:Capture_AddCaptureCard_InputMessage" />
+      <output wsaw:Action="http://mythtv.org/Capture/AddCaptureCardResponse" message="tns:Capture_AddCaptureCard_OutputMessage" />
+    </operation>
+    <operation name="AddCardInput">
+      <documentation>POST </documentation>
+      <input wsaw:Action="http://mythtv.org/Capture/AddCardInput" message="tns:Capture_AddCardInput_InputMessage" />
+      <output wsaw:Action="http://mythtv.org/Capture/AddCardInputResponse" message="tns:Capture_AddCardInput_OutputMessage" />
+    </operation>
+    <operation name="GetCaptureCard">
+      <documentation>GET </documentation>
+      <input wsaw:Action="http://mythtv.org/Capture/GetCaptureCard" message="tns:Capture_GetCaptureCard_InputMessage" />
+      <output wsaw:Action="http://mythtv.org/Capture/GetCaptureCardResponse" message="tns:Capture_GetCaptureCard_OutputMessage" />
+    </operation>
+    <operation name="GetCaptureCardList">
+      <documentation>GET </documentation>
+      <input wsaw:Action="http://mythtv.org/Capture/GetCaptureCardList" message="tns:Capture_GetCaptureCardList_InputMessage" />
+      <output wsaw:Action="http://mythtv.org/Capture/GetCaptureCardListResponse" message="tns:Capture_GetCaptureCardList_OutputMessage" />
+    </operation>
+    <operation name="RemoveCaptureCard">
+      <documentation>POST </documentation>
+      <input wsaw:Action="http://mythtv.org/Capture/RemoveCaptureCard" message="tns:Capture_RemoveCaptureCard_InputMessage" />
+      <output wsaw:Action="http://mythtv.org/Capture/RemoveCaptureCardResponse" message="tns:Capture_RemoveCaptureCard_OutputMessage" />
+    </operation>
+    <operation name="RemoveCardInput">
+      <documentation>POST </documentation>
+      <input wsaw:Action="http://mythtv.org/Capture/RemoveCardInput" message="tns:Capture_RemoveCardInput_InputMessage" />
+      <output wsaw:Action="http://mythtv.org/Capture/RemoveCardInputResponse" message="tns:Capture_RemoveCardInput_OutputMessage" />
+    </operation>
+    <operation name="UpdateCaptureCard">
+      <documentation>POST </documentation>
+      <input wsaw:Action="http://mythtv.org/Capture/UpdateCaptureCard" message="tns:Capture_UpdateCaptureCard_InputMessage" />
+      <output wsaw:Action="http://mythtv.org/Capture/UpdateCaptureCardResponse" message="tns:Capture_UpdateCaptureCard_OutputMessage" />
+    </operation>
+    <operation name="UpdateCardInput">
+      <documentation>POST </documentation>
+      <input wsaw:Action="http://mythtv.org/Capture/UpdateCardInput" message="tns:Capture_UpdateCardInput_InputMessage" />
+      <output wsaw:Action="http://mythtv.org/Capture/UpdateCardInputResponse" message="tns:Capture_UpdateCardInput_OutputMessage" />
+    </operation>
+  </portType>
+  <binding name="BasicHttpBinding_Capture" type="tns:Capture">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <operation name="AddCaptureCard">
+      <soap:operation soapAction="http://mythtv.org/Capture/AddCaptureCard" style="document" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="AddCardInput">
+      <soap:operation soapAction="http://mythtv.org/Capture/AddCardInput" style="document" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="GetCaptureCard">
+      <soap:operation soapAction="http://mythtv.org/Capture/GetCaptureCard" style="document" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="GetCaptureCardList">
+      <soap:operation soapAction="http://mythtv.org/Capture/GetCaptureCardList" style="document" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="RemoveCaptureCard">
+      <soap:operation soapAction="http://mythtv.org/Capture/RemoveCaptureCard" style="document" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="RemoveCardInput">
+      <soap:operation soapAction="http://mythtv.org/Capture/RemoveCardInput" style="document" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="UpdateCaptureCard">
+      <soap:operation soapAction="http://mythtv.org/Capture/UpdateCaptureCard" style="document" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="UpdateCardInput">
+      <soap:operation soapAction="http://mythtv.org/Capture/UpdateCardInput" style="document" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+  </binding>
+  <service name="CaptureServices">
+    <documentation>Interface Version 1.4 - </documentation>
+    <port name="BasicHttpBinding_Capture" binding="tns:BasicHttpBinding_Capture">
+      <soap:address location="http://hungrymythtv:6544/Capture" />
+    </port>
+  </service>
+</definitions>

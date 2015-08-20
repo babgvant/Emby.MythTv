@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ReferenceGroup xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" ID="a9fc8bba-4ee0-41d6-b0a3-fca3ecd15280" xmlns="urn:schemas-microsoft-com:xml-wcfservicemap">
+  <ClientOptions>
+    <GenerateAsynchronousMethods>false</GenerateAsynchronousMethods>
+    <GenerateTaskBasedAsynchronousMethod>true</GenerateTaskBasedAsynchronousMethod>
+    <EnableDataBinding>true</EnableDataBinding>
+    <ExcludedTypes />
+    <ImportXmlTypes>false</ImportXmlTypes>
+    <GenerateInternalTypes>false</GenerateInternalTypes>
+    <GenerateMessageContracts>false</GenerateMessageContracts>
+    <NamespaceMappings />
+    <CollectionMappings />
+    <GenerateSerializableTypes>true</GenerateSerializableTypes>
+    <Serializer>Auto</Serializer>
+    <UseSerializerForFaults>true</UseSerializerForFaults>
+    <ReferenceAllAssemblies>true</ReferenceAllAssemblies>
+    <ReferencedAssemblies />
+    <ReferencedDataContractTypes />
+    <ServiceContractMappings />
+  </ClientOptions>
+  <MetadataSources>
+    <MetadataSource Address="http://hungrymythtv:6544/Myth/wsdl" Protocol="http" SourceId="1" />
+  </MetadataSources>
+  <Metadata>
+    <MetadataFile FileName="xsd.xsd" MetadataType="Schema" ID="55b6d98e-9431-498d-845c-09a2e1d52682" SourceId="1" SourceUrl="http://hungrymythtv:6544/Myth/xsd?type=ArrayOfStorageGroupDir&amp;name=StorageGroupDir" />
+    <MetadataFile FileName="xsd1.xsd" MetadataType="Schema" ID="7a791482-4673-4636-afc1-563ce9eb897d" SourceId="1" SourceUrl="http://hungrymythtv:6544/Myth/xsd?type=DatabaseInfo" />
+    <MetadataFile FileName="xsd2.xsd" MetadataType="Schema" ID="0423fc50-d30c-4814-a5ac-e8ef291b07f6" SourceId="1" SourceUrl="http://hungrymythtv:6544/Myth/xsd?type=LabelValue" />
+    <MetadataFile FileName="xsd3.xsd" MetadataType="Schema" ID="b5a7b2b0-4575-4171-b714-4f028dc533ef" SourceId="1" SourceUrl="http://hungrymythtv:6544/Myth/xsd?type=TimeZoneInfo" />
+    <MetadataFile FileName="xsd4.xsd" MetadataType="Schema" ID="d4a89f66-86c4-4137-b506-446bda52b3e1" SourceId="1" SourceUrl="http://hungrymythtv:6544/Myth/xsd?type=StorageGroupDirList" />
+    <MetadataFile FileName="xsd5.xsd" MetadataType="Schema" ID="5c1a663f-a0df-44c5-b393-be15a36dd6b3" SourceId="1" SourceUrl="http://hungrymythtv:6544/Myth/xsd?type=LogMessage" />
+    <MetadataFile FileName="xsd6.xsd" MetadataType="Schema" ID="5d2443f3-fed2-4b85-b736-dc12f4715510" SourceId="1" SourceUrl="http://hungrymythtv:6544/Myth/xsd?type=SettingList" />
+    <MetadataFile FileName="xsd7.xsd" MetadataType="Schema" ID="79f2fff7-ff87-4cc1-b5f7-af8b32a09487" SourceId="1" SourceUrl="http://hungrymythtv:6544/Myth/xsd?type=LogMessageList" />
+    <MetadataFile FileName="xsd8.xsd" MetadataType="Schema" ID="4d5c8181-6d4b-46f7-afca-dd03ba22b4be" SourceId="1" SourceUrl="http://hungrymythtv:6544/Myth/xsd?type=MapOfStringString&amp;name=String" />
+    <MetadataFile FileName="xsd9.xsd" MetadataType="Schema" ID="06f2f9fe-e8c4-40aa-8331-97b213cd4e5e" SourceId="1" SourceUrl="http://hungrymythtv:6544/Myth/xsd?type=VersionInfo" />
+    <MetadataFile FileName="xsd10.xsd" MetadataType="Schema" ID="32dea66a-4535-4c18-bce9-6868916d3df1" SourceId="1" SourceUrl="http://hungrymythtv:6544/Myth/xsd?type=StorageGroupDir" />
+    <MetadataFile FileName="xsd11.xsd" MetadataType="Schema" ID="9b2b2307-d3a2-465f-a56f-a47ca0d23cc0" SourceId="1" SourceUrl="http://hungrymythtv:6544/Myth/xsd?type=ArrayOfLabelValue&amp;name=LabelValue" />
+    <MetadataFile FileName="xsd12.xsd" MetadataType="Schema" ID="253c0c1d-5c2a-4d22-b872-2f8766eab742" SourceId="1" SourceUrl="http://hungrymythtv:6544/Myth/xsd?type=ConnectionInfo" />
+    <MetadataFile FileName="xsd13.xsd" MetadataType="Schema" ID="9f0091da-91ec-4123-86b1-ace5c69d16aa" SourceId="1" SourceUrl="http://hungrymythtv:6544/Myth/xsd?type=ArrayOfLogMessage&amp;name=LogMessage" />
+    <MetadataFile FileName="MythServices.wsdl" MetadataType="Wsdl" ID="34bdceb8-26b1-4571-aca6-28d615855a0a" SourceId="1" SourceUrl="http://hungrymythtv:6544/Myth/wsdl" />
+    <MetadataFile FileName="xsd14.xsd" MetadataType="Schema" ID="82d18f10-69e1-4150-b02f-f8d23d6dfb7d" SourceId="1" SourceUrl="http://hungrymythtv:6544/Myth/xsd?type=ArrayOfString" />
+    <MetadataFile FileName="xsd15.xsd" MetadataType="Schema" ID="02d283ee-f2c4-4e81-b45b-b4e94009be71" SourceId="1" SourceUrl="http://hungrymythtv:6544/Myth/xsd?type=WOLInfo" />
+  </Metadata>
+  <Extensions>
+    <ExtensionFile FileName="configuration91.svcinfo" Name="configuration91.svcinfo" />
+    <ExtensionFile FileName="configuration.svcinfo" Name="configuration.svcinfo" />
+  </Extensions>
+</ReferenceGroup>

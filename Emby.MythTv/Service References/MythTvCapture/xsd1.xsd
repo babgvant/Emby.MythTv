@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:tns="http://mythtv.org" attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://mythtv.org" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:complexType name="CaptureCard">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="CardId" type="xs:unsignedInt" />
+      <xs:element minOccurs="0" name="VideoDevice" type="xs:string" />
+      <xs:element minOccurs="0" name="AudioDevice" type="xs:string" />
+      <xs:element minOccurs="0" name="VBIDevice" type="xs:string" />
+      <xs:element minOccurs="0" name="CardType" type="xs:string" />
+      <xs:element minOccurs="0" name="AudioRateLimit" type="xs:unsignedInt" />
+      <xs:element minOccurs="0" name="HostName" type="xs:string" />
+      <xs:element minOccurs="0" name="DVBSWFilter" type="xs:unsignedInt" />
+      <xs:element minOccurs="0" name="DVBSatType" type="xs:unsignedInt" />
+      <xs:element minOccurs="0" name="DVBWaitForSeqStart" type="xs:boolean" />
+      <xs:element minOccurs="0" name="SkipBTAudio" type="xs:boolean" />
+      <xs:element minOccurs="0" name="DVBOnDemand" type="xs:boolean" />
+      <xs:element minOccurs="0" name="DVBDiSEqCType" type="xs:unsignedInt" />
+      <xs:element minOccurs="0" name="FirewireSpeed" type="xs:unsignedInt" />
+      <xs:element minOccurs="0" name="FirewireModel" type="xs:string" />
+      <xs:element minOccurs="0" name="FirewireConnection" type="xs:unsignedInt" />
+      <xs:element minOccurs="0" name="SignalTimeout" type="xs:unsignedInt" />
+      <xs:element minOccurs="0" name="ChannelTimeout" type="xs:unsignedInt" />
+      <xs:element minOccurs="0" name="DVBTuningDelay" type="xs:unsignedInt" />
+      <xs:element minOccurs="0" name="Contrast" type="xs:unsignedInt" />
+      <xs:element minOccurs="0" name="Brightness" type="xs:unsignedInt" />
+      <xs:element minOccurs="0" name="Colour" type="xs:unsignedInt" />
+      <xs:element minOccurs="0" name="Hue" type="xs:unsignedInt" />
+      <xs:element minOccurs="0" name="DiSEqCId" type="xs:unsignedInt" />
+      <xs:element minOccurs="0" name="DVBEITScan" type="xs:boolean" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="CaptureCard" nillable="true" type="tns:CaptureCard" />
+</xs:schema>

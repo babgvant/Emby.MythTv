@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:tns="http://mythtv.org" attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://mythtv.org" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:complexType name="VideoMultiplex">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="MplexId" type="xs:int" />
+      <xs:element minOccurs="0" name="SourceId" type="xs:int" />
+      <xs:element minOccurs="0" name="TransportId" type="xs:int" />
+      <xs:element minOccurs="0" name="NetworkId" type="xs:int" />
+      <xs:element minOccurs="0" name="Frequency" type="xs:long" />
+      <xs:element minOccurs="0" name="Inversion" type="xs:string" />
+      <xs:element minOccurs="0" name="SymbolRate" type="xs:long" />
+      <xs:element minOccurs="0" name="FEC" type="xs:string" />
+      <xs:element minOccurs="0" name="Polarity" type="xs:string" />
+      <xs:element minOccurs="0" name="Modulation" type="xs:string" />
+      <xs:element minOccurs="0" name="Bandwidth" type="xs:string" />
+      <xs:element minOccurs="0" name="LPCodeRate" type="xs:string" />
+      <xs:element minOccurs="0" name="HPCodeRate" type="xs:string" />
+      <xs:element minOccurs="0" name="TransmissionMode" type="xs:string" />
+      <xs:element minOccurs="0" name="GuardInterval" type="xs:string" />
+      <xs:element minOccurs="0" name="Visible" type="xs:boolean" />
+      <xs:element minOccurs="0" name="Constellation" type="xs:string" />
+      <xs:element minOccurs="0" name="Hierarchy" type="xs:string" />
+      <xs:element minOccurs="0" name="ModulationSystem" type="xs:string" />
+      <xs:element minOccurs="0" name="RollOff" type="xs:string" />
+      <xs:element minOccurs="0" name="SIStandard" type="xs:string" />
+      <xs:element minOccurs="0" name="ServiceVersion" type="xs:int" />
+      <xs:element minOccurs="0" name="UpdateTimeStamp" nillable="true" type="xs:dateTime" />
+      <xs:element minOccurs="0" name="DefaultAuthority" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="VideoMultiplex" nillable="true" type="tns:VideoMultiplex" />
+</xs:schema>

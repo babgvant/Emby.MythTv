@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ReferenceGroup xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" ID="3a965663-b691-4ab0-9cf7-0df953bdfd31" xmlns="urn:schemas-microsoft-com:xml-wcfservicemap">
+  <ClientOptions>
+    <GenerateAsynchronousMethods>false</GenerateAsynchronousMethods>
+    <GenerateTaskBasedAsynchronousMethod>true</GenerateTaskBasedAsynchronousMethod>
+    <EnableDataBinding>true</EnableDataBinding>
+    <ExcludedTypes />
+    <ImportXmlTypes>false</ImportXmlTypes>
+    <GenerateInternalTypes>false</GenerateInternalTypes>
+    <GenerateMessageContracts>false</GenerateMessageContracts>
+    <NamespaceMappings />
+    <CollectionMappings />
+    <GenerateSerializableTypes>true</GenerateSerializableTypes>
+    <Serializer>Auto</Serializer>
+    <UseSerializerForFaults>true</UseSerializerForFaults>
+    <ReferenceAllAssemblies>true</ReferenceAllAssemblies>
+    <ReferencedAssemblies />
+    <ReferencedDataContractTypes />
+    <ServiceContractMappings />
+  </ClientOptions>
+  <MetadataSources>
+    <MetadataSource Address="http://hungrymythtv:6544/Guide/wsdl" Protocol="http" SourceId="1" />
+  </MetadataSources>
+  <Metadata>
+    <MetadataFile FileName="xsd.xsd" MetadataType="Schema" ID="c5a5dd43-aacd-4b27-a34c-ea44f47d1bde" SourceId="1" SourceUrl="http://hungrymythtv:6544/Guide/xsd?type=ChannelInfo" />
+    <MetadataFile FileName="xsd1.xsd" MetadataType="Schema" ID="54abefb8-e5dd-4062-945c-4a73d14aabde" SourceId="1" SourceUrl="http://hungrymythtv:6544/Guide/xsd?type=ProgramGuide" />
+    <MetadataFile FileName="xsd2.xsd" MetadataType="Schema" ID="8799bba6-9459-4fc3-b876-663ad94518d7" SourceId="1" SourceUrl="http://hungrymythtv:6544/Guide/xsd?type=ArtworkInfo" />
+    <MetadataFile FileName="xsd3.xsd" MetadataType="Schema" ID="83399f59-ebeb-4c08-9d4e-5a59856165c2" SourceId="1" SourceUrl="http://hungrymythtv:6544/Guide/xsd?type=ArrayOfChannelInfo&amp;name=ChannelInfo" />
+    <MetadataFile FileName="xsd4.xsd" MetadataType="Schema" ID="4f409bed-6e42-446b-b129-7d1936a1f35d" SourceId="1" SourceUrl="http://hungrymythtv:6544/Guide/xsd?type=ArtworkInfoList" />
+    <MetadataFile FileName="xsd5.xsd" MetadataType="Schema" ID="10d283ce-51e1-4fe6-ba12-1d2b3206b3c8" SourceId="1" SourceUrl="http://hungrymythtv:6544/Guide/xsd?type=RecordingInfo" />
+    <MetadataFile FileName="GuideServices.wsdl" MetadataType="Wsdl" ID="2bd44e10-8467-4111-a180-0c2ea324e31d" SourceId="1" SourceUrl="http://hungrymythtv:6544/Guide/wsdl" />
+    <MetadataFile FileName="xsd6.xsd" MetadataType="Schema" ID="623f81bc-ccbf-4492-a81e-f63f535e03b4" SourceId="1" SourceUrl="http://hungrymythtv:6544/Guide/xsd?type=ArrayOfArtworkInfo&amp;name=ArtworkInfo" />
+    <MetadataFile FileName="xsd7.xsd" MetadataType="Schema" ID="5725bf3c-8a83-4453-bbf5-a70139c0c8b9" SourceId="1" SourceUrl="http://hungrymythtv:6544/Guide/xsd?type=Program" />
+    <MetadataFile FileName="xsd8.xsd" MetadataType="Schema" ID="15e1f2d8-832d-459e-98ac-42079546cdc5" SourceId="1" SourceUrl="http://hungrymythtv:6544/Guide/xsd?type=ArrayOfProgram&amp;name=Program" />
+  </Metadata>
+  <Extensions>
+    <ExtensionFile FileName="configuration91.svcinfo" Name="configuration91.svcinfo" />
+    <ExtensionFile FileName="configuration.svcinfo" Name="configuration.svcinfo" />
+  </Extensions>
+</ReferenceGroup>

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ReferenceGroup xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" ID="3c8216eb-db21-4618-b298-206e088f875e" xmlns="urn:schemas-microsoft-com:xml-wcfservicemap">
+  <ClientOptions>
+    <GenerateAsynchronousMethods>false</GenerateAsynchronousMethods>
+    <GenerateTaskBasedAsynchronousMethod>true</GenerateTaskBasedAsynchronousMethod>
+    <EnableDataBinding>true</EnableDataBinding>
+    <ExcludedTypes />
+    <ImportXmlTypes>false</ImportXmlTypes>
+    <GenerateInternalTypes>false</GenerateInternalTypes>
+    <GenerateMessageContracts>false</GenerateMessageContracts>
+    <NamespaceMappings />
+    <CollectionMappings />
+    <GenerateSerializableTypes>true</GenerateSerializableTypes>
+    <Serializer>Auto</Serializer>
+    <UseSerializerForFaults>true</UseSerializerForFaults>
+    <ReferenceAllAssemblies>true</ReferenceAllAssemblies>
+    <ReferencedAssemblies />
+    <ReferencedDataContractTypes />
+    <ServiceContractMappings />
+  </ClientOptions>
+  <MetadataSources>
+    <MetadataSource Address="http://hungrymythtv:6544/Video/wsdl" Protocol="http" SourceId="1" />
+  </MetadataSources>
+  <Metadata>
+    <MetadataFile FileName="xsd.xsd" MetadataType="Schema" ID="7ad44a0e-2b21-4012-875e-bd04cb163dfc" SourceId="1" SourceUrl="http://hungrymythtv:6544/Video/xsd?type=ArrayOfArtworkItem&amp;name=ArtworkItem" />
+    <MetadataFile FileName="xsd1.xsd" MetadataType="Schema" ID="8346f450-cb7e-45e5-bf72-ab8e51da12bb" SourceId="1" SourceUrl="http://hungrymythtv:6544/Video/xsd?type=ArtworkInfoList" />
+    <MetadataFile FileName="xsd2.xsd" MetadataType="Schema" ID="3e05d33d-ca93-4544-8ccf-8b64b848619e" SourceId="1" SourceUrl="http://hungrymythtv:6544/Video/xsd?type=VideoLookupList" />
+    <MetadataFile FileName="xsd3.xsd" MetadataType="Schema" ID="00d0c653-280e-40a8-aae0-2e1b56280bd2" SourceId="1" SourceUrl="http://hungrymythtv:6544/Video/xsd?type=ArrayOfArtworkInfo&amp;name=ArtworkInfo" />
+    <MetadataFile FileName="xsd4.xsd" MetadataType="Schema" ID="070fbf8a-4e52-4297-8196-f181c835ab67" SourceId="1" SourceUrl="http://hungrymythtv:6544/Video/xsd?type=ArtworkInfo" />
+    <MetadataFile FileName="xsd5.xsd" MetadataType="Schema" ID="d765a22b-d6b8-416a-b4d8-c5ac819b7bde" SourceId="1" SourceUrl="http://hungrymythtv:6544/Video/xsd?type=ArrayOfVideoLookup&amp;name=VideoLookup" />
+    <MetadataFile FileName="xsd6.xsd" MetadataType="Schema" ID="d9b7ce38-9694-4e25-801f-bf155749505b" SourceId="1" SourceUrl="http://hungrymythtv:6544/Video/xsd?type=BlurayInfo" />
+    <MetadataFile FileName="xsd7.xsd" MetadataType="Schema" ID="0fed481c-9b10-4177-ac75-8ffb362e32ea" SourceId="1" SourceUrl="http://hungrymythtv:6544/Video/xsd?type=ArrayOfVideoMetadataInfo&amp;name=VideoMetadataInfo" />
+    <MetadataFile FileName="xsd8.xsd" MetadataType="Schema" ID="8ee8e5a1-18f7-4358-8597-6383afdc327f" SourceId="1" SourceUrl="http://hungrymythtv:6544/Video/xsd?type=ArrayOfString" />
+    <MetadataFile FileName="xsd9.xsd" MetadataType="Schema" ID="bdcf5dc9-720d-4e8f-a3a4-e56507676ca0" SourceId="1" SourceUrl="http://hungrymythtv:6544/Video/xsd?type=ArtworkItem" />
+    <MetadataFile FileName="VideoServices.wsdl" MetadataType="Wsdl" ID="f862424a-607a-4133-b4f7-4ddd8f377271" SourceId="1" SourceUrl="http://hungrymythtv:6544/Video/wsdl" />
+    <MetadataFile FileName="xsd10.xsd" MetadataType="Schema" ID="0208baf7-7202-46ac-86b7-fa3b8d4e3d3d" SourceId="1" SourceUrl="http://hungrymythtv:6544/Video/xsd?type=VideoLookup" />
+    <MetadataFile FileName="xsd11.xsd" MetadataType="Schema" ID="658ec642-01a3-4ad3-adb8-e27d5881e6d0" SourceId="1" SourceUrl="http://hungrymythtv:6544/Video/xsd?type=VideoMetadataInfo" />
+    <MetadataFile FileName="xsd12.xsd" MetadataType="Schema" ID="09a9816e-448e-4527-9e39-d0cb904473af" SourceId="1" SourceUrl="http://hungrymythtv:6544/Video/xsd?type=VideoMetadataInfoList" />
+  </Metadata>
+  <Extensions>
+    <ExtensionFile FileName="configuration91.svcinfo" Name="configuration91.svcinfo" />
+    <ExtensionFile FileName="configuration.svcinfo" Name="configuration.svcinfo" />
+  </Extensions>
+</ReferenceGroup>

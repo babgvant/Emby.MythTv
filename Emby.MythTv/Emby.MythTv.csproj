@@ -1,0 +1,578 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{408C3F73-7432-4522-9BE4-C302F260DAED}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>babgvant.Emby.MythTv</RootNamespace>
+    <AssemblyName>Emby.MythTv</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\..\MediaBrowser\ProgramData-Server\plugins\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Interfaces.IO, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Interfaces.IO.1.0.0.5\lib\portable-net45+sl4+wp71+win8+wpa81\Interfaces.IO.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="MediaBrowser.Common, Version=3.0.5692.23493, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MediaBrowser.Common.3.0.631\lib\net45\MediaBrowser.Common.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="MediaBrowser.Controller, Version=3.0.5692.23492, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MediaBrowser.Server.Core.3.0.631\lib\net45\MediaBrowser.Controller.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="MediaBrowser.Model, Version=3.0.5692.23495, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MediaBrowser.Common.3.0.631\lib\net45\MediaBrowser.Model.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Configuration\MythTvConfigurationPage.cs" />
+    <Compile Include="Helpers\AsyncLock.cs" />
+    <Compile Include="Helpers\AsyncSemaphore.cs" />
+    <Compile Include="Helpers\GeneralHelpers.cs" />
+    <Compile Include="LiveTvService.cs" />
+    <Compile Include="MythServiceHost.cs" />
+    <Compile Include="Plugin.cs" />
+    <Compile Include="Configuration\PluginConfiguration.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Responses\RecordingResponse.cs" />
+    <Compile Include="Service References\MythTvCapture\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Compile>
+    <Compile Include="Service References\MythTvChannel\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Compile>
+    <Compile Include="Service References\MythTvContent\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Compile>
+    <Compile Include="Service References\MythTvDvr\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Compile>
+    <Compile Include="Service References\MythTvGuide\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Compile>
+    <Compile Include="Service References\MythTvUtility\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Compile>
+    <Compile Include="Service References\MythTvVideo\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="packages.config" />
+    <None Include="Service References\MythTvCapture\babgvant.Emby.MythTv.MythTvCapture.CaptureCard.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\MythTvCapture\babgvant.Emby.MythTv.MythTvCapture.CaptureCardList.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\MythTvCapture\CaptureServices.wsdl" />
+    <None Include="Service References\MythTvCapture\xsd.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\MythTvCapture\xsd1.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\MythTvCapture\xsd2.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\MythTvChannel\babgvant.Emby.MythTv.MythTvChannel.ArrayOfString.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\MythTvChannel\babgvant.Emby.MythTv.MythTvChannel.ChannelInfo.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\MythTvChannel\babgvant.Emby.MythTv.MythTvChannel.ChannelInfoList.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\MythTvChannel\babgvant.Emby.MythTv.MythTvChannel.LineupList.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\MythTvChannel\babgvant.Emby.MythTv.MythTvChannel.VideoMultiplex.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\MythTvChannel\babgvant.Emby.MythTv.MythTvChannel.VideoMultiplexList.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\MythTvChannel\babgvant.Emby.MythTv.MythTvChannel.VideoSource.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\MythTvChannel\babgvant.Emby.MythTv.MythTvChannel.VideoSourceList.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\MythTvChannel\ChannelServices.wsdl" />
+    <None Include="Service References\MythTvChannel\xsd.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\MythTvChannel\xsd1.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\MythTvChannel\xsd10.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\MythTvChannel\xsd11.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\MythTvChannel\xsd12.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\MythTvChannel\xsd13.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\MythTvChannel\xsd14.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\MythTvChannel\xsd15.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\MythTvChannel\xsd16.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\MythTvChannel\xsd17.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\MythTvChannel\xsd18.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\MythTvChannel\xsd2.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\MythTvChannel\xsd3.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\MythTvChannel\xsd4.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\MythTvChannel\xsd5.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\MythTvChannel\xsd6.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\MythTvChannel\xsd7.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\MythTvChannel\xsd8.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\MythTvChannel\xsd9.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\MythTvContent\babgvant.Emby.MythTv.MythTvContent.ArrayOfString.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\MythTvContent\babgvant.Emby.MythTv.MythTvContent.ArtworkInfoList.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\MythTvContent\babgvant.Emby.MythTv.MythTvContent.LiveStreamInfo.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\MythTvContent\babgvant.Emby.MythTv.MythTvContent.LiveStreamInfoList.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\MythTvContent\ContentServices.wsdl" />
+    <None Include="Service References\MythTvContent\xsd.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\MythTvContent\xsd1.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\MythTvContent\xsd2.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\MythTvContent\xsd3.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\MythTvContent\xsd4.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\MythTvContent\xsd5.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\MythTvContent\xsd6.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\MythTvDvr\babgvant.Emby.MythTv.MythTvDvr.ArrayOfString.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\MythTvDvr\babgvant.Emby.MythTv.MythTvDvr.EncoderList.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\MythTvDvr\babgvant.Emby.MythTv.MythTvDvr.Program.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\MythTvDvr\babgvant.Emby.MythTv.MythTvDvr.ProgramList.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\MythTvDvr\babgvant.Emby.MythTv.MythTvDvr.RecRule.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\MythTvDvr\babgvant.Emby.MythTv.MythTvDvr.RecRuleList.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\MythTvDvr\babgvant.Emby.MythTv.MythTvDvr.TitleInfoList.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\MythTvDvr\DvrServices.wsdl" />
+    <None Include="Service References\MythTvDvr\xsd.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\MythTvDvr\xsd1.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\MythTvDvr\xsd10.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\MythTvDvr\xsd11.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\MythTvDvr\xsd12.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\MythTvDvr\xsd13.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\MythTvDvr\xsd14.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\MythTvDvr\xsd15.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\MythTvDvr\xsd16.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\MythTvDvr\xsd17.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\MythTvDvr\xsd2.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\MythTvDvr\xsd3.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\MythTvDvr\xsd4.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\MythTvDvr\xsd5.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\MythTvDvr\xsd6.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\MythTvDvr\xsd7.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\MythTvDvr\xsd8.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\MythTvDvr\xsd9.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\MythTvGuide\babgvant.Emby.MythTv.MythTvGuide.Program.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\MythTvGuide\babgvant.Emby.MythTv.MythTvGuide.ProgramGuide.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\MythTvGuide\GuideServices.wsdl" />
+    <None Include="Service References\MythTvGuide\xsd.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\MythTvGuide\xsd1.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\MythTvGuide\xsd2.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\MythTvGuide\xsd3.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\MythTvGuide\xsd4.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\MythTvGuide\xsd5.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\MythTvGuide\xsd6.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\MythTvGuide\xsd7.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\MythTvGuide\xsd8.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\MythTvUtility\babgvant.Emby.MythTv.MythTvUtility.ArrayOfString.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\MythTvUtility\babgvant.Emby.MythTv.MythTvUtility.ConnectionInfo.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\MythTvUtility\babgvant.Emby.MythTv.MythTvUtility.LogMessageList.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\MythTvUtility\babgvant.Emby.MythTv.MythTvUtility.SettingList.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\MythTvUtility\babgvant.Emby.MythTv.MythTvUtility.StorageGroupDirList.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\MythTvUtility\babgvant.Emby.MythTv.MythTvUtility.TimeZoneInfo.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\MythTvUtility\MythServices.wsdl" />
+    <None Include="Service References\MythTvUtility\xsd.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\MythTvUtility\xsd1.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\MythTvUtility\xsd10.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\MythTvUtility\xsd11.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\MythTvUtility\xsd12.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\MythTvUtility\xsd13.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\MythTvUtility\xsd14.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\MythTvUtility\xsd15.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\MythTvUtility\xsd2.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\MythTvUtility\xsd3.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\MythTvUtility\xsd4.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\MythTvUtility\xsd5.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\MythTvUtility\xsd6.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\MythTvUtility\xsd7.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\MythTvUtility\xsd8.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\MythTvUtility\xsd9.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\MythTvVideo\babgvant.Emby.MythTv.MythTvVideo.BlurayInfo.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\MythTvVideo\babgvant.Emby.MythTv.MythTvVideo.VideoLookupList.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\MythTvVideo\babgvant.Emby.MythTv.MythTvVideo.VideoMetadataInfo.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\MythTvVideo\babgvant.Emby.MythTv.MythTvVideo.VideoMetadataInfoList.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\MythTvVideo\VideoServices.wsdl" />
+    <None Include="Service References\MythTvVideo\xsd.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\MythTvVideo\xsd1.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\MythTvVideo\xsd10.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\MythTvVideo\xsd11.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\MythTvVideo\xsd12.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\MythTvVideo\xsd2.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\MythTvVideo\xsd3.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\MythTvVideo\xsd4.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\MythTvVideo\xsd5.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\MythTvVideo\xsd6.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\MythTvVideo\xsd7.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\MythTvVideo\xsd8.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\MythTvVideo\xsd9.xsd">
+      <SubType>Designer</SubType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadataStorage Include="Service References\MythTvCapture\" />
+    <WCFMetadataStorage Include="Service References\MythTvChannel\" />
+    <WCFMetadataStorage Include="Service References\MythTvContent\" />
+    <WCFMetadataStorage Include="Service References\MythTvDvr\" />
+    <WCFMetadataStorage Include="Service References\MythTvGuide\" />
+    <WCFMetadataStorage Include="Service References\MythTvUtility\" />
+    <WCFMetadataStorage Include="Service References\MythTvVideo\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\MythTvDvr\configuration91.svcinfo" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\MythTvDvr\configuration.svcinfo" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\MythTvDvr\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\MythTvVideo\configuration91.svcinfo" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\MythTvVideo\configuration.svcinfo" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\MythTvVideo\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\MythTvGuide\configuration91.svcinfo" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\MythTvGuide\configuration.svcinfo" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\MythTvGuide\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\MythTvUtility\configuration91.svcinfo" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\MythTvUtility\configuration.svcinfo" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\MythTvUtility\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\MythTvContent\configuration91.svcinfo" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\MythTvContent\configuration.svcinfo" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\MythTvContent\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Configuration\configPage.html" />
+    <None Include="Service References\MythTvCapture\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+    <None Include="Service References\MythTvCapture\configuration.svcinfo" />
+    <None Include="Service References\MythTvCapture\configuration91.svcinfo" />
+    <None Include="Service References\MythTvChannel\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+    <None Include="Service References\MythTvChannel\configuration.svcinfo" />
+    <None Include="Service References\MythTvChannel\configuration91.svcinfo" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

@@ -1,0 +1,113 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>NextPVR</title>
+</head>
+<body>
+    <div data-role="page" class="page type-interior pluginConfigurationPage mythTvConfigurationPage">
+
+        <div data-role="content">
+            <div class="content-primary">
+                <form class="mythTvConfigurationForm">
+
+                    <ul class="ulForm" data-role="listview">
+                        <li>
+                            <label for="txtWebServiceUrl">
+                                MythTv base url:
+                            </label>
+                            <input type="text" id="txtWebServiceUrl" name="txtWebServiceUrl" />
+                            <div class="fieldDescription">
+                                MythTv backend url (format --> http://{hostname}:{port}, usually port 6544 ).
+                            </div>
+                        </li>
+                        <li>
+                            <label for="txtUncPath">
+                                Recordings UNC:
+                            </label>
+                            <input type="text" id="txtUncPath" name="txtUncPath" />
+                            <div class="fieldDescription">
+                                MythTv Recordings UNC Path (format --> \\{hostname}\recordings).
+                            </div>
+                        </li>
+                        <!--<li>
+                            <label for="txtUserName">
+                                User Name:
+                            </label>
+                            <input type="text" id="txtUserName" name="txtUserName" />
+                            <div class="fieldDescription">
+                                MythTv backend user name.
+                            </div>
+                        </li>
+                        <li>
+                            <label for="txtPassword">
+                                Password:
+                            </label>
+                            <input type="text" id="txtPassword" name="txtPassword" />
+                            <div class="fieldDescription">
+                                MythTv backend password.
+                            </div>
+                        </li>-->
+                        <!--<li>
+                            <label for="chkDebugLogging">Enable MythTv debug logging</label>
+                            <input type="checkbox" id="chkDebugLogging" data-mini="true" />
+                        </li>-->
+
+                        <li>
+                            <button type="submit" data-theme="b">Save</button>
+                            <button type="button" onclick="history.back();">Cancel</button>
+                        </li>
+                    </ul>
+
+                </form>
+            </div>
+        </div>
+
+
+        <script type="text/javascript">
+
+            var MythTvConfigurationPage = {
+                pluginUniqueId: "3a64de78-51be-495e-89de-0bb46f8c28f4"
+            };
+
+            $('.mythTvConfigurationPage').on('pageshow', function (event) {
+
+                Dashboard.showLoadingMsg();
+
+                var page = this;
+
+                ApiClient.getPluginConfiguration(MythTvConfigurationPage.pluginUniqueId).done(function (config) {
+
+                    $('#txtWebServiceUrl', page).val(config.WebServiceUrl || "");
+                    $('#txtUncPath', page).val(config.UncPath || "");
+                    //$('#txtUserName', page).val(config.UserName || "");
+                    //$('#txtPassword', page).val(config.Password || "");
+                    //$('#chkDebugLogging', page).checked(config.EnableDebugLogging || false).checkboxradio("refresh");
+
+                    Dashboard.hideLoadingMsg();
+                });
+            });
+
+            $('.mythTvConfigurationForm').on('submit', function (e) {
+
+                Dashboard.showLoadingMsg();
+
+                var form = this;
+
+                ApiClient.getPluginConfiguration(MythTvConfigurationPage.pluginUniqueId).done(function (config) {
+
+                    config.WebServiceUrl = $('#txtWebServiceUrl', form).val();
+                    config.UncPath = $('#txtUncPath', form).val();
+                    //config.UserName = $('#txtUserName', form).val();
+                    //config.Password = $('#txtPassword', form).val();
+                    //config.EnableDebugLogging = $('#chkDebugLogging', form).checked();
+
+                    ApiClient.updatePluginConfiguration(MythTvConfigurationPage.pluginUniqueId, config).done(Dashboard.processPluginConfigurationUpdateResult);
+                });
+
+                // Disable default form submission
+                return false;
+            });
+        </script>
+    </div>
+</body>
+</html>
