@@ -12,6 +12,8 @@ namespace babgvant.Emby.MythTv
 {
     public class Plugin : BasePlugin<PluginConfiguration>
     {
+        public EventHandler ConfigurationChanged;
+
         public Plugin(IApplicationPaths applicationPaths, IXmlSerializer xmlSerializer)
             : base(applicationPaths, xmlSerializer)
         {
@@ -42,6 +44,10 @@ namespace babgvant.Emby.MythTv
         public override void SaveConfiguration()
         {
             base.SaveConfiguration();
+
+            EventHandler eh = ConfigurationChanged;
+            if (eh != null)
+                eh(this, new EventArgs());
         }
 
         /// <summary>

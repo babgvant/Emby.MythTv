@@ -32,15 +32,36 @@ namespace babgvant.Emby.MythTv
         private int _liveStreams;
         private readonly Dictionary<int, int> _heartBeat = new Dictionary<int, int>();
         private Dictionary<string, MythTvChannel.ChannelInfo> _channelCache = new Dictionary<string, MythTvChannel.ChannelInfo>();
-        private readonly AsyncLock m_lock = new AsyncLock();
+        private readonly AsyncLock _channelsLock = new AsyncLock();
+        private readonly object _hostLock = new object();
 
-        private MythServiceHost host { get; set; }
+        private MythServiceHost _host;
+        private MythServiceHost Host
+        {
+            get
+            {
+                lock (_hostLock)
+                    return _host;
+            }
+            set
+            {
+                lock (_hostLock)
+                    _host = value;
+            }
+        }
 
         public LiveTvService(IHttpClient httpClient, IJsonSerializer jsonSerializer, ILogger logger)
         {
             _httpClient = httpClient;
             _jsonSerializer = jsonSerializer;
             _logger = logger;
+            Plugin.Instance.ConfigurationChanged += OnPluginConfigChange;
+        }
+
+        private void OnPluginConfigChange(object sender, EventArgs e)
+        {
+            Host = null;
+            EnsureSetup();
         }
 
         /// <summary>
@@ -64,9 +85,9 @@ namespace babgvant.Emby.MythTv
                 throw new InvalidOperationException("[MythTV] UncPath must be configured.");
             }
 
-            if (host == null)
+            if (Host == null)
             {
-                host = new MythServiceHost(Plugin.Instance.Configuration.WebServiceUrl, Plugin.Instance.Configuration.UserName, Plugin.Instance.Configuration.Password);
+                Host = new MythServiceHost(config.WebServiceUrl, config.UserName, config.Password);
             }
         }
 
@@ -123,7 +144,7 @@ namespace babgvant.Emby.MythTv
             _logger.Info("[MythTV] Start GetChannels Async, retrieve all channels");
 
             await GetCallsign(string.Empty); //call to build the cache
-            using (var releaser = await m_lock.LockAsync()) 
+            using (var releaser = await _channelsLock.LockAsync()) 
             {
                 foreach (var channel in _channelCache.Values)
                 {
@@ -158,7 +179,7 @@ namespace babgvant.Emby.MythTv
             _logger.Info("[MythTV] Start GetRecordings Async, retrieve all 'Pending', 'Inprogress' and 'Completed' recordings ");
             EnsureSetup();
 
-            var recordings = await host.DvrService.GetRecordedListAsync(null, null, null, string.Empty, string.Empty, string.Empty);
+            var recordings = await Host.DvrService.GetRecordedListAsync(null, null, null, string.Empty, string.Empty, string.Empty);
 
             foreach (var item in recordings.Programs)
             {
@@ -229,7 +250,7 @@ namespace babgvant.Emby.MythTv
                 {
                     DateTime start = new DateTime(ticks);
                     _logger.Info(string.Format("[MythTV] Delete Recording Async chan: {0} start: {1}", chanId, start));            
-                    await host.DvrService.RemoveRecordedAsync(chanId, start);
+                    await Host.DvrService.RemoveRecordedAsync(chanId, start);
                 }
             }
         }
@@ -262,17 +283,17 @@ namespace babgvant.Emby.MythTv
         
         private async Task<string> GetCallsign(string channelId)
         {
-            using (var releaser = await m_lock.LockAsync()) 
+            using (var releaser = await _channelsLock.LockAsync()) 
             {
                 if (_channelCache.Count == 0)
                 {
                     EnsureSetup();
 
-                    var sources = host.ChannelService.GetVideoSourceList();
+                    var sources = await Host.ChannelService.GetVideoSourceListAsync();
 
                     foreach (var source in sources.VideoSources)
                     {
-                        var channels = host.ChannelService.GetChannelInfoList(source.Id, null, null);
+                        var channels = await Host.ChannelService.GetChannelInfoListAsync(source.Id, null, null);
 
                         foreach (var channel in channels.ChannelInfos)
                         {
@@ -537,7 +558,7 @@ namespace babgvant.Emby.MythTv
                             await Task.Delay(200).ConfigureAwait(false);
                             try
                             {
-                                recProg = host.DvrService.GetRecorded(int.Parse(channelOid), startTime);
+                                recProg = Host.DvrService.GetRecorded(int.Parse(channelOid), startTime);
                                 if (recProg != null && File.Exists(Path.Combine(Plugin.Instance.Configuration.UncPath, recProg.FileName)))
                                 {
                                     return new MediaSourceInfo
@@ -687,7 +708,7 @@ namespace babgvant.Emby.MythTv
 
             if (int.TryParse(channelId, out chanId))
             {
-                var data = await host.GuideService.GetProgramGuideAsync(startDateUtc.ToLocalTime(), endDateUtc.ToLocalTime(), chanId, 1, true);
+                var data = await Host.GuideService.GetProgramGuideAsync(startDateUtc.ToLocalTime(), endDateUtc.ToLocalTime(), chanId, 1, true);
 
                 foreach (var item in data.Channels)
                 {
@@ -754,13 +775,17 @@ namespace babgvant.Emby.MythTv
             
             bool upgradeAvailable = false;
             
-            var conInfo = await host.MythService.GetConnectionInfoAsync(string.Empty);
+            var conInfo = await Host.MythService.GetConnectionInfoAsync(string.Empty);
             string serverVersion = conInfo.Version.Version;
             
             //Tuner information
             List<LiveTvTunerInfo> tvTunerInfos = new List<LiveTvTunerInfo>();
-            var tuners = host.DvrService.GetEncoderList();
-            var encoders = host.CaptureService.GetCaptureCardList(string.Empty, string.Empty);
+            var tunersTask = Host.DvrService.GetEncoderListAsync();
+            var encodersTask = Host.CaptureService.GetCaptureCardListAsync(string.Empty, string.Empty);
+
+            var tuners = await tunersTask;
+            var encoders = await encodersTask;
+
             foreach(var tuner in tuners.Encoders)
             {
                 LiveTvTunerInfo info = new LiveTvTunerInfo()
