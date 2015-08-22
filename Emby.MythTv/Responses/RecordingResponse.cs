@@ -8,11 +8,12 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace babgvant.Emby.MythTv.Responses
 {
-    public class RecordingResponse
+    public class DvrResponse
     {
         private static readonly CultureInfo _usCulture = new CultureInfo("en-US");
 
@@ -117,6 +118,19 @@ namespace babgvant.Emby.MythTv.Responses
             var root = ParseRecRule(stream, json);
             UtilsHelper.DebugInformation(logger, string.Format("[MythTV] GetRecRule Response: {0}", json.SerializeToString(root)));
             return root.RecRule;
+        }
+
+        public static EncoderList ParseEncoderList(Stream stream, IJsonSerializer json, ILogger logger)
+        {
+            using (var reader = new StreamReader(stream, new UTF8Encoding()))
+            {
+                string resptext = reader.ReadToEnd();
+                UtilsHelper.DebugInformation(logger, string.Format("[MythTV] ParseEncoderList Response: {0}", resptext));
+            
+                //resptext = Regex.Replace(resptext, "{\"Version\": {\"Version\"", "{\"Version\": {\"Ver\"");
+                var root = json.DeserializeFromString<RootEncoderObject>(resptext);
+                return root.EncoderList;
+            }           
         }
 
         private static RecRuleRoot ParseRecRule(Stream stream, IJsonSerializer json)
@@ -224,5 +238,110 @@ namespace babgvant.Emby.MythTv.Responses
     public class RecordId
     {
         public string @uint { get; set; }
+    }
+
+    public class Channel
+    {
+        public string ChanId { get; set; }
+        public string ChanNum { get; set; }
+        public string CallSign { get; set; }
+        public string IconURL { get; set; }
+        public string ChannelName { get; set; }
+        public string MplexId { get; set; }
+        public string TransportId { get; set; }
+        public string ServiceId { get; set; }
+        public string NetworkId { get; set; }
+        public string ATSCMajorChan { get; set; }
+        public string ATSCMinorChan { get; set; }
+        public string Format { get; set; }
+        public string Modulation { get; set; }
+        public string Frequency { get; set; }
+        public string FrequencyId { get; set; }
+        public string FrequencyTable { get; set; }
+        public string FineTune { get; set; }
+        public string SIStandard { get; set; }
+        public string ChanFilters { get; set; }
+        public string SourceId { get; set; }
+        public string InputId { get; set; }
+        public string CommFree { get; set; }
+        public string UseEIT { get; set; }
+        public string Visible { get; set; }
+        public string XMLTVID { get; set; }
+        public string DefaultAuth { get; set; }
+        public List<object> Programs { get; set; }
+    }
+
+    public class Recording2
+    {
+        public string Status { get; set; }
+        public string Priority { get; set; }
+        public string StartTs { get; set; }
+        public string EndTs { get; set; }
+        public string RecordId { get; set; }
+        public string RecGroup { get; set; }
+        public string PlayGroup { get; set; }
+        public string StorageGroup { get; set; }
+        public string RecType { get; set; }
+        public string DupInType { get; set; }
+        public string DupMethod { get; set; }
+        public string EncoderId { get; set; }
+        public string Profile { get; set; }
+    }
+
+    public class Artwork
+    {
+        public List<object> ArtworkInfos { get; set; }
+    }
+
+    public class Recording
+    {
+        public DateTime? StartTime { get; set; }
+        public DateTime? EndTime { get; set; }
+        public string Title { get; set; }
+        public string SubTitle { get; set; }
+        public string Category { get; set; }
+        public string CatType { get; set; }
+        public string Repeat { get; set; }
+        public string VideoProps { get; set; }
+        public string AudioProps { get; set; }
+        public string SubProps { get; set; }
+        public string SeriesId { get; set; }
+        public string ProgramId { get; set; }
+        public string Stars { get; set; }
+        public string FileSize { get; set; }
+        public string LastModified { get; set; }
+        public string ProgramFlags { get; set; }
+        public string FileName { get; set; }
+        public string HostName { get; set; }
+        public string Airdate { get; set; }
+        public string Description { get; set; }
+        public string Inetref { get; set; }
+        public string Season { get; set; }
+        public string Episode { get; set; }
+        public Channel Channel { get; set; }
+        public Recording2 Rec { get; set; }
+        public Artwork Artwork { get; set; }
+    }
+
+    public class Encoder
+    {
+        public string Id { get; set; }
+        public string HostName { get; set; }
+        public string Local { get; set; }
+        public string Connected { get; set; }
+        public int State { get; set; }
+        public string SleepStatus { get; set; }
+        public string LowOnFreeSpace { get; set; }
+        public Recording Recording { get; set; }
+    }
+
+    public class EncoderList
+    {
+        public List<Encoder> Encoders { get; set; }
+    }
+
+    public class RootEncoderObject
+    {
+        public EncoderList EncoderList { get; set; }
     }
 }

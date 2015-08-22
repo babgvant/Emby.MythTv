@@ -325,7 +325,7 @@ namespace babgvant.Emby.MythTv
 
             using (var stream = await _httpClient.Get(GetOptions(cancellationToken, "/Dvr/GetRecordSchedule?Template=Default")).ConfigureAwait(false))
             {
-                RecRule orgRule = RecordingResponse.GetRecRule(stream, _jsonSerializer, _logger);
+                RecRule orgRule = DvrResponse.GetRecRule(stream, _jsonSerializer, _logger);
                 if (orgRule != null)
                 {
                     orgRule.Title = info.Name;
@@ -358,7 +358,7 @@ namespace babgvant.Emby.MythTv
 
             using (var stream = await _httpClient.Get(GetOptions(cancellationToken, "/Dvr/GetRecordScheduleList")).ConfigureAwait(false))
             {
-                return  RecordingResponse.GetTimers(stream, _jsonSerializer, _logger);
+                return  DvrResponse.GetTimers(stream, _jsonSerializer, _logger);
             }
         }
 
@@ -374,7 +374,7 @@ namespace babgvant.Emby.MythTv
 
             using (var stream = await _httpClient.Get(GetOptions(cancellationToken, "/Dvr/GetRecordScheduleList")).ConfigureAwait(false))
             {
-                return  RecordingResponse.GetSeriesTimers(stream, _jsonSerializer, _logger);
+                return  DvrResponse.GetSeriesTimers(stream, _jsonSerializer, _logger);
             }
         }
 
@@ -391,7 +391,7 @@ namespace babgvant.Emby.MythTv
 
             using (var stream = await _httpClient.Get(GetOptions(cancellationToken, "/Dvr/GetRecordSchedule?Template=Default")).ConfigureAwait(false))
             {
-                RecRule orgRule = RecordingResponse.GetRecRule(stream, _jsonSerializer, _logger);
+                RecRule orgRule = DvrResponse.GetRecRule(stream, _jsonSerializer, _logger);
                 if (orgRule != null)
                 {
                     orgRule.Title = info.Name;
@@ -436,7 +436,7 @@ namespace babgvant.Emby.MythTv
 
             using (var stream = await _httpClient.Get(GetOptions(cancellationToken, "/Dvr/GetRecordSchedule?RecordId={0}", info.Id)).ConfigureAwait(false))
             {
-                RecRule orgRule = RecordingResponse.GetRecRule(stream, _jsonSerializer, _logger);
+                RecRule orgRule = DvrResponse.GetRecRule(stream, _jsonSerializer, _logger);
                 if (orgRule != null)
                 {
                     orgRule.Title = info.Name;
@@ -479,7 +479,7 @@ namespace babgvant.Emby.MythTv
 
             using (var stream = await _httpClient.Get(GetOptions(cancellationToken, "/Dvr/GetRecordSchedule?RecordId={0}", info.Id)).ConfigureAwait(false))
             {
-                RecRule orgRule = RecordingResponse.GetRecRule(stream, _jsonSerializer, _logger);
+                RecRule orgRule = DvrResponse.GetRecRule(stream, _jsonSerializer, _logger);
                 if (orgRule != null)
                 {
                     orgRule.Title = info.Name;
@@ -532,7 +532,7 @@ namespace babgvant.Emby.MythTv
 
             using (var stream = await _httpClient.Get(GetOptions(cancellationToken, "/Dvr/GetRecordSchedule?Template=Default")).ConfigureAwait(false))
             {
-                RecRule orgRule = RecordingResponse.GetRecRule(stream, _jsonSerializer, _logger);
+                RecRule orgRule = DvrResponse.GetRecRule(stream, _jsonSerializer, _logger);
                 if (orgRule != null)
                 {
                     DateTime startTime = DateTime.Now.ToUniversalTime();
@@ -551,7 +551,7 @@ namespace babgvant.Emby.MythTv
 
                     using (var response = await _httpClient.Post(options).ConfigureAwait(false))
                     {
-                        RecordId recId = RecordingResponse.ParseRecordId(response.Content, _jsonSerializer);
+                        RecordId recId = DvrResponse.ParseRecordId(response.Content, _jsonSerializer);
                         MythTvDvr.Program recProg = null;
                         for (int i = 0; i < Plugin.Instance.Configuration.LiveTvWaits; i++)
                         {
@@ -695,7 +695,7 @@ namespace babgvant.Emby.MythTv
             EnsureSetup();
             using (var stream = await _httpClient.Get(GetOptions(cancellationToken, "/Dvr/GetRecordSchedule?Template=Default")).ConfigureAwait(false))
             {
-                return RecordingResponse.GetDefaultTimerInfo(stream, _jsonSerializer, _logger);
+                return DvrResponse.GetDefaultTimerInfo(stream, _jsonSerializer, _logger);
             }               
         }
 
@@ -774,18 +774,34 @@ namespace babgvant.Emby.MythTv
             EnsureSetup();
             
             bool upgradeAvailable = false;
-            
-            var conInfo = await Host.MythService.GetConnectionInfoAsync(string.Empty);
-            string serverVersion = conInfo.Version.Version;
+            string serverVersion = string.Empty;
+
+            var conInfoTask = _httpClient.Get(GetOptions(cancellationToken, "/Myth/GetConnectionInfo")).ConfigureAwait(false);
+
+            var tunersTask = _httpClient.Get(GetOptions(cancellationToken, "/Dvr/GetEncoderList")).ConfigureAwait(false);
+            var encodersTask = _httpClient.Get(GetOptions(cancellationToken, "/Capture/GetCaptureCardList")).ConfigureAwait(false); 
+
+            EncoderList tuners = null;
+            CaptureCardList encoders = null;
+
+            using (var stream = await tunersTask)
+            {
+                tuners = DvrResponse.ParseEncoderList(stream, _jsonSerializer, _logger);
+            }
+
+            using (var stream = await encodersTask)
+            {
+                encoders = CaptureResponse.ParseCaptureCardList(stream, _jsonSerializer, _logger);
+            }
+
+            using (var stream = await conInfoTask)
+            {
+                var conInfo = UtilityResponse.GetConnectionInfo(stream, _jsonSerializer, _logger);
+                serverVersion = conInfo.Version.Ver;
+            }
             
             //Tuner information
             List<LiveTvTunerInfo> tvTunerInfos = new List<LiveTvTunerInfo>();
-            var tunersTask = Host.DvrService.GetEncoderListAsync();
-            var encodersTask = Host.CaptureService.GetCaptureCardListAsync(string.Empty, string.Empty);
-
-            var tuners = await tunersTask;
-            var encoders = await encodersTask;
-
             foreach(var tuner in tuners.Encoders)
             {
                 LiveTvTunerInfo info = new LiveTvTunerInfo()

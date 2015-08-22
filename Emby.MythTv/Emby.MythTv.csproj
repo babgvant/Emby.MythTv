@@ -71,7 +71,9 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="Responses\CaptureResponse.cs" />
     <Compile Include="Responses\RecordingResponse.cs" />
+    <Compile Include="Responses\UtilityResponse.cs" />
     <Compile Include="Service References\MythTvCapture\Reference.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
