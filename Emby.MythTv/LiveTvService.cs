@@ -199,9 +199,17 @@ namespace babgvant.Emby.MythTv
                                 StringComparison.OrdinalIgnoreCase)
                     };
 
-                    if (!string.IsNullOrWhiteSpace(Plugin.Instance.Configuration.UncPath))
+                    if (Plugin.Instance.RecordingUncs.Count > 0)
                     {
-                        val.Path = Path.Combine(Plugin.Instance.Configuration.UncPath, item.FileName);                        
+                        foreach (string unc in Plugin.Instance.RecordingUncs)
+                        {
+                            string recPath = Path.Combine(unc, item.FileName);
+                            if (File.Exists(recPath))
+                            {
+                                val.Path = recPath;
+                                break;
+                            }
+                        }
                     }
                     val.Genres.AddRange(item.Category.Split(new char[] { '/' }, StringSplitOptions.RemoveEmptyEntries));
                     if (item.Artwork.ArtworkInfos.Count() > 0)

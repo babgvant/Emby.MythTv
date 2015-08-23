@@ -18,6 +18,9 @@ namespace babgvant.Emby.MythTv
             : base(applicationPaths, xmlSerializer)
         {
             Instance = this;
+            RecordingUncs = new List<string>();
+
+            BuildUncList();
         }
 
         /// <summary>
@@ -41,9 +44,24 @@ namespace babgvant.Emby.MythTv
             }
         }
 
+        public List<string> RecordingUncs { get; private set; }
+
+        private void BuildUncList()
+        {
+            RecordingUncs.Clear();
+
+            if (!string.IsNullOrWhiteSpace(this.Configuration.UncPath))
+            {
+                string[] uncs = this.Configuration.UncPath.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
+                RecordingUncs.AddRange(uncs);
+            }
+        }
+
         public override void SaveConfiguration()
         {
             base.SaveConfiguration();
+
+            BuildUncList();
 
             EventHandler eh = ConfigurationChanged;
             if (eh != null)
