@@ -29,27 +29,10 @@ namespace babgvant.Emby.MythTv
         private readonly IJsonSerializer _jsonSerializer;
         private readonly CultureInfo _usCulture = new CultureInfo("en-US");
         private readonly ILogger _logger;
-        private int _liveStreams;
-        private readonly Dictionary<int, int> _heartBeat = new Dictionary<int, int>();
-        private Dictionary<string, MythTvChannel.ChannelInfo> _channelCache = new Dictionary<string, MythTvChannel.ChannelInfo>();
+        //private readonly Dictionary<int, int> _heartBeat = new Dictionary<int, int>();
+        private Dictionary<string, Channel> _channelCache = new Dictionary<string, Channel>();
         private readonly AsyncLock _channelsLock = new AsyncLock();
-        private readonly object _hostLock = new object();
-
-        private MythServiceHost _host;
-        private MythServiceHost Host
-        {
-            get
-            {
-                lock (_hostLock)
-                    return _host;
-            }
-            set
-            {
-                lock (_hostLock)
-                    _host = value;
-            }
-        }
-
+        
         public LiveTvService(IHttpClient httpClient, IJsonSerializer jsonSerializer, ILogger logger)
         {
             _httpClient = httpClient;
@@ -60,7 +43,6 @@ namespace babgvant.Emby.MythTv
 
         private void OnPluginConfigChange(object sender, EventArgs e)
         {
-            Host = null;
             EnsureSetup();
         }
 
@@ -79,16 +61,11 @@ namespace babgvant.Emby.MythTv
                 throw new InvalidOperationException("MythTV web service url must be configured.");
             }
 
-            if (string.IsNullOrEmpty(config.UncPath))
-            {
-                _logger.Error("[MythTV] UncPath must be configured.");
-                throw new InvalidOperationException("[MythTV] UncPath must be configured.");
-            }
-
-            if (Host == null)
-            {
-                Host = new MythServiceHost(config.WebServiceUrl, config.UserName, config.Password);
-            }
+            //if (string.IsNullOrEmpty(config.UncPath))
+            //{
+            //    _logger.Error("[MythTV] UncPath must be configured.");
+            //    throw new InvalidOperationException("[MythTV] UncPath must be configured.");
+            //}
         }
 
         private HttpRequestOptions PostOptions(CancellationToken cancellationToken, string requestContent, string uriPathQuery, params object[] plist) 
@@ -132,6 +109,11 @@ namespace babgvant.Emby.MythTv
             return ret;
         }
 
+        private string FormateMythDate(DateTime inDate)
+        {
+            return inDate.ToString("yyyy-MM-ddThh:mm:ss");
+        }
+
         /// <summary>
         /// Gets the channels async.
         /// </summary>
@@ -143,7 +125,7 @@ namespace babgvant.Emby.MythTv
 
             _logger.Info("[MythTV] Start GetChannels Async, retrieve all channels");
 
-            await GetCallsign(string.Empty); //call to build the cache
+            await GetCallsign(string.Empty, cancellationToken); //call to build the cache
             using (var releaser = await _channelsLock.LockAsync()) 
             {
                 foreach (var channel in _channelCache.Values)
@@ -153,11 +135,12 @@ namespace babgvant.Emby.MythTv
                                 Name = channel.ChannelName,
                                 Number = channel.ChanNum,
                                 Id = channel.ChanId.ToString(_usCulture),
-                                HasImage = !string.IsNullOrWhiteSpace(channel.IconURL)
+                                HasImage = false
                             };
 
-                    if ((bool)ci.HasImage)
+                    if (!string.IsNullOrWhiteSpace(channel.IconURL) && Plugin.Instance.Configuration.LoadChannelIcons)
                     {
+                        ci.HasImage = true;
                         ci.ImageUrl = string.Format("{0}/Guide/GetChannelIcon?ChanId={1}", Plugin.Instance.Configuration.WebServiceUrl, channel.ChanId);
                     }
 
@@ -179,51 +162,58 @@ namespace babgvant.Emby.MythTv
             _logger.Info("[MythTV] Start GetRecordings Async, retrieve all 'Pending', 'Inprogress' and 'Completed' recordings ");
             EnsureSetup();
 
-            var recordings = await Host.DvrService.GetRecordedListAsync(null, null, null, string.Empty, string.Empty, string.Empty);
-
-            foreach (var item in recordings.Programs)
+            using (var stream = await _httpClient.Get(GetOptions(cancellationToken, "/Dvr/GetRecordedList")).ConfigureAwait(false))
             {
-                RecordingInfo val = new RecordingInfo()
-                {
-                    Name = item.Title,
-                    EpisodeTitle = item.SubTitle,
-                    Overview = item.Description,
-                    Audio = ProgramAudio.Stereo, //Hardcode for now (ProgramAudio)item.AudioProps,
-                    ChannelId = item.Channel.ChanId.ToString(),
-                    ProgramId = item.ProgramId,
-                    SeriesTimerId = item.Recording.RecordId.ToString(),
-                    EndDate = (DateTime)item.EndTime,
-                    StartDate = (DateTime)item.StartTime,
-                    Path = Path.Combine(Plugin.Instance.Configuration.UncPath, item.FileName),
-                    Url = string.Format("{0}{1}", Plugin.Instance.Configuration.WebServiceUrl, string.Format("Content/GetFile?StorageGroup={0}&FileName={1}", item.Recording.StorageGroup, item.FileName)),
-                    Id = string.Format("StartTime={0}&ChanId={1}", ((DateTime)item.StartTime).Ticks, item.Channel.ChanId),
-                    IsSeries = GeneralHelpers.ContainsWord(item.CatType, "series", StringComparison.OrdinalIgnoreCase),
-                    IsMovie = GeneralHelpers.ContainsWord(item.CatType, "movie", StringComparison.OrdinalIgnoreCase),
-                    IsRepeat = item.Repeat,
-                    IsNews = GeneralHelpers.ContainsWord(item.Category, "news",
-                    StringComparison.OrdinalIgnoreCase),
-                    IsKids = GeneralHelpers.ContainsWord(item.Category, "animation",
-                    StringComparison.OrdinalIgnoreCase),
-                    IsSports =
-                        GeneralHelpers.ContainsWord(item.Category, "sport",
-                            StringComparison.OrdinalIgnoreCase) ||
-                        GeneralHelpers.ContainsWord(item.Category, "motor sports",
-                            StringComparison.OrdinalIgnoreCase) ||
-                        GeneralHelpers.ContainsWord(item.Category, "football",
-                            StringComparison.OrdinalIgnoreCase) ||
-                        GeneralHelpers.ContainsWord(item.Category, "cricket",
-                            StringComparison.OrdinalIgnoreCase)
-                };
-                val.Genres.AddRange(item.Category.Split(new char[] { '/' }, StringSplitOptions.RemoveEmptyEntries));
-                if (item.Artwork.ArtworkInfos.Count() > 0)
-                {
-                    val.HasImage = true;
-                    val.ImageUrl = string.Format("{0}{1}", Plugin.Instance.Configuration.WebServiceUrl, item.Artwork.ArtworkInfos[0].URL);
-                }
-                else
-                    val.HasImage = false;
+                var recordings = DvrResponse.ParseProgramList(stream, _jsonSerializer, _logger);
 
-                ret.Add(val);
+                foreach (var item in recordings.Programs)
+                {
+                    RecordingInfo val = new RecordingInfo()
+                    {
+                        Name = item.Title,
+                        EpisodeTitle = item.SubTitle,
+                        Overview = item.Description,
+                        Audio = ProgramAudio.Stereo, //Hardcode for now (ProgramAudio)item.AudioProps,
+                        ChannelId = item.Channel.ChanId.ToString(),
+                        ProgramId = item.ProgramId,
+                        SeriesTimerId = item.Recording.RecordId.ToString(),
+                        EndDate = (DateTime)item.EndTime,
+                        StartDate = (DateTime)item.StartTime,
+                        Url = string.Format("{0}{1}", Plugin.Instance.Configuration.WebServiceUrl, string.Format("/Content/GetFile?StorageGroup={0}&FileName={1}", item.Recording.StorageGroup, item.FileName)),
+                        Id = string.Format("StartTime={0}&ChanId={1}", ((DateTime)item.StartTime).Ticks, item.Channel.ChanId),
+                        IsSeries = GeneralHelpers.ContainsWord(item.CatType, "series", StringComparison.OrdinalIgnoreCase),
+                        IsMovie = GeneralHelpers.ContainsWord(item.CatType, "movie", StringComparison.OrdinalIgnoreCase),
+                        IsRepeat = item.Repeat,
+                        IsNews = GeneralHelpers.ContainsWord(item.Category, "news",
+                        StringComparison.OrdinalIgnoreCase),
+                        IsKids = GeneralHelpers.ContainsWord(item.Category, "animation",
+                        StringComparison.OrdinalIgnoreCase),
+                        IsSports =
+                            GeneralHelpers.ContainsWord(item.Category, "sport",
+                                StringComparison.OrdinalIgnoreCase) ||
+                            GeneralHelpers.ContainsWord(item.Category, "motor sports",
+                                StringComparison.OrdinalIgnoreCase) ||
+                            GeneralHelpers.ContainsWord(item.Category, "football",
+                                StringComparison.OrdinalIgnoreCase) ||
+                            GeneralHelpers.ContainsWord(item.Category, "cricket",
+                                StringComparison.OrdinalIgnoreCase)
+                    };
+
+                    if (!string.IsNullOrWhiteSpace(Plugin.Instance.Configuration.UncPath))
+                    {
+                        val.Path = Path.Combine(Plugin.Instance.Configuration.UncPath, item.FileName);                        
+                    }
+                    val.Genres.AddRange(item.Category.Split(new char[] { '/' }, StringSplitOptions.RemoveEmptyEntries));
+                    if (item.Artwork.ArtworkInfos.Count() > 0)
+                    {
+                        val.HasImage = true;
+                        val.ImageUrl = string.Format("{0}{1}", Plugin.Instance.Configuration.WebServiceUrl, item.Artwork.ArtworkInfos[0].URL);
+                    }
+                    else
+                        val.HasImage = false;
+
+                    ret.Add(val);
+                }
             }
 
             return ret;
@@ -250,7 +240,12 @@ namespace babgvant.Emby.MythTv
                 {
                     DateTime start = new DateTime(ticks);
                     _logger.Info(string.Format("[MythTV] Delete Recording Async chan: {0} start: {1}", chanId, start));            
-                    await Host.DvrService.RemoveRecordedAsync(chanId, start);
+                    //await Host.DvrService.RemoveRecordedAsync(chanId, start);
+
+                    using (var stream = await _httpClient.Get(GetOptions(cancellationToken, "/Dvr/RemoveRecorded?ChanId={0}&StartTime={1}", chanId, FormateMythDate(start))).ConfigureAwait(false))
+                    {
+                        
+                    }    
                 }
             }
         }
@@ -280,8 +275,8 @@ namespace babgvant.Emby.MythTv
                 //return new RecordingResponse().GetSeriesTimers(stream, _jsonSerializer, _logger);
             }
         }
-        
-        private async Task<string> GetCallsign(string channelId)
+
+        private async Task<string> GetCallsign(string channelId, CancellationToken cancellationToken)
         {
             using (var releaser = await _channelsLock.LockAsync()) 
             {
@@ -289,17 +284,21 @@ namespace babgvant.Emby.MythTv
                 {
                     EnsureSetup();
 
-                    var sources = await Host.ChannelService.GetVideoSourceListAsync();
-
-                    foreach (var source in sources.VideoSources)
+                    using (var sourcesstream = await _httpClient.Get(GetOptions(cancellationToken, "/Channel/GetVideoSourceList")).ConfigureAwait(false))
                     {
-                        var channels = await Host.ChannelService.GetChannelInfoListAsync(source.Id, null, null);
-
-                        foreach (var channel in channels.ChannelInfos)
+                        var sources = ChannelResponse.ParseVideoSourceList(sourcesstream, _jsonSerializer, _logger);
+                        foreach (var source in sources.VideoSources)
                         {
-                            if (channel.Visible)
+                            using (var stream = await _httpClient.Get(GetOptions(cancellationToken, "/Channel/GetChannelInfoList?SourceID={0}", source.Id)).ConfigureAwait(false))
                             {
-                                _channelCache[channel.ChanId.ToString()] = channel;
+                                var channels = ChannelResponse.ParseChannelInfoList(stream, _jsonSerializer, _logger);
+                                foreach (var channel in channels.ChannelInfos)
+                                {
+                                    if (channel.Visible)
+                                    {
+                                        _channelCache[channel.ChanId.ToString()] = channel;
+                                    }
+                                }
                             }
                         }
                     }
@@ -330,7 +329,7 @@ namespace babgvant.Emby.MythTv
                 {
                     orgRule.Title = info.Name;
                     orgRule.ChanId = info.ChannelId;
-                    orgRule.CallSign = await GetCallsign(info.ChannelId);
+                    orgRule.CallSign = await GetCallsign(info.ChannelId, cancellationToken);
                     orgRule.EndTime = info.EndDate;
                     orgRule.StartTime = info.StartDate;
                     orgRule.StartOffset = info.PrePaddingSeconds / 60;
@@ -396,7 +395,7 @@ namespace babgvant.Emby.MythTv
                 {
                     orgRule.Title = info.Name;
                     orgRule.ChanId = info.ChannelId;
-                    orgRule.CallSign = await GetCallsign(info.ChannelId);
+                    orgRule.CallSign = await GetCallsign(info.ChannelId, cancellationToken);
                     orgRule.EndTime = info.EndDate;
                     orgRule.StartTime = info.StartDate;
                     orgRule.StartOffset = info.PrePaddingSeconds / 60;
@@ -441,7 +440,7 @@ namespace babgvant.Emby.MythTv
                 {
                     orgRule.Title = info.Name;
                     orgRule.ChanId = info.ChannelId;
-                    orgRule.CallSign = await GetCallsign(info.ChannelId);
+                    orgRule.CallSign = await GetCallsign(info.ChannelId, cancellationToken);
                     orgRule.EndTime = info.EndDate;
                     orgRule.StartTime = info.StartDate;
                     orgRule.StartOffset = info.PrePaddingSeconds / 60;
@@ -484,7 +483,7 @@ namespace babgvant.Emby.MythTv
                 {
                     orgRule.Title = info.Name;
                     orgRule.ChanId = info.ChannelId;
-                    orgRule.CallSign = await GetCallsign(info.ChannelId);
+                    orgRule.CallSign = await GetCallsign(info.ChannelId, cancellationToken);
                     orgRule.EndTime = info.EndDate;
                     orgRule.StartTime = info.StartDate;
                     orgRule.StartOffset = info.PrePaddingSeconds / 60;
@@ -536,9 +535,9 @@ namespace babgvant.Emby.MythTv
                 if (orgRule != null)
                 {
                     DateTime startTime = DateTime.Now.ToUniversalTime();
-                    orgRule.Title = string.Format("Emby LiveTV: {0} ({1}) - {1}", await GetCallsign(channelOid), channelOid, startTime);
+                    orgRule.Title = string.Format("Emby LiveTV: {0} ({1}) - {1}", await GetCallsign(channelOid, cancellationToken), channelOid, startTime);
                     orgRule.ChanId = channelOid;
-                    orgRule.CallSign = await GetCallsign(channelOid);
+                    orgRule.CallSign = await GetCallsign(channelOid, cancellationToken);
                     orgRule.EndTime = startTime.AddHours(5);
                     orgRule.StartTime = startTime;
                     orgRule.StartOffset = 0;
@@ -552,13 +551,15 @@ namespace babgvant.Emby.MythTv
                     using (var response = await _httpClient.Post(options).ConfigureAwait(false))
                     {
                         RecordId recId = DvrResponse.ParseRecordId(response.Content, _jsonSerializer);
-                        MythTvDvr.Program recProg = null;
                         for (int i = 0; i < Plugin.Instance.Configuration.LiveTvWaits; i++)
                         {
                             await Task.Delay(200).ConfigureAwait(false);
                             try
                             {
-                                recProg = Host.DvrService.GetRecorded(int.Parse(channelOid), startTime);
+                                using (var rpstream = await _httpClient.Get(GetOptions(cancellationToken, "/Dvr/GetRecorded?ChanId={0}&StartTime={1}", channelOid, FormateMythDate(startTime))).ConfigureAwait(false))
+                                {
+
+                                var recProg = DvrResponse.ParseRecorded(rpstream, _jsonSerializer,  _logger) ;//Host.DvrService.GetRecorded(int.Parse(channelOid), startTime);
                                 if (recProg != null && File.Exists(Path.Combine(Plugin.Instance.Configuration.UncPath, recProg.FileName)))
                                 {
                                     return new MediaSourceInfo
@@ -583,6 +584,8 @@ namespace babgvant.Emby.MythTv
                                         }
                                     };
                                     break;
+                                }
+
                                 }
                             }
                             catch
@@ -701,14 +704,14 @@ namespace babgvant.Emby.MythTv
 
         public async Task<IEnumerable<ProgramInfo>> GetProgramsAsync(string channelId, DateTime startDateUtc, DateTime endDateUtc, CancellationToken cancellationToken)
         {
-            _logger.Info("[MythTV] Start GetPrograms Async, retrieve all Programs");
+            _logger.Info("[MythTV] Start GetPrograms Async, retrieve programs for: {0}", channelId);
             EnsureSetup();
             List<ProgramInfo> ret = new List<ProgramInfo>();
-            int chanId;
+            var options = GetOptions(cancellationToken, "/Guide/GetProgramGuide?StartTime={0}&EndTime={1}&StartChanId={2}&NumChannels=1&Details=1", FormateMythDate(startDateUtc), FormateMythDate(endDateUtc), channelId);
 
-            if (int.TryParse(channelId, out chanId))
+            using (var stream = await _httpClient.Get(options).ConfigureAwait(false))
             {
-                var data = await Host.GuideService.GetProgramGuideAsync(startDateUtc.ToLocalTime(), endDateUtc.ToLocalTime(), chanId, 1, true);
+                var data = GuideResponse.ParseGuide(stream, _jsonSerializer, _logger);
 
                 foreach (var item in data.Channels)
                 {
@@ -716,7 +719,7 @@ namespace babgvant.Emby.MythTv
                     {
                         List<string> categories = new List<string>();
                         categories.AddRange(prog.Category.Split(new char[] { '/' }, StringSplitOptions.RemoveEmptyEntries));
-                        
+
                         ProgramInfo val = new ProgramInfo()
                         {
                             Name = prog.Title,
@@ -757,6 +760,7 @@ namespace babgvant.Emby.MythTv
                     }
                 }
             }
+
             return ret;
         }
 

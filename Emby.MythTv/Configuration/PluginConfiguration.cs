@@ -31,6 +31,7 @@ namespace babgvant.Emby.MythTv.Configuration
         public bool TimeShift { get; set; }
         public Boolean EnableDebugLogging { get; set; }
         public int LiveTvWaits { get; set; }
+        public bool LoadChannelIcons { get; set; }
 
         public PluginConfiguration()
         {
@@ -41,6 +42,7 @@ namespace babgvant.Emby.MythTv.Configuration
             TimeShift = false;
             EnableDebugLogging = false;
             LiveTvWaits = 10;
+            LoadChannelIcons = false;
         }
     }
 }

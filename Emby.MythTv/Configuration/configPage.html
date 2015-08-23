@@ -51,7 +51,10 @@
                             <label for="chkDebugLogging">Enable MythTv debug logging</label>
                             <input type="checkbox" id="chkDebugLogging" data-mini="true" />
                         </li>-->
-
+                        <li>
+                            <label for="chkLoadChannelIcons">MythTV has channel icons</label>
+                            <input type="checkbox" id="chkLoadChannelIcons" data-mini="true" />
+                        </li>
                         <li>
                             <button type="submit" data-theme="b">Save</button>
                             <button type="button" onclick="history.back();">Cancel</button>
@@ -82,6 +85,7 @@
                     //$('#txtUserName', page).val(config.UserName || "");
                     //$('#txtPassword', page).val(config.Password || "");
                     //$('#chkDebugLogging', page).checked(config.EnableDebugLogging || false).checkboxradio("refresh");
+                    $('#chkLoadChannelIcons', page).checked(config.LoadChannelIcons || false).checkboxradio("refresh");
 
                     Dashboard.hideLoadingMsg();
                 });
@@ -100,6 +104,7 @@
                     //config.UserName = $('#txtUserName', form).val();
                     //config.Password = $('#txtPassword', form).val();
                     //config.EnableDebugLogging = $('#chkDebugLogging', form).checked();
+                    config.LoadChannelIcons = $('#chkLoadChannelIcons', form).checked();
 
                     ApiClient.updatePluginConfiguration(MythTvConfigurationPage.pluginUniqueId, config).done(Dashboard.processPluginConfigurationUpdateResult);
                 });

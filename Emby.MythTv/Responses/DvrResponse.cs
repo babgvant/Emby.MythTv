@@ -147,6 +147,23 @@ namespace babgvant.Emby.MythTv.Responses
         {
             return json.DeserializeFromStream<RecordId>(stream);
         }
+
+        public static ProgramList ParseProgramList(Stream stream, IJsonSerializer json, ILogger logger)
+        {
+            var root = json.DeserializeFromStream<RootProgramListObject>(stream);
+            return root.ProgramList;
+        }
+
+        internal static Program ParseRecorded(Stream stream, IJsonSerializer json, ILogger logger)
+        {
+            var root = json.DeserializeFromStream<RootProgramObject>(stream);
+            return root.Program;
+        }
+    }
+
+    public class RootProgramObject
+    {
+        public Program Program { get; set; }
     }
 
     public enum RecFilter
@@ -264,14 +281,14 @@ namespace babgvant.Emby.MythTv.Responses
         public string SourceId { get; set; }
         public string InputId { get; set; }
         public string CommFree { get; set; }
-        public string UseEIT { get; set; }
-        public string Visible { get; set; }
+        public bool UseEIT { get; set; }
+        public bool Visible { get; set; }
         public string XMLTVID { get; set; }
         public string DefaultAuth { get; set; }
-        public List<object> Programs { get; set; }
+        public List<Program> Programs { get; set; }
     }
 
-    public class Recording2
+    public class RecordingDetail
     {
         public string Status { get; set; }
         public string Priority { get; set; }
@@ -288,9 +305,17 @@ namespace babgvant.Emby.MythTv.Responses
         public string Profile { get; set; }
     }
 
+    public class ArtworkInfo
+    {
+        public string URL { get; set; }
+        public string FileName { get; set; }
+        public string StorageGroup { get; set; }
+        public string Type { get; set; }
+    }
+
     public class Artwork
     {
-        public List<object> ArtworkInfos { get; set; }
+        public List<ArtworkInfo> ArtworkInfos { get; set; }
     }
 
     public class Recording
@@ -319,7 +344,7 @@ namespace babgvant.Emby.MythTv.Responses
         public string Season { get; set; }
         public string Episode { get; set; }
         public Channel Channel { get; set; }
-        public Recording2 Rec { get; set; }
+        public RecordingDetail Rec { get; set; }
         public Artwork Artwork { get; set; }
     }
 
@@ -343,5 +368,21 @@ namespace babgvant.Emby.MythTv.Responses
     public class RootEncoderObject
     {
         public EncoderList EncoderList { get; set; }
+    }
+
+    public class ProgramList
+    {
+        public string StartIndex { get; set; }
+        public string Count { get; set; }
+        public string TotalAvailable { get; set; }
+        public string AsOf { get; set; }
+        public string Version { get; set; }
+        public string ProtoVer { get; set; }
+        public List<Program> Programs { get; set; }
+    }
+
+    public class RootProgramListObject
+    {
+        public ProgramList ProgramList { get; set; }
     }
 }
