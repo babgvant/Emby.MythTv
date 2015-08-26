@@ -860,7 +860,7 @@ namespace babgvant.Emby.MythTv
 
         public string HomePageUrl
         {
-            get { return "http://www.mythtv.com/"; }
+            get { return "http://www.mythtv.org/"; }
         }
 
         public Task ResetTuner(string id, CancellationToken cancellationToken)
