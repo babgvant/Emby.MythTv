@@ -69,7 +69,7 @@ namespace babgvant.Emby.MythTv.Responses
                         PostPaddingSeconds = item.EndOffset * 60,
                         RecordAnyChannel = !((item.Filter & RecFilter.ThisChannel) == RecFilter.ThisChannel),
                         RecordAnyTime = !((item.Filter & RecFilter.ThisDayTime) == RecFilter.ThisDayTime),
-                        RecordNewOnly = !((item.Filter & RecFilter.NewEpisode) == RecFilter.NewEpisode),
+                        RecordNewOnly = ((item.Filter & RecFilter.NewEpisode) == RecFilter.NewEpisode),
                         //IsPostPaddingRequired = item.EndOffset != 0,
                         //IsPrePaddingRequired = item.StartOffset != 0,                    
                         ProgramId = item.ProgramId
@@ -102,7 +102,7 @@ namespace babgvant.Emby.MythTv.Responses
                         PostPaddingSeconds = root.RecRule.EndOffset * 60,
                         RecordAnyChannel = !((root.RecRule.Filter & RecFilter.ThisChannel) == RecFilter.ThisChannel),
                         RecordAnyTime = !((root.RecRule.Filter & RecFilter.ThisDayTime) == RecFilter.ThisDayTime),
-                        RecordNewOnly = !((root.RecRule.Filter & RecFilter.NewEpisode) == RecFilter.NewEpisode),
+                        RecordNewOnly = ((root.RecRule.Filter & RecFilter.NewEpisode) == RecFilter.NewEpisode),
                         //IsPostPaddingRequired = root.RecRule.EndOffset != 0,
                         //IsPrePaddingRequired = root.RecRule.StartOffset != 0,
                     };
