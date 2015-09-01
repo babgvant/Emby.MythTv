@@ -19,8 +19,9 @@ namespace babgvant.Emby.MythTv
         {
             Instance = this;
             RecordingUncs = new List<string>();
+            RecGroupExclude = new List<string>();
 
-            BuildUncList();
+            BuildLists();
         }
 
         /// <summary>
@@ -45,8 +46,9 @@ namespace babgvant.Emby.MythTv
         }
 
         public List<string> RecordingUncs { get; private set; }
+        public List<string> RecGroupExclude { get; private set; }
 
-        private void BuildUncList()
+        private void BuildLists()
         {
             RecordingUncs.Clear();
 
@@ -55,13 +57,20 @@ namespace babgvant.Emby.MythTv
                 string[] uncs = this.Configuration.UncPath.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
                 RecordingUncs.AddRange(uncs);
             }
+
+            RecGroupExclude.Clear();
+            if (!string.IsNullOrWhiteSpace(this.Configuration.RecGroupExclude))
+            {
+                string[] recex = this.Configuration.RecGroupExclude.Split(new string[] { ";","," }, StringSplitOptions.RemoveEmptyEntries);
+                RecGroupExclude.AddRange(recex);
+            }
         }
 
         public override void SaveConfiguration()
         {
             base.SaveConfiguration();
 
-            BuildUncList();
+            BuildLists();
 
             EventHandler eh = ConfigurationChanged;
             if (eh != null)

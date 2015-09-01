@@ -32,6 +32,7 @@ namespace babgvant.Emby.MythTv.Configuration
         public Boolean EnableDebugLogging { get; set; }
         public int LiveTvWaits { get; set; }
         public bool LoadChannelIcons { get; set; }
+        public string RecGroupExclude { get; set; }
 
         public PluginConfiguration()
         {
@@ -43,6 +44,7 @@ namespace babgvant.Emby.MythTv.Configuration
             EnableDebugLogging = false;
             LiveTvWaits = 10;
             LoadChannelIcons = false;
+            RecGroupExclude = "Deleted, LiveTV";
         }
     }
 }

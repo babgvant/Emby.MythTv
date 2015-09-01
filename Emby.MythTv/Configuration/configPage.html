@@ -29,6 +29,15 @@
                                 MythTv Recordings UNC Path (format --> \\{hostname}\recordings). One per line.
                             </div>
                         </li>
+                        <li>
+                            <label for="txtRecExclude">
+                                Exclude Recordings Categories:
+                            </label>
+                            <input id="txtRecExclude" name="txtRecExclude" />
+                            <div class="fieldDescription">
+                                Exclude recordings of these types, comma separated.
+                            </div>
+                        </li>
                         <!--<li>
                             <label for="txtUserName">
                                 User Name:
@@ -82,6 +91,7 @@
 
                     $('#txtWebServiceUrl', page).val(config.WebServiceUrl || "");
                     $('#txtUncPath', page).val(config.UncPath || "");
+                    $('#txtRecExclude', page).val(config.RecGroupExclude || "");
                     //$('#txtUserName', page).val(config.UserName || "");
                     //$('#txtPassword', page).val(config.Password || "");
                     //$('#chkDebugLogging', page).checked(config.EnableDebugLogging || false).checkboxradio("refresh");
@@ -101,6 +111,7 @@
 
                     config.WebServiceUrl = $('#txtWebServiceUrl', form).val();
                     config.UncPath = $('#txtUncPath', form).val();
+                    config.RecGroupExclude = $('#txtRecExclude', form).val();
                     //config.UserName = $('#txtUserName', form).val();
                     //config.Password = $('#txtPassword', form).val();
                     //config.EnableDebugLogging = $('#chkDebugLogging', form).checked();

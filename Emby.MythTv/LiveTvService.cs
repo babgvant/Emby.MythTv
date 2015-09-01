@@ -128,23 +128,29 @@ namespace babgvant.Emby.MythTv
             await GetCallsign(string.Empty, cancellationToken); //call to build the cache
             using (var releaser = await _channelsLock.LockAsync()) 
             {
+                List<string> foundChannels = new List<string>();
+
                 foreach (var channel in _channelCache.Values)
                 {
-                    ChannelInfo ci = new ChannelInfo()
-                            {
-                                Name = channel.ChannelName,
-                                Number = channel.ChanNum,
-                                Id = channel.ChanId.ToString(_usCulture),
-                                HasImage = false
-                            };
-
-                    if (!string.IsNullOrWhiteSpace(channel.IconURL) && Plugin.Instance.Configuration.LoadChannelIcons)
+                    if (!foundChannels.Contains(channel.ChannelName))
                     {
-                        ci.HasImage = true;
-                        ci.ImageUrl = string.Format("{0}/Guide/GetChannelIcon?ChanId={1}", Plugin.Instance.Configuration.WebServiceUrl, channel.ChanId);
-                    }
+                        ChannelInfo ci = new ChannelInfo()
+                                {
+                                    Name = channel.ChannelName,
+                                    Number = channel.ChanNum,
+                                    Id = channel.ChanId.ToString(_usCulture),
+                                    HasImage = false
+                                };
 
-                    ret.Add(ci);
+                        if (!string.IsNullOrWhiteSpace(channel.IconURL) && Plugin.Instance.Configuration.LoadChannelIcons)
+                        {
+                            ci.HasImage = true;
+                            ci.ImageUrl = string.Format("{0}/Guide/GetChannelIcon?ChanId={1}", Plugin.Instance.Configuration.WebServiceUrl, channel.ChanId);
+                        }
+
+                        ret.Add(ci);
+                        foundChannels.Add(channel.ChannelName);
+                    }
                 }
             }
             return ret;
@@ -168,59 +174,62 @@ namespace babgvant.Emby.MythTv
 
                 foreach (var item in recordings.Programs)
                 {
-                    RecordingInfo val = new RecordingInfo()
+                    if (!Plugin.Instance.RecGroupExclude.Contains(item.Recording.RecGroup))
                     {
-                        Name = item.Title,
-                        EpisodeTitle = item.SubTitle,
-                        Overview = item.Description,
-                        Audio = ProgramAudio.Stereo, //Hardcode for now (ProgramAudio)item.AudioProps,
-                        ChannelId = item.Channel.ChanId.ToString(),
-                        ProgramId = item.ProgramId,
-                        SeriesTimerId = item.Recording.RecordId.ToString(),
-                        EndDate = (DateTime)item.EndTime,
-                        StartDate = (DateTime)item.StartTime,
-                        Url = string.Format("{0}{1}", Plugin.Instance.Configuration.WebServiceUrl, string.Format("/Content/GetFile?StorageGroup={0}&FileName={1}", item.Recording.StorageGroup, item.FileName)),
-                        Id = string.Format("StartTime={0}&ChanId={1}", ((DateTime)item.StartTime).Ticks, item.Channel.ChanId),
-                        IsSeries = GeneralHelpers.ContainsWord(item.CatType, "series", StringComparison.OrdinalIgnoreCase),
-                        IsMovie = GeneralHelpers.ContainsWord(item.CatType, "movie", StringComparison.OrdinalIgnoreCase),
-                        IsRepeat = item.Repeat,
-                        IsNews = GeneralHelpers.ContainsWord(item.Category, "news",
-                        StringComparison.OrdinalIgnoreCase),
-                        IsKids = GeneralHelpers.ContainsWord(item.Category, "animation",
-                        StringComparison.OrdinalIgnoreCase),
-                        IsSports =
-                            GeneralHelpers.ContainsWord(item.Category, "sport",
-                                StringComparison.OrdinalIgnoreCase) ||
-                            GeneralHelpers.ContainsWord(item.Category, "motor sports",
-                                StringComparison.OrdinalIgnoreCase) ||
-                            GeneralHelpers.ContainsWord(item.Category, "football",
-                                StringComparison.OrdinalIgnoreCase) ||
-                            GeneralHelpers.ContainsWord(item.Category, "cricket",
-                                StringComparison.OrdinalIgnoreCase)
-                    };
-
-                    if (Plugin.Instance.RecordingUncs.Count > 0)
-                    {
-                        foreach (string unc in Plugin.Instance.RecordingUncs)
+                        RecordingInfo val = new RecordingInfo()
                         {
-                            string recPath = Path.Combine(unc, item.FileName);
-                            if (File.Exists(recPath))
+                            Name = item.Title,
+                            EpisodeTitle = item.SubTitle,
+                            Overview = item.Description,
+                            Audio = ProgramAudio.Stereo, //Hardcode for now (ProgramAudio)item.AudioProps,
+                            ChannelId = item.Channel.ChanId.ToString(),
+                            ProgramId = item.ProgramId,
+                            SeriesTimerId = item.Recording.RecordId.ToString(),
+                            EndDate = (DateTime)item.EndTime,
+                            StartDate = (DateTime)item.StartTime,
+                            Url = string.Format("{0}{1}", Plugin.Instance.Configuration.WebServiceUrl, string.Format("/Content/GetFile?StorageGroup={0}&FileName={1}", item.Recording.StorageGroup, item.FileName)),
+                            Id = string.Format("StartTime={0}&ChanId={1}", ((DateTime)item.StartTime).Ticks, item.Channel.ChanId),
+                            IsSeries = GeneralHelpers.ContainsWord(item.CatType, "series", StringComparison.OrdinalIgnoreCase),
+                            IsMovie = GeneralHelpers.ContainsWord(item.CatType, "movie", StringComparison.OrdinalIgnoreCase),
+                            IsRepeat = item.Repeat,
+                            IsNews = GeneralHelpers.ContainsWord(item.Category, "news",
+                            StringComparison.OrdinalIgnoreCase),
+                            IsKids = GeneralHelpers.ContainsWord(item.Category, "animation",
+                            StringComparison.OrdinalIgnoreCase),
+                            IsSports =
+                                GeneralHelpers.ContainsWord(item.Category, "sport",
+                                    StringComparison.OrdinalIgnoreCase) ||
+                                GeneralHelpers.ContainsWord(item.Category, "motor sports",
+                                    StringComparison.OrdinalIgnoreCase) ||
+                                GeneralHelpers.ContainsWord(item.Category, "football",
+                                    StringComparison.OrdinalIgnoreCase) ||
+                                GeneralHelpers.ContainsWord(item.Category, "cricket",
+                                    StringComparison.OrdinalIgnoreCase)
+                        };
+
+                        if (Plugin.Instance.RecordingUncs.Count > 0)
+                        {
+                            foreach (string unc in Plugin.Instance.RecordingUncs)
                             {
-                                val.Path = recPath;
-                                break;
+                                string recPath = Path.Combine(unc, item.FileName);
+                                if (File.Exists(recPath))
+                                {
+                                    val.Path = recPath;
+                                    break;
+                                }
                             }
                         }
-                    }
-                    val.Genres.AddRange(item.Category.Split(new char[] { '/' }, StringSplitOptions.RemoveEmptyEntries));
-                    if (item.Artwork.ArtworkInfos.Count() > 0)
-                    {
-                        val.HasImage = true;
-                        val.ImageUrl = string.Format("{0}{1}", Plugin.Instance.Configuration.WebServiceUrl, item.Artwork.ArtworkInfos[0].URL);
-                    }
-                    else
-                        val.HasImage = false;
+                        val.Genres.AddRange(item.Category.Split(new char[] { '/' }, StringSplitOptions.RemoveEmptyEntries));
+                        if (item.Artwork.ArtworkInfos.Count() > 0)
+                        {
+                            val.HasImage = true;
+                            val.ImageUrl = string.Format("{0}{1}", Plugin.Instance.Configuration.WebServiceUrl, item.Artwork.ArtworkInfos[0].URL);
+                        }
+                        else
+                            val.HasImage = false;
 
-                    ret.Add(val);
+                        ret.Add(val);
+                    }
                 }
             }
 

@@ -64,6 +64,7 @@ namespace babgvant.Emby.MythTv.Responses
                         ChannelId = item.ChanId.ToString(),
                         EndDate = (DateTime)item.EndTime,
                         StartDate = (DateTime)item.StartTime,
+                        //Overview = item.Description,
                         Id = item.Id,
                         PrePaddingSeconds = item.StartOffset * 60,
                         PostPaddingSeconds = item.EndOffset * 60,
