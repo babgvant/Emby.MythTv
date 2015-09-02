@@ -44,7 +44,7 @@ namespace babgvant.Emby.MythTv.Configuration
             EnableDebugLogging = false;
             LiveTvWaits = 10;
             LoadChannelIcons = false;
-            RecGroupExclude = "Deleted, LiveTV";
+            RecGroupExclude = "Deleted,LiveTV";
         }
     }
 }

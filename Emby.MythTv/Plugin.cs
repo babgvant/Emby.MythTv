@@ -62,7 +62,8 @@ namespace babgvant.Emby.MythTv
             if (!string.IsNullOrWhiteSpace(this.Configuration.RecGroupExclude))
             {
                 string[] recex = this.Configuration.RecGroupExclude.Split(new string[] { ";","," }, StringSplitOptions.RemoveEmptyEntries);
-                RecGroupExclude.AddRange(recex);
+                foreach(var r in recex)
+                    RecGroupExclude.Add(r.Trim());
             }
         }
 
