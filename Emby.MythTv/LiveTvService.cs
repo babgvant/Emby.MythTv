@@ -132,7 +132,7 @@ namespace babgvant.Emby.MythTv
 
                 foreach (var channel in _channelCache.Values)
                 {
-                    if (!foundChannels.Contains(channel.ChannelName))
+                    if (!foundChannels.Contains(channel.CallSign.ToLower()))
                     {
                         ChannelInfo ci = new ChannelInfo()
                                 {
@@ -149,7 +149,7 @@ namespace babgvant.Emby.MythTv
                         }
 
                         ret.Add(ci);
-                        foundChannels.Add(channel.ChannelName);
+                        foundChannels.Add(channel.CallSign.ToLower());
                     }
                 }
             }
