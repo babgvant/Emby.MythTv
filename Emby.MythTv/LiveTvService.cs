@@ -591,9 +591,9 @@ namespace babgvant.Emby.MythTv
         {
             _logger.Info("[MythTV] Start GetNewTimerDefault Async");
             EnsureSetup();
-            using (var stream = await _httpClient.Get(GetOptions(cancellationToken, "/Dvr/GetRecordSchedule?Template=Default")).ConfigureAwait(false))
+            using (var stream = await _httpClient.Get(GetOptions(cancellationToken, "/Dvr/GetRecordScheduleList")).ConfigureAwait(false))
             {
-                return DvrResponse.GetDefaultTimerInfo(stream, _jsonSerializer, _logger);
+                return new RuleResponse().GetDefaultTimerInfo(stream, _jsonSerializer, _logger);
             }               
         }
 

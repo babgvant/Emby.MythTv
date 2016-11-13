@@ -273,6 +273,17 @@ namespace babgvant.Emby.MythTv.Responses
 
 	}
 
+	public SeriesTimerInfo GetDefaultTimerInfo(Stream stream, IJsonSerializer json, ILogger logger)
+        {
+
+            var root = json.DeserializeFromStream<RootObject>(stream);
+	    UtilsHelper.DebugInformation(logger, string.Format("[MythTV] GetDefaultTimerInfo Response: {0}",
+							       json.SerializeToString(root)));
+
+	    return GetRecRule(root.RecRuleList.RecRules.Where(i => i.Title == "Default (Template)").First());
+
+	}
+	    
     	private enum RecFilter
 	{
 	    NewEpisode = 1,
@@ -359,36 +370,6 @@ namespace babgvant.Emby.MythTv.Responses
     {
         private static readonly CultureInfo _usCulture = new CultureInfo("en-US");
 
-        public static SeriesTimerInfo GetDefaultTimerInfo(Stream stream, IJsonSerializer json, ILogger logger)
-        {
-            SeriesTimerInfo val = null;
-
-            var root = ParseRecRule(stream, json);
-            UtilsHelper.DebugInformation(logger, string.Format("[MythTV] GetDefaultTimerInfo Response: {0}", json.SerializeToString(root)));
-            
-
-            //var root = ParseRecRules(stream, json);
-
-            //foreach (var item in root.RecRuleList.RecRules)
-            //{
-            //    if (!item.Inactive && item.ChanId == "0")
-            //    {
-	    val = new SeriesTimerInfo()
-		{
-		    PrePaddingSeconds = root.RecRule.StartOffset * 60,
-		    PostPaddingSeconds = root.RecRule.EndOffset * 60,
-		    RecordAnyChannel = !((root.RecRule.Filter & RecFilter.ThisChannel) == RecFilter.ThisChannel),
-		    RecordAnyTime = !((root.RecRule.Filter & RecFilter.ThisDayTime) == RecFilter.ThisDayTime),
-		    RecordNewOnly = ((root.RecRule.Filter & RecFilter.NewEpisode) == RecFilter.NewEpisode),
-		    //IsPostPaddingRequired = root.RecRule.EndOffset != 0,
-		    //IsPrePaddingRequired = root.RecRule.StartOffset != 0,
-		};
-            //        break;
-            //    }
-            //}
-
-            return val;
-        }
 
         private static RecRule GetRecRule(Stream stream, IJsonSerializer json, ILogger logger)
         {
