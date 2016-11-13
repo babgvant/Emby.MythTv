@@ -11,7 +11,7 @@ namespace babgvant.Emby.MythTv.Responses
 {
     public class GuideResponse
     {
-        public static ProgramGuide ParseGuide(Stream stream, IJsonSerializer json, ILogger logger)
+        public static ProgramGuide GetPrograms(Stream stream, IJsonSerializer json, string channelId, ILogger logger)
         {
             var root = json.DeserializeFromStream<RootProgramGuideObject>(stream);
             return root.ProgramGuide;

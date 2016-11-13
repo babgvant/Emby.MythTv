@@ -741,7 +741,7 @@ namespace babgvant.Emby.MythTv
 
             using (var stream = await _httpClient.Get(options).ConfigureAwait(false))
             {
-                var data = GuideResponse.ParseGuide(stream, _jsonSerializer, _logger);
+                var data = GuideResponse.GetPrograms(stream, _jsonSerializer, channelId, _logger);
 
                 foreach (var item in data.Channels)
                 {
@@ -756,7 +756,7 @@ namespace babgvant.Emby.MythTv
                             EpisodeTitle = prog.SubTitle,
                             Overview = prog.Description,
                             Audio = ProgramAudio.Stereo, //Hardcode for now (ProgramAudio)item.AudioProps,
-                            ChannelId = item.ChanId.ToString(),
+                            ChannelId = channelId,
                             EndDate = (DateTime)prog.EndTime,
                             StartDate = (DateTime)prog.StartTime,
                             Id = string.Format("StartTime={0}&ChanId={1}", ((DateTime)prog.StartTime).Ticks, item.ChanId),
