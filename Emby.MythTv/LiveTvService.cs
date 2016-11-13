@@ -28,7 +28,6 @@ namespace babgvant.Emby.MythTv
     {
         private readonly IHttpClient _httpClient;
         private readonly IJsonSerializer _jsonSerializer;
-        private readonly CultureInfo _usCulture = new CultureInfo("en-US");
         private readonly ILogger _logger;
         private LiveTVPlayback _liveTV;
 

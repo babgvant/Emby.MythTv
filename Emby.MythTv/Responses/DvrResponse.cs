@@ -29,7 +29,6 @@ namespace babgvant.Emby.MythTv.Responses
 
     public class DvrResponse
     {
-        private static readonly CultureInfo _usCulture = new CultureInfo("en-US");
 
         public List<LiveTvTunerInfo> GetTuners(Stream tunerStream, IJsonSerializer json, ILogger logger)
         {
