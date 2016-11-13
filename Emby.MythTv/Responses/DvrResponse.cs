@@ -359,37 +359,6 @@ namespace babgvant.Emby.MythTv.Responses
     {
         private static readonly CultureInfo _usCulture = new CultureInfo("en-US");
 
-        public static List<TimerInfo> GetTimers(Stream stream, IJsonSerializer json, ILogger logger)
-        {
-            List<TimerInfo> ret = new List<TimerInfo>();
-
-            var root = ParseRecRules(stream, json);
-            foreach (var item in root.RecRuleList.RecRules)
-            {
-                if (!item.Inactive && string.Compare(item.Type, "Not Recording", true) != 0)
-                {
-                    TimerInfo val = new TimerInfo()
-			{
-			    Name = item.Title,
-			    Overview = item.Description,
-			    ChannelId = item.ChanId.ToString(),
-			    EndDate = (DateTime)item.EndTime,
-			    StartDate = (DateTime)item.StartTime,
-			    Id = item.Id,
-			    PrePaddingSeconds = item.StartOffset * 60,
-			    PostPaddingSeconds = item.EndOffset * 60,
-			    IsPostPaddingRequired = item.EndOffset != 0,
-			    IsPrePaddingRequired = item.StartOffset != 0,
-			    ProgramId = item.ProgramId
-			};
-
-                    ret.Add(val);
-                }
-            }
-
-            return ret;
-        }
-	
         public static SeriesTimerInfo GetDefaultTimerInfo(Stream stream, IJsonSerializer json, ILogger logger)
         {
             SeriesTimerInfo val = null;
