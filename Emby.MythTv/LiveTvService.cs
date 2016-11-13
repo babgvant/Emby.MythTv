@@ -29,8 +29,6 @@ namespace babgvant.Emby.MythTv
         private readonly IJsonSerializer _jsonSerializer;
         private readonly CultureInfo _usCulture = new CultureInfo("en-US");
         private readonly ILogger _logger;
-        //private readonly Dictionary<int, int> _heartBeat = new Dictionary<int, int>();
-        private readonly AsyncLock _channelsLock = new AsyncLock();
 
 	// cache the listings data
 	private readonly AsyncLock _guideLock = new AsyncLock();
