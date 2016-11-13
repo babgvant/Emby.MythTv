@@ -14,10 +14,16 @@ namespace babgvant.Emby.MythTv.Responses
 {
     public class GuideResponse
     {
-        public IEnumerable<ProgramInfo> GetPrograms(Stream stream, IJsonSerializer json, string channelId, ILogger logger)
-        {
-            var root = json.DeserializeFromStream<RootObject>(stream);
 
+	RootObject root;
+	
+	public GuideResponse(Stream stream, IJsonSerializer json)
+	{
+            root = json.DeserializeFromStream<RootObject>(stream);
+	}
+	
+        public IEnumerable<ProgramInfo> GetPrograms(string channelId, ILogger logger)
+        {
 	    var listings = root.ProgramGuide.Channels;
 	    return listings.Where(i => string.Equals(i.ChanId.ToString(), channelId))
 		.SelectMany(i => i.Programs.Select(e => GetProgram(channelId, e)));

@@ -32,6 +32,10 @@ namespace babgvant.Emby.MythTv
         //private readonly Dictionary<int, int> _heartBeat = new Dictionary<int, int>();
         private Dictionary<string, Channel> _channelCache = new Dictionary<string, Channel>();
         private readonly AsyncLock _channelsLock = new AsyncLock();
+
+	// cache the listings data
+	private readonly AsyncLock _guideLock = new AsyncLock();
+	private GuideResponse _guide;
         
         public LiveTvService(IHttpClient httpClient, IJsonSerializer jsonSerializer, ILogger logger)
         {
@@ -732,15 +736,40 @@ namespace babgvant.Emby.MythTv
             }               
         }
 
+	private async Task CacheGuideResponse(DateTime startDateUtc, DateTime endDateUtc, CancellationToken cancellationToken)
+	{
+	    using (var releaser = await _guideLock.LockAsync()) {
+	    
+		if (_guide != null)
+		    return;
+
+		_logger.Info("[MythTV] Start CacheGuideResponse");
+
+		EnsureSetup();
+	    
+		var options = GetOptions(cancellationToken,
+					 "/Guide/GetProgramGuide?StartTime={0}&EndTime={1}&Details=1",
+					 FormateMythDate(startDateUtc),
+					 FormateMythDate(endDateUtc));
+
+		using (var stream = await _httpClient.Get(options).ConfigureAwait(false))
+		{
+		    _guide = new GuideResponse(stream, _jsonSerializer);
+		}
+	    }
+
+	    _logger.Info("[MythTV] End CacheGuideResponse");
+	}
+
         public async Task<IEnumerable<ProgramInfo>> GetProgramsAsync(string channelId, DateTime startDateUtc, DateTime endDateUtc, CancellationToken cancellationToken)
         {
             _logger.Info("[MythTV] Start GetPrograms Async, retrieve programs for: {0}", channelId);
-            EnsureSetup();
-            var options = GetOptions(cancellationToken, "/Guide/GetProgramGuide?StartTime={0}&EndTime={1}&StartChanId={2}&NumChannels=1&Details=1", FormateMythDate(startDateUtc), FormateMythDate(endDateUtc), channelId);
 
-            using (var stream = await _httpClient.Get(options).ConfigureAwait(false))
+	    await CacheGuideResponse(startDateUtc, endDateUtc, cancellationToken);
+	    
+            using (var releaser = await _guideLock.LockAsync())
             {
-                return new GuideResponse().GetPrograms(stream, _jsonSerializer, channelId, _logger).ToList();
+                return _guide.GetPrograms(channelId, _logger).ToList();
             }
         }
 
