@@ -1,6 +1,6 @@
-﻿using babgvant.Emby.MythTv.Helpers;
-using babgvant.Emby.MythTv.Responses;
-using babgvant.Emby.MythTv.Protocol;
+﻿using Emby.MythTv.Helpers;
+using Emby.MythTv.Responses;
+using Emby.MythTv.Protocol;
 using MediaBrowser.Common.Extensions;
 using MediaBrowser.Common.Net;
 using MediaBrowser.Controller.Drawing;
@@ -22,7 +22,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace babgvant.Emby.MythTv
+namespace Emby.MythTv
 {
     public class LiveTvService : ILiveTvService
     {

@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using babgvant.Emby.MythTv.Model;
+using Emby.MythTv.Model;
 
-namespace babgvant.Emby.MythTv.Protocol
+namespace Emby.MythTv.Protocol
 {
     class ProtoRecorder : ProtoPlayback
     {

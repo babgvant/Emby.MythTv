@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace babgvant.Emby.MythTv.Helpers
+namespace Emby.MythTv.Helpers
 {
     public static class GeneralHelpers
     {

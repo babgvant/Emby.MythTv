@@ -1,4 +1,4 @@
-﻿using babgvant.Emby.MythTv.Configuration;
+﻿using Emby.MythTv.Configuration;
 using MediaBrowser.Common.Configuration;
 using MediaBrowser.Common.Plugins;
 using MediaBrowser.Model.Serialization;
@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace babgvant.Emby.MythTv
+namespace Emby.MythTv
 {
     public class Plugin : BasePlugin<PluginConfiguration>
     {

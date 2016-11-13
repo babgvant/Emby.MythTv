@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace babgvant.Emby.MythTv.Configuration
+namespace Emby.MythTv.Configuration
 {
     public class PluginConfiguration : BasePluginConfiguration
     {

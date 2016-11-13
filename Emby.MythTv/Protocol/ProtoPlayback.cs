@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace babgvant.Emby.MythTv.Protocol
+namespace Emby.MythTv.Protocol
 {
     class ProtoPlayback : ProtoBase
     {
