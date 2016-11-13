@@ -12,11 +12,11 @@ namespace babgvant.Emby.MythTv.Responses
 {
     public class CaptureResponse
     {
-        public static CaptureCardList ParseCaptureCardList(Stream stream, IJsonSerializer json, ILogger logger)
+        public static List<CaptureCard> GetCaptureCards(Stream stream, IJsonSerializer json, ILogger logger)
         {
             var root = json.DeserializeFromStream<RootCaptureObject>(stream);
             UtilsHelper.DebugInformation(logger, string.Format("[MythTV] ParseCaptureCardList Response: {0}", json.SerializeToString(root)));
-            return root.CaptureCardList;
+            return root.CaptureCardList.CaptureCards;
         }
     }
 

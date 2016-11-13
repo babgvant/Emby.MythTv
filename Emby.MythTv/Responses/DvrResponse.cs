@@ -470,7 +470,7 @@ namespace babgvant.Emby.MythTv.Responses
                 tuners = json.DeserializeFromString<RootEncoderObject>(resptext).EncoderList;
             }
 
-	    CaptureCardList encoders = CaptureResponse.ParseCaptureCardList(encoderStream, json, logger);
+	    var encoders = CaptureResponse.GetCaptureCards(encoderStream, json, logger);
 
 	    var tvTunerInfos = new List<LiveTvTunerInfo>();
             foreach(var tuner in tuners.Encoders)
@@ -496,7 +496,7 @@ namespace babgvant.Emby.MythTv.Responses
                     info.ProgramName = string.Format("{0} : {1}", tuner.Recording.Title, tuner.Recording.SubTitle);
                 }
 
-                foreach(var enc in encoders.CaptureCards)
+                foreach(var enc in encoders)
                 {
                     if(enc.CardId == tuner.Id)
                     {
