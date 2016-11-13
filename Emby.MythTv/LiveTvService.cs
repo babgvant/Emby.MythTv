@@ -48,9 +48,9 @@ namespace babgvant.Emby.MythTv
             Plugin.Instance.ConfigurationChanged += OnPluginConfigChange;
         }
 
-        private void OnPluginConfigChange(object sender, EventArgs e)
+        private async void OnPluginConfigChange(object sender, EventArgs e)
         {
-            EnsureSetup();
+            await EnsureSetup();
         }
 
         /// <summary>
@@ -58,7 +58,7 @@ namespace babgvant.Emby.MythTv
         /// </summary>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        private void EnsureSetup()
+        private async Task EnsureSetup()
         {
             var config = Plugin.Instance.Configuration;
 
@@ -78,7 +78,7 @@ namespace babgvant.Emby.MythTv
             {
                 _logger.Info("[MythTV] Initiating MythProtocol connection");
                 _liveTV = new LiveTVPlayback(config.Host, 6543);
-                _liveTV.Open();
+                await _liveTV.Open();
             }
         }
 
@@ -168,7 +168,7 @@ namespace babgvant.Emby.MythTv
         {
 
             _logger.Info("[MythTV] Start GetRecordings Async, retrieve all 'Pending', 'Inprogress' and 'Completed' recordings ");
-            EnsureSetup();
+            await EnsureSetup();
 
             using (var stream = await _httpClient.Get(GetOptions(cancellationToken, "/Dvr/GetRecordedList")).ConfigureAwait(false))
             {
@@ -187,7 +187,7 @@ namespace babgvant.Emby.MythTv
         {
 
             _logger.Info(string.Format("[MythTV] Start Delete Recording Async for recordingId: {0}", recordingId));
-            EnsureSetup();
+            await EnsureSetup();
 
             var options = PostOptions(cancellationToken,
                                       $"RecordedId={recordingId}",
@@ -228,7 +228,7 @@ namespace babgvant.Emby.MythTv
             }
 
             // We are cancelling a legitimate single timer
-            EnsureSetup();
+            await EnsureSetup();
 
             var options = PostOptions(cancellationToken, $"RecordId={timerId}", "/Dvr/RemoveRecordSchedule");
             await _httpClient.Post(options).ConfigureAwait(false);
@@ -260,7 +260,7 @@ namespace babgvant.Emby.MythTv
             var timerJson = _jsonSerializer.SerializeToString(info);
             _logger.Info($"[MythTV] Start CreateTimer Async for TimerInfo\n{timerJson}");
 
-            EnsureSetup();
+            await EnsureSetup();
 
             var options = GetRuleStreamOptions(info.ChannelId, info.StartDate, info.ProgramId, cancellationToken);
             using (var stream = await _httpClient.Get(options))
@@ -288,7 +288,7 @@ namespace babgvant.Emby.MythTv
 
             _logger.Info($"[MythTV] Start CreateDoNotRecordTimer Async for Channel {ChannelId} at {StartDate}");
 
-            EnsureSetup();
+            await EnsureSetup();
 
             var options = GetRuleStreamOptions(ChannelId, StartDate, null, cancellationToken, true);
             using (var stream = await _httpClient.Get(options))
@@ -308,7 +308,7 @@ namespace babgvant.Emby.MythTv
         public async Task<IEnumerable<TimerInfo>> GetTimersAsync(CancellationToken cancellationToken)
         {
             _logger.Info("[MythTV] Start GetTimer Async, retrieve the 'Pending' recordings");
-            EnsureSetup();
+            await EnsureSetup();
 
             using (var stream = await _httpClient.Get(GetOptions(cancellationToken, "/Dvr/GetUpcomingList?ShowAll=false")).ConfigureAwait(false))
             {
@@ -324,7 +324,7 @@ namespace babgvant.Emby.MythTv
         public async Task<IEnumerable<SeriesTimerInfo>> GetSeriesTimersAsync(CancellationToken cancellationToken)
         {
             _logger.Info("[MythTV] Start GetSeriesTimer Async, retrieve the recurring recordings");
-            EnsureSetup();
+            await EnsureSetup();
 
             using (var stream = await _httpClient.Get(GetOptions(cancellationToken, "/Dvr/GetRecordScheduleList")).ConfigureAwait(false))
             {
@@ -362,7 +362,7 @@ namespace babgvant.Emby.MythTv
             var seriesTimerJson = _jsonSerializer.SerializeToString(info);
             _logger.Info($"[MythTV] Start CreateSeriesTimer Async for SeriesTimerInfo\n{seriesTimerJson}");
 
-            EnsureSetup();
+            await EnsureSetup();
 
             var options = GetRuleStreamOptions(info.ChannelId, info.StartDate, info.ProgramId, cancellationToken);
             using (var stream = await _httpClient.Get(options))
@@ -384,7 +384,7 @@ namespace babgvant.Emby.MythTv
             var seriesTimerJson = _jsonSerializer.SerializeToString(info);
             _logger.Info($"[MythTV] Start UpdateSeriesTimer Async for SeriesTimerInfo\n{seriesTimerJson}");
 
-            EnsureSetup();
+            await EnsureSetup();
 
             var options = GetRuleStreamOptions(info.ChannelId, info.StartDate, info.ProgramId, cancellationToken);
             using (var stream = await _httpClient.Get(options))
@@ -407,7 +407,7 @@ namespace babgvant.Emby.MythTv
             var timerJson = _jsonSerializer.SerializeToString(info);
             _logger.Info($"[MythTV] Start UpdateTimer Async for TimerInfo\n{timerJson}");
 
-            EnsureSetup();
+            await EnsureSetup();
 
             var options = GetRuleStreamOptions(info.ChannelId, info.StartDate, info.ProgramId, cancellationToken);
             using (var stream = await _httpClient.Get(options))
@@ -429,7 +429,7 @@ namespace babgvant.Emby.MythTv
         {
 
             _logger.Info(string.Format("[MythTV] Start Cancel SeriesRecording Async for recordingId: {0}", timerId));
-            EnsureSetup();
+            await EnsureSetup();
 
             var options = PostOptions(cancellationToken,
                                       $"RecordId={timerId}",
@@ -571,7 +571,7 @@ namespace babgvant.Emby.MythTv
         public async Task<SeriesTimerInfo> GetNewTimerDefaultsAsync(CancellationToken cancellationToken, ProgramInfo program = null)
         {
             _logger.Info("[MythTV] Start GetNewTimerDefault Async");
-            EnsureSetup();
+            await EnsureSetup();
             using (var stream = await _httpClient.Get(GetOptions(cancellationToken, "/Dvr/GetRecordSchedule?Template=Default")).ConfigureAwait(false))
             {
                 return new DvrResponse().GetDefaultTimerInfo(stream, _jsonSerializer, _logger);
@@ -587,7 +587,7 @@ namespace babgvant.Emby.MythTv
 
                 _logger.Info("[MythTV] Start CacheGuideResponse");
 
-                EnsureSetup();
+                await EnsureSetup();
             
                 var options = GetOptions(cancellationToken,
                                          "/Guide/GetProgramGuide?StartTime={0}&EndTime={1}&Details=1",
@@ -628,7 +628,7 @@ namespace babgvant.Emby.MythTv
 
         public async Task<LiveTvServiceStatusInfo> GetStatusInfoAsync(CancellationToken cancellationToken)
         {
-            EnsureSetup();
+            await EnsureSetup();
             
             bool upgradeAvailable = false;
             string serverVersion = string.Empty;
