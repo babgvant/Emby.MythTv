@@ -59,9 +59,12 @@ namespace babgvant.Emby.MythTv.Responses
 		// Use the mythtv rule ID for single recordings
 		timer.Id = item.Recording.RecordId;
 	    }
-		
-	    timer.PrePaddingSeconds = (timer.StartDate - item.Recording.StartTs).Seconds;
-	    timer.PostPaddingSeconds = (item.Recording.EndTs - timer.EndDate).Seconds;
+
+	    timer.PrePaddingSeconds = (int)(timer.StartDate - item.Recording.StartTs).TotalSeconds;
+	    timer.PostPaddingSeconds = (int)(item.Recording.EndTs - timer.EndDate).TotalSeconds;
+
+	    timer.IsPrePaddingRequired = timer.PrePaddingSeconds > 0;
+	    timer.IsPostPaddingRequired = timer.PostPaddingSeconds > 0;
 
 	    return timer;
         }
