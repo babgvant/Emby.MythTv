@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using babgvant.Emby.MythTv.Model;
 
 namespace babgvant.Emby.MythTv.Protocol
 {
@@ -64,10 +65,10 @@ namespace babgvant.Emby.MythTv.Protocol
             while (fileSize == 0)
             {
                 program = await recorder.GetCurrentRecording75();
-                fileSize = await recorder.QueryFileSize65(program.fileName.Split('/').Last(), "LiveTV");
+                fileSize = await recorder.QueryFileSize65(program.FileName.Split('/').Last(), "LiveTV");
                 System.Threading.Thread.Sleep(500);
             }
-            return program.fileName;
+            return program.FileName;
         }
 
         public async Task StopLiveTV(int id)

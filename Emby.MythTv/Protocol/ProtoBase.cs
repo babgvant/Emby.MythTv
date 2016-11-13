@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
+using babgvant.Emby.MythTv.Model;
 
 namespace babgvant.Emby.MythTv.Protocol
 {
@@ -125,16 +126,16 @@ namespace babgvant.Emby.MythTv.Protocol
         protected Program RcvProgramInfo86(List<string> fields)
         {
             var program = new Program();
-            program.title = fields[0];
-            program.subTitle = fields[1];
-            program.description = fields[2];
-            program.season = int.Parse(fields[3]);
-            program.episode = int.Parse(fields[4]);
-            program.category = fields[7];
-            program.fileName = fields[12];
-            program.fileSize = int.Parse(fields[13]);
-            program.startTime = UnixTimeStampToDateTime(int.Parse(fields[14]));
-            program.endTime = UnixTimeStampToDateTime(int.Parse(fields[15]));
+            program.Title = fields[0];
+            program.SubTitle = fields[1];
+            program.Description = fields[2];
+            program.Season = int.Parse(fields[3]);
+            program.Episode = int.Parse(fields[4]);
+            program.Category = fields[7];
+            program.FileName = fields[12];
+            program.FileSize = long.Parse(fields[13]);
+            program.StartTime = UnixTimeStampToDateTime(int.Parse(fields[14]));
+            program.EndTime = UnixTimeStampToDateTime(int.Parse(fields[15]));
             return program;
         }
 

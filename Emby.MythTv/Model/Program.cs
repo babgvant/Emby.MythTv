@@ -21,7 +21,7 @@ namespace babgvant.Emby.MythTv.Model
         public string SeriesId { get; set; }
         public string ProgramId { get; set; }
         public float Stars { get; set; }
-        public string FileSize { get; set; }
+        public long FileSize { get; set; }
         public string LastModified { get; set; }
         public string ProgramFlags { get; set; }
         public string FileName { get; set; }

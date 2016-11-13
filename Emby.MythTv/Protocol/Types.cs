@@ -6,36 +6,6 @@ using System.Threading.Tasks;
 
 namespace babgvant.Emby.MythTv.Protocol
 {
-    public class Program
-    {
-        public DateTime startTime { get; set; }
-        public DateTime endTime { get; set; }
-        public string title { get; set; }
-        public string subTitle { get; set; }
-        public string description { get; set; }
-        public int season { get; set; }
-        public int episode { get; set; }
-        public string category { get; set; }
-        public string catType { get; set; }
-        public string hostName { get; set; }
-        public string fileName { get; set; }
-        public int fileSize { get; set; }
-        public bool repeat { get; set; }
-        public int programFlags { get; set; }
-        public string seriesId { get; set; }
-        public string programId { get; set; }
-        public string inetref { get; set; }
-        public DateTime lastModified { get; set; }
-        public string stars { get; set; }
-        public DateTime airdate { get; set; }
-        public int audioProps { get; set; }
-        public int videoProps { get; set; }
-        public int subProps { get; set; }
-        //Channel channel;
-        //Recording recording;
-        //vector<Artwork> artwork;
-
-    }
 
     public class CardInput
     {
