@@ -31,9 +31,11 @@ namespace babgvant.Emby.MythTv.Model
         public string Inetref { get; set; }
         public int? Season { get; set; }
         public int? Episode { get; set; }
+        public string TotalEpisodes { get; set; }
         public Channel Channel { get; set; }
         public RecordingDetail Recording { get; set; }
         public Artwork Artwork { get; set; }
+        public Cast Cast { get; set; }
     }
 
     [Flags]
