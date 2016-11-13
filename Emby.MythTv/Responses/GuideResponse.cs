@@ -42,7 +42,7 @@ namespace babgvant.Emby.MythTv.Responses
 		    ChannelId = channelId,
 		    EndDate = (DateTime)prog.EndTime,
 		    StartDate = (DateTime)prog.StartTime,
-		    Id = prog.ProgramId,
+		    Id = string.Format("{1}_{0}", ((DateTime)prog.StartTime).Ticks, channelId),
 		    IsSeries = GeneralHelpers.ContainsWord(prog.CatType, "series", StringComparison.OrdinalIgnoreCase),
 		    IsMovie = GeneralHelpers.ContainsWord(prog.CatType, "movie", StringComparison.OrdinalIgnoreCase),
 		    IsRepeat = prog.Repeat,

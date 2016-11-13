@@ -37,7 +37,7 @@ namespace babgvant.Emby.MythTv.Responses
 		    Id = item.Recording.RecordedId,
 		    IsPostPaddingRequired = false,
 		    IsPrePaddingRequired = false,
-		    ProgramId = item.ProgramId
+		    ProgramId = string.Format("{1}_{0}", ((DateTime)item.StartTime).Ticks, item.Channel.ChanId)
 		};
 	    timer.PrePaddingSeconds = (timer.StartDate - item.Recording.StartTs).Seconds;
 	    timer.PostPaddingSeconds = (item.Recording.EndTs - timer.EndDate).Seconds;
@@ -62,7 +62,7 @@ namespace babgvant.Emby.MythTv.Responses
 		    Overview = item.Description,
 		    Audio = ProgramAudio.Stereo, //Hardcode for now (ProgramAudio)item.AudioProps,
 		    ChannelId = item.Channel.ChanId,
-		    ProgramId = item.ProgramId,
+		    ProgramId = string.Format("{1}_{0}", ((DateTime)item.StartTime).Ticks, item.Channel.ChanId),
 		    SeriesTimerId = item.Recording.RecordId,
 		    EndDate = item.EndTime,
 		    StartDate = item.StartTime,
