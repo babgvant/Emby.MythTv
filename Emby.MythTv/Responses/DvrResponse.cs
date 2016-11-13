@@ -278,11 +278,11 @@ namespace babgvant.Emby.MythTv.Responses
             var root = json.DeserializeFromStream<RootObject>(stream);
 	    return root.RecRuleList.RecRules
 		.Where(rule => rule.Type.Equals("Record All"))
-		.Select(i => RecRuleToTimerInfo(i));
+		.Select(i => RecRuleToSeriesTimerInfo(i));
 
 	}
 
-	private SeriesTimerInfo RecRuleToTimerInfo(RecRule item)
+	private SeriesTimerInfo RecRuleToSeriesTimerInfo(RecRule item)
 	{
 	    var info = new SeriesTimerInfo()
 		{
@@ -315,7 +315,7 @@ namespace babgvant.Emby.MythTv.Responses
 
 	public SeriesTimerInfo GetDefaultTimerInfo(Stream stream, IJsonSerializer json, ILogger logger)
         {
-	    return RecRuleToTimerInfo(GetOneRecRule(stream, json, logger));
+	    return RecRuleToSeriesTimerInfo(GetOneRecRule(stream, json, logger));
 	}
 
 	public string GetNewSeriesTimerJson(SeriesTimerInfo info, Stream stream, IJsonSerializer json, ILogger logger)
