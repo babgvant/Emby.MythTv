@@ -224,7 +224,7 @@ namespace babgvant.Emby.MythTv
             {
                 var ChannelId = timerId.Split('_')[0];
                 var StartDate = new DateTime(Convert.ToInt64(timerId.Split('_')[1]));
-                CreateDoNotRecordTimerAsync(ChannelId, StartDate, cancellationToken);
+                await CreateDoNotRecordTimerAsync(ChannelId, StartDate, cancellationToken);
                 return;
             }
 
