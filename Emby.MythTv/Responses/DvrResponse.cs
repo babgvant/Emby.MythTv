@@ -14,6 +14,18 @@ using System.Threading.Tasks;
 
 namespace babgvant.Emby.MythTv.Responses
 {
+
+    public class ExistingTimerException : Exception
+    {
+	public string id {get; private set;}
+
+	public ExistingTimerException(string id)
+	    : base($"Existing timer {id}")
+	{
+	    this.id = id;
+	}
+    }
+    
     public class UpcomingResponse
     {
 
@@ -355,6 +367,11 @@ namespace babgvant.Emby.MythTv.Responses
 	{
 
 	    RecRule rule = GetOneRecRule(stream, json, logger);
+
+	    // check if there is an existing rule that is going to cause grief
+	    if (rule.Type != "Not Recording")
+		throw new ExistingTimerException(rule.Id);
+	    
 	    rule.Type = "Single Record";
 	    rule.StartOffset = info.PrePaddingSeconds / 60;
 	    rule.EndOffset = info.PostPaddingSeconds / 60;

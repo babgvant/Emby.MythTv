@@ -263,9 +263,19 @@ namespace babgvant.Emby.MythTv
 	    var options = GetRuleStreamOptions(info.ChannelId, info.StartDate, info.ProgramId, cancellationToken);
             using (var stream = await _httpClient.Get(options))
             {
-		var json = new RuleResponse().GetNewTimerJson(info, stream, _jsonSerializer, _logger);
-		var post = PostOptions(cancellationToken, ConvertJsonRecRuleToPost(json), "/Dvr/AddRecordSchedule");
-		await _httpClient.Post(post).ConfigureAwait(false);
+		try
+		{
+		    var json = new RuleResponse().GetNewTimerJson(info, stream, _jsonSerializer, _logger);
+		    var post = PostOptions(cancellationToken,
+					   ConvertJsonRecRuleToPost(json),
+					   "/Dvr/AddRecordSchedule");
+		    await _httpClient.Post(post).ConfigureAwait(false);
+		}
+		catch (ExistingTimerException existing)
+		{
+		    _logger.Info($"[MythTV] found existing rule {existing.id}");
+		    await CancelTimerAsync(existing.id, cancellationToken);
+		}
             }          
 
         }
