@@ -260,11 +260,11 @@ namespace babgvant.Emby.MythTv.Responses
             var root = json.DeserializeFromStream<RootObject>(stream);
 	    return root.RecRuleList.RecRules
 		.Where(rule => !rule.Type.Equals("Recording Template"))
-		.Select(i => GetRecRule(i));
+		.Select(i => RecRuleToTimerInfo(i));
 
 	}
 
-	private SeriesTimerInfo GetRecRule(RecRule item)
+	private SeriesTimerInfo RecRuleToTimerInfo(RecRule item)
 	{
 	    var info = new SeriesTimerInfo()
 		{
@@ -287,18 +287,50 @@ namespace babgvant.Emby.MythTv.Responses
 
 	}
 
+	private RecRule GetOneRecRule(Stream stream, IJsonSerializer json, ILogger logger)
+	{
+	    var root = json.DeserializeFromStream<RecRuleRootObject>(stream);
+	    UtilsHelper.DebugInformation(logger, string.Format("[MythTV] GetOneRecRule Response: {0}",
+							       json.SerializeToString(root)));
+	    return root.RecRule;
+	}
+
 	public SeriesTimerInfo GetDefaultTimerInfo(Stream stream, IJsonSerializer json, ILogger logger)
         {
+	    return RecRuleToTimerInfo(GetOneRecRule(stream, json, logger));
+	}
 
-            var root = json.DeserializeFromStream<RootObject>(stream);
-	    UtilsHelper.DebugInformation(logger, string.Format("[MythTV] GetDefaultTimerInfo Response: {0}",
-							       json.SerializeToString(root)));
+	public string GetNewSeriesTimerJson(SeriesTimerInfo info, Stream stream, IJsonSerializer json, ILogger logger)
+	{
 
-	    return GetRecRule(root.RecRuleList.RecRules.Where(i => i.Title == "Default (Template)").First());
+	    RecRule orgRule = GetOneRecRule(stream, json, logger);
+	    if (orgRule != null)
+	    {
+		orgRule.Title = info.Name;
+		orgRule.Type = "Record All";
 
+		if (info.RecordAnyChannel)
+		    orgRule.Filter |= RecFilter.ThisChannel;
+		else
+		    orgRule.Filter &= RecFilter.ThisChannel;
+		if (info.RecordAnyTime)
+		    orgRule.Filter &= RecFilter.ThisDayTime;
+		else
+		    orgRule.Filter |= RecFilter.ThisDayTime;
+		if (info.RecordNewOnly)
+		    orgRule.Filter |= RecFilter.NewEpisode;
+		else
+		    orgRule.Filter &= RecFilter.NewEpisode;
+	    
+	    }
+
+	    var output = json.SerializeToString(orgRule);
+	    logger.Info($"[MythTV RuleResponse: generated new timer json:\n{output}");
+
+	    return output;
 	}
 	    
-    	private enum RecFilter
+	private enum RecFilter
 	{
 	    NewEpisode = 1,
 	    IdentifiableEpisode = 2,
@@ -361,6 +393,11 @@ namespace babgvant.Emby.MythTv.Responses
 	    public DateTime LastRecorded { get; set; }
 	    public DateTime LastDeleted { get; set; }
 	    public string AverageDelay { get; set; }
+	}
+
+	private class RecRuleRootObject
+	{
+	    public RecRule RecRule { get; set; }
 	}
 
 	private class RecRuleList
