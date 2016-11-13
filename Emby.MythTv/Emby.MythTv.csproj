@@ -70,7 +70,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="Responses\CaptureResponse.cs" />
     <Compile Include="Responses\ChannelResponse.cs" />
     <Compile Include="Responses\DvrResponse.cs" />
     <Compile Include="Responses\GuideResponse.cs" />
