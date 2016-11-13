@@ -32,7 +32,6 @@ namespace babgvant.Emby.MythTv.Responses
 	    TimerInfo timer = new TimerInfo()
 		{
 		    Id = id,
-		    SeriesTimerId = item.Recording.RecordId,
 		    ChannelId = item.Channel.ChanId,
 		    ProgramId = id,
 		    Name = item.Title,
@@ -45,6 +44,12 @@ namespace babgvant.Emby.MythTv.Responses
 		    EpisodeTitle = item.Title,
 		    IsRepeat = item.Repeat
 		};
+
+	    // Only add on SeriesTimerId if a "Record All" rule
+	    // see https://code.mythtv.org/doxygen/recordingtypes_8h_source.html#l00022
+	    if (item.Recording.RecType == 4)
+		timer.SeriesTimerId = item.Recording.RecordId;
+		
 	    timer.PrePaddingSeconds = (timer.StartDate - item.Recording.StartTs).Seconds;
 	    timer.PostPaddingSeconds = (item.Recording.EndTs - timer.EndDate).Seconds;
 
@@ -168,7 +173,7 @@ namespace babgvant.Emby.MythTv.Responses
 	    public string RecGroup { get; set; }
 	    public string PlayGroup { get; set; }
 	    public string StorageGroup { get; set; }
-	    public string RecType { get; set; }
+	    public int RecType { get; set; }
 	    public string DupInType { get; set; }
 	    public string DupMethod { get; set; }
 	    public string EncoderId { get; set; }
