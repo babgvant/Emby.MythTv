@@ -417,12 +417,6 @@ namespace babgvant.Emby.MythTv.Responses
             return json.DeserializeFromStream<RecordId>(stream);
         }
 
-        private static ProgramList ParseProgramList(Stream stream, IJsonSerializer json, ILogger logger)
-        {
-            var root = json.DeserializeFromStream<RootProgramListObject>(stream);
-            return root.ProgramList;
-        }
-
         private static Program ParseRecorded(Stream stream, IJsonSerializer json, ILogger logger)
         {
             var root = json.DeserializeFromStream<RootProgramObject>(stream);
