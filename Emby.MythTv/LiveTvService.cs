@@ -132,6 +132,9 @@ namespace babgvant.Emby.MythTv
 
                 foreach (var channel in _channelCache.Values)
                 {
+
+		    _logger.Info(string.Format("[MythTV] Processing {0}", channel.CallSign));
+		    
                     if (!foundChannels.Contains(channel.CallSign.ToLower()))
                     {
                         ChannelInfo ci = new ChannelInfo()
@@ -153,6 +156,9 @@ namespace babgvant.Emby.MythTv
                     }
                 }
             }
+
+	    _logger.Info(string.Format("[MythTV] End GetChannels Async, retrieved {0} channels", ret.Count));
+	    
             return ret;
         }
 
@@ -295,6 +301,7 @@ namespace babgvant.Emby.MythTv
 
         private async Task<string> GetCallsign(string channelId, CancellationToken cancellationToken)
         {
+	    _logger.Info("[MythTV] Start GetCallsign");
             using (var releaser = await _channelsLock.LockAsync()) 
             {
                 if (_channelCache.Count == 0)
@@ -311,6 +318,7 @@ namespace babgvant.Emby.MythTv
                                 var channels = ChannelResponse.ParseChannelInfoList(stream, _jsonSerializer, _logger);
                                 foreach (var channel in channels.ChannelInfos)
                                 {
+				    _logger.Info(string.Format("[MythTV] GetCallsign: processing {0}", channel.CallSign));
                                     if (channel.Visible)
                                     {
                                         _channelCache[channel.ChanId.ToString()] = channel;
@@ -320,6 +328,8 @@ namespace babgvant.Emby.MythTv
                         }
                     }
                 }
+
+		_logger.Info(string.Format("[MythTV] End GetCallsign Async, retrieved {0} callsigns", _channelCache.Count));
 
                 if (_channelCache.ContainsKey(channelId))
                     return _channelCache[channelId].CallSign;
