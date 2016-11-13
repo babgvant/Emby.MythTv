@@ -555,7 +555,7 @@ namespace babgvant.Emby.MythTv
         public async Task CloseLiveStream(string id, CancellationToken cancellationToken)
         {
             _logger.Info($"[MythTV] Closing {id}");
-            _liveTV.StopLiveTV(int.Parse(id));
+            await _liveTV.StopLiveTV(int.Parse(id));
         }
 
         public async Task CopyFilesAsync(StreamReader source, StreamWriter destination)
