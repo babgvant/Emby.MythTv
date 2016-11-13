@@ -1,4 +1,4 @@
-﻿using babgvant.Emby.MythTv.Helpers;
+﻿
 using MediaBrowser.Controller.LiveTv;
 using MediaBrowser.Model.Logging;
 using MediaBrowser.Model.Serialization;
@@ -11,6 +11,8 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using babgvant.Emby.MythTv.Helpers;
+using babgvant.Emby.MythTv.Model;
 
 namespace babgvant.Emby.MythTv.Responses
 {
