@@ -128,6 +128,8 @@ namespace babgvant.Emby.MythTv
             await GetCallsign(string.Empty, cancellationToken); //call to build the cache
             using (var releaser = await _channelsLock.LockAsync()) 
             {
+
+		_logger.Info(string.Format("[MythTV] GetChannels: got lock, {0} channels", _channelCache.Count));
                 List<string> foundChannels = new List<string>();
 
                 foreach (var channel in _channelCache.Values)
@@ -306,6 +308,7 @@ namespace babgvant.Emby.MythTv
             {
                 if (_channelCache.Count == 0)
                 {
+		    _logger.Info("[MythTV] GetCallsign: populating cache");
                     EnsureSetup();
 
                     using (var sourcesstream = await _httpClient.Get(GetOptions(cancellationToken, "/Channel/GetVideoSourceList")).ConfigureAwait(false))
@@ -327,9 +330,9 @@ namespace babgvant.Emby.MythTv
                             }
                         }
                     }
+		    _logger.Info(string.Format("[MythTV] GetCallsign: populated cache, retrieved {0} callsigns",
+					       _channelCache.Count));
                 }
-
-		_logger.Info(string.Format("[MythTV] End GetCallsign Async, retrieved {0} callsigns", _channelCache.Count));
 
                 if (_channelCache.ContainsKey(channelId))
                     return _channelCache[channelId].CallSign;
