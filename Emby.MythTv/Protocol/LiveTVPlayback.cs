@@ -49,9 +49,6 @@ namespace babgvant.Emby.MythTv.Protocol
 		m_idCounter++;
 		m_recorders.Add(m_idCounter, recorder);
 		
-                // sleep briefly to make sure file updates
-                System.Threading.Thread.Sleep(3000);
-
                 return m_idCounter;
             }
 
@@ -61,8 +58,16 @@ namespace babgvant.Emby.MythTv.Protocol
 
         public async Task<string> GetCurrentRecording(int id)
         {
-            var program = await m_recorders[id].GetCurrentRecording75();
-            return program.fileName;
+	    var recorder = m_recorders[id];
+	    int fileSize = 0;
+	    Program program = null;
+	    while (fileSize == 0)
+	    {
+		program = await recorder.GetCurrentRecording75();
+		fileSize = await recorder.QueryFileSize65(program.fileName.Split('/').Last(), "LiveTV");
+		System.Threading.Thread.Sleep(500);
+	    }
+	    return program.fileName;
         }
 
         public async Task StopLiveTV(int id)

@@ -73,6 +73,11 @@ namespace babgvant.Emby.MythTv.Protocol
             return RcvProgramInfo86(result);
         }
 
+	public async Task<int> QueryFileSize65(string filename, string storageGroup = "default")
+	{
+	    var cmd = $"QUERY_FILE_EXISTS{DELIMITER}{filename}{DELIMITER}{storageGroup}";
+	    var result = await SendCommand(cmd);
+	    return int.Parse(result[9]);
+	}
     }
-
 }
