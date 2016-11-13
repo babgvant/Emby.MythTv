@@ -125,8 +125,6 @@ namespace babgvant.Emby.MythTv
         /// <returns>Task{IEnumerable{ChannelInfo}}.</returns>
         public async Task<IEnumerable<ChannelInfo>> GetChannelsAsync(CancellationToken cancellationToken)
         {
-            List<ChannelInfo> ret = new List<ChannelInfo>();
-
             _logger.Info("[MythTV] Start GetChannels Async, retrieve all channels");
 
 	    var sources = await GetVideoSourceList(cancellationToken);
@@ -143,7 +141,7 @@ namespace babgvant.Emby.MythTv
 								  Plugin.Instance.Configuration.LoadChannelIcons));
 		}
 	    }
-            return ret;
+            return channels;
         }
 
         /// <summary>
