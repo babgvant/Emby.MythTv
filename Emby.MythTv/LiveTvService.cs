@@ -612,6 +612,8 @@ namespace babgvant.Emby.MythTv
 					 "/Guide/GetProgramGuide?StartTime={0}&EndTime={1}&Details=1",
 					 FormateMythDate(startDateUtc),
 					 FormateMythDate(endDateUtc));
+		// This can be slow so default 20 sec timeout can be too short
+		options.TimeoutMs = 60000;
 
 		using (var stream = await _httpClient.Get(options).ConfigureAwait(false))
 		{
