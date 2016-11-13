@@ -457,14 +457,17 @@ namespace babgvant.Emby.MythTv
 	    if (channelNums == null)
 		await GetChannelsAsync(cancellationToken);
 	    
-	    var success = await _liveTV.SpawnLiveTV(channelNums[channelId]);
-	    var filepath = await _liveTV.GetCurrentRecording();
+	    var id = await _liveTV.SpawnLiveTV(channelNums[channelId]);
+	    if (id == 0)
+		return new MediaSourceInfo();
+	    
+	    var filepath = await _liveTV.GetCurrentRecording(id);
 
 	    _logger.Info($"[MythTV] ChannelStream at {filepath}");
 
 	    var output = new MediaSourceInfo
 	    {
-		Id = channelId,
+		Id = id.ToString(),
 		Path = filepath,
 		Protocol = MediaProtocol.File,
 		ReadAtNativeFramerate = true,
@@ -551,8 +554,8 @@ namespace babgvant.Emby.MythTv
 
         public async Task CloseLiveStream(string id, CancellationToken cancellationToken)
         {
-            _logger.Info("[MythTV] Closing " + id);
-	    _liveTV.StopLiveTV();
+            _logger.Info($"[MythTV] Closing {id}");
+	    _liveTV.StopLiveTV(int.Parse(id));
         }
 
         public async Task CopyFilesAsync(StreamReader source, StreamWriter destination)
