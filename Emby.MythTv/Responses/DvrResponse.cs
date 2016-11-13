@@ -26,13 +26,15 @@ namespace babgvant.Emby.MythTv.Responses
 	}
 
 	private TimerInfo GetUpcomingRecording(Program item) {
+
+	    string id = $"{item.Channel.ChanId}_{((DateTime)item.StartTime).Ticks}";
 	    
 	    TimerInfo timer = new TimerInfo()
 		{
-		    Id = item.Recording.RecordedId, // this is always zero, might break for multiple upcoming
+		    Id = id,
 		    SeriesTimerId = item.Recording.RecordId,
 		    ChannelId = item.Channel.ChanId,
-		    ProgramId = string.Format("{1}_{0}", ((DateTime)item.StartTime).Ticks, item.Channel.ChanId),
+		    ProgramId = id,
 		    Name = item.Title,
 		    Overview = item.Description,
 		    StartDate = (DateTime)item.StartTime,
