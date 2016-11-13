@@ -458,14 +458,6 @@ namespace babgvant.Emby.MythTv.Responses
     {
         private static readonly CultureInfo _usCulture = new CultureInfo("en-US");
 
-
-        private static RecRule GetRecRule(Stream stream, IJsonSerializer json, ILogger logger)
-        {
-            var root = ParseRecRule(stream, json);
-            UtilsHelper.DebugInformation(logger, string.Format("[MythTV] GetRecRule Response: {0}", json.SerializeToString(root)));
-            return root.RecRule;
-        }
-
 	public static List<LiveTvTunerInfo> GetTuners(Stream tunerStream, Stream encoderStream,
 						      IJsonSerializer json, ILogger logger)
 	{
@@ -518,32 +510,6 @@ namespace babgvant.Emby.MythTv.Responses
             }
 
 	    return tvTunerInfos;
-	}
-
-        private static RecRuleRoot ParseRecRule(Stream stream, IJsonSerializer json)
-        {
-            return json.DeserializeFromStream<RecRuleRoot>(stream);
-        }
-
-        private static RecRuleListRoot ParseRecRules(Stream stream, IJsonSerializer json)
-        {
-            return json.DeserializeFromStream<RecRuleListRoot>(stream);
-        }
-
-        private static RecordId ParseRecordId(Stream stream, IJsonSerializer json)
-        {
-            return json.DeserializeFromStream<RecordId>(stream);
-        }
-
-        private static Program ParseRecorded(Stream stream, IJsonSerializer json, ILogger logger)
-        {
-            var root = json.DeserializeFromStream<RootProgramObject>(stream);
-            return root.Program;
-        }
-
-	private class RootProgramObject
-	{
-	    public Program Program { get; set; }
 	}
 
 	[Flags]
@@ -781,21 +747,5 @@ namespace babgvant.Emby.MythTv.Responses
 	    public Artwork Artwork { get; set; }
 	}
 
-
-	private class ProgramList
-	{
-	    public string StartIndex { get; set; }
-	    public string Count { get; set; }
-	    public string TotalAvailable { get; set; }
-	    public string AsOf { get; set; }
-	    public string Version { get; set; }
-	    public string ProtoVer { get; set; }
-	    public List<Program> Programs { get; set; }
-	}
-
-	private class RootProgramListObject
-	{
-	    public ProgramList ProgramList { get; set; }
-	}
     }
 }
