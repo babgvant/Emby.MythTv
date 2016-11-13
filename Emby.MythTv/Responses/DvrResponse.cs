@@ -324,7 +324,7 @@ namespace babgvant.Emby.MythTv.Responses
             return root.EncoderList.Encoders.Select(i => EncoderToTunerInfo(i)).ToList();
         }
 
-        private LiveTvTunerInfo EncoderToTunerInfo(Encoder tuner)
+        private LiveTvTunerInfo EncoderToTunerInfo(Model.Encoder tuner)
         {
             var info = new LiveTvTunerInfo()
                 {
