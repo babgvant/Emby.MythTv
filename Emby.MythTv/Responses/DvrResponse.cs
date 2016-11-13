@@ -306,7 +306,6 @@ namespace babgvant.Emby.MythTv.Responses
 	    RecRule orgRule = GetOneRecRule(stream, json, logger);
 	    if (orgRule != null)
 	    {
-		orgRule.Title = info.Name;
 		orgRule.Type = "Record All";
 
 		if (info.RecordAnyChannel)
