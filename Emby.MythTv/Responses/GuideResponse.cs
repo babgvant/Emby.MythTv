@@ -35,21 +35,71 @@ namespace babgvant.Emby.MythTv.Responses
 	{
 	    var info = new ProgramInfo()
 		{
-		    Name = prog.Title,
-		    EpisodeTitle = prog.SubTitle,
-		    Overview = prog.Description,
-		    Audio = ProgramAudio.Stereo, //Hardcode for now (ProgramAudio)item.AudioProps,
-		    ChannelId = channelId,
-		    EndDate = (DateTime)prog.EndTime,
-		    StartDate = (DateTime)prog.StartTime,
+
+		    /// Id of the program.
 		    Id = string.Format("{1}_{0}", ((DateTime)prog.StartTime).Ticks, channelId),
-		    IsSeries = GeneralHelpers.ContainsWord(prog.CatType, "series", StringComparison.OrdinalIgnoreCase),
-		    IsMovie = GeneralHelpers.ContainsWord(prog.CatType, "movie", StringComparison.OrdinalIgnoreCase),
+
+		    /// Gets or sets the channel identifier.
+		    ChannelId = channelId,
+
+		    /// Name of the program
+		    Name = prog.Title,
+
+		    /// Gets or sets the official rating.
+		    // public OfficialRating { get; set; }
+
+		    /// Gets or sets the overview.
+		    Overview = prog.Description,
+
+		    /// Gets or sets the short overview.
+		    ShortOverview = null,
+
+		    /// The start date of the program, in UTC.
+		    StartDate = (DateTime)prog.StartTime,
+
+		    /// The end date of the program, in UTC.
+		    EndDate = (DateTime)prog.EndTime,
+
+		    /// Genre of the program.
+		    // public List<string> Genres { get; set; }
+
+		    /// Gets or sets the original air date.
+		    OriginalAirDate = prog.Airdate,
+
+		    /// Gets or sets a value indicating whether this instance is hd.
+		    // public bool? IsHD { get; set; }
+
+		    Is3D = false,
+
+		    /// Gets or sets the audio.
+		    Audio = ProgramAudio.Stereo, //Hardcode for now (ProgramAudio)item.AudioProps,
+		    
+		    /// Gets or sets the community rating.
+		    CommunityRating = prog.Stars,
+
+		    /// Gets or sets a value indicating whether this instance is repeat.
 		    IsRepeat = prog.Repeat,
-		    IsNews = GeneralHelpers.ContainsWord(prog.Category, "news",
-							 StringComparison.OrdinalIgnoreCase),
-		    IsKids = GeneralHelpers.ContainsWord(prog.Category, "animation",
-							 StringComparison.OrdinalIgnoreCase),
+
+		    IsSubjectToBlackout = false,
+
+		    /// Gets or sets the episode title.
+		    EpisodeTitle = prog.SubTitle,
+
+		    /// Supply the image path if it can be accessed directly from the file system
+		    // public string ImagePath { get; set; }
+
+		    /// Supply the image url if it can be downloaded
+		    // public string ImageUrl { get; set; }
+
+		    // public string LogoImageUrl { get; set; }
+
+		    /// Gets or sets a value indicating whether this instance has image.
+		    // public bool? HasImage { get; set; }
+
+		    /// Gets or sets a value indicating whether this instance is movie.
+		    IsMovie = GeneralHelpers.ContainsWord(prog.CatType, "movie", StringComparison.OrdinalIgnoreCase),
+
+		    /// Gets or sets a value indicating whether this instance is sports.
 		    IsSports =
 		    GeneralHelpers.ContainsWord(prog.Category, "sport",
 						StringComparison.OrdinalIgnoreCase) ||
@@ -58,7 +108,45 @@ namespace babgvant.Emby.MythTv.Responses
 		    GeneralHelpers.ContainsWord(prog.Category, "football",
 						StringComparison.OrdinalIgnoreCase) ||
 		    GeneralHelpers.ContainsWord(prog.Category, "cricket",
-						StringComparison.OrdinalIgnoreCase)
+						StringComparison.OrdinalIgnoreCase),
+
+		    /// Gets or sets a value indicating whether this instance is series.
+		    IsSeries = GeneralHelpers.ContainsWord(prog.CatType, "series", StringComparison.OrdinalIgnoreCase),
+
+		    /// Gets or sets a value indicating whether this instance is live.
+		    // public bool IsLive { get; set; }
+
+		    /// Gets or sets a value indicating whether this instance is news.
+		    IsNews = GeneralHelpers.ContainsWord(prog.Category, "news",
+							 StringComparison.OrdinalIgnoreCase),
+
+		    /// Gets or sets a value indicating whether this instance is kids.
+		    IsKids = GeneralHelpers.ContainsWord(prog.Category, "animation",
+							 StringComparison.OrdinalIgnoreCase),
+
+		    // public bool IsEducational { get; set; }
+
+		    /// Gets or sets a value indicating whether this instance is premiere.
+		    // public bool IsPremiere { get; set;  }
+
+		    /// Gets or sets the production year.
+		    // public int? ProductionYear { get; set; }
+
+		    /// Gets or sets the home page URL.
+		    // public string HomePageUrl { get; set; }
+
+		    /// Gets or sets the series identifier.
+		    SeriesId = prog.SeriesId,
+
+		    /// Gets or sets the show identifier.
+		    ShowId = prog.ProgramId,
+
+		    /// Gets or sets the season number.
+		    SeasonNumber = prog.Season,
+
+		    /// Gets or sets the episode number.
+		    EpisodeNumber = prog.Episode
+
 		};
 	    
 	    return info;
@@ -108,7 +196,7 @@ namespace babgvant.Emby.MythTv.Responses
 	    public string SubProps { get; set; }
 	    public string SeriesId { get; set; }
 	    public string ProgramId { get; set; }
-	    public string Stars { get; set; }
+	    public float Stars { get; set; }
 	    public string FileSize { get; set; }
 	    public string LastModified { get; set; }
 	    public string ProgramFlags { get; set; }
@@ -117,8 +205,8 @@ namespace babgvant.Emby.MythTv.Responses
 	    public DateTime? Airdate { get; set; }
 	    public string Description { get; set; }
 	    public string Inetref { get; set; }
-	    public string Season { get; set; }
-	    public string Episode { get; set; }
+	    public int? Season { get; set; }
+	    public int? Episode { get; set; }
 	    public Channel Channel { get; set; }
 	    public RecordingDetail Recording { get; set; }
 	    public Artwork Artwork { get; set; }
