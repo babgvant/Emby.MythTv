@@ -736,62 +736,12 @@ namespace babgvant.Emby.MythTv
         {
             _logger.Info("[MythTV] Start GetPrograms Async, retrieve programs for: {0}", channelId);
             EnsureSetup();
-            List<ProgramInfo> ret = new List<ProgramInfo>();
             var options = GetOptions(cancellationToken, "/Guide/GetProgramGuide?StartTime={0}&EndTime={1}&StartChanId={2}&NumChannels=1&Details=1", FormateMythDate(startDateUtc), FormateMythDate(endDateUtc), channelId);
 
             using (var stream = await _httpClient.Get(options).ConfigureAwait(false))
             {
-                var data = GuideResponse.GetPrograms(stream, _jsonSerializer, channelId, _logger);
-
-                foreach (var item in data.Channels)
-                {
-                    foreach (var prog in item.Programs)
-                    {
-                        List<string> categories = new List<string>();
-                        categories.AddRange(prog.Category.Split(new char[] { '/' }, StringSplitOptions.RemoveEmptyEntries));
-
-                        ProgramInfo val = new ProgramInfo()
-                        {
-                            Name = prog.Title,
-                            EpisodeTitle = prog.SubTitle,
-                            Overview = prog.Description,
-                            Audio = ProgramAudio.Stereo, //Hardcode for now (ProgramAudio)item.AudioProps,
-                            ChannelId = channelId,
-                            EndDate = (DateTime)prog.EndTime,
-                            StartDate = (DateTime)prog.StartTime,
-                            Id = string.Format("StartTime={0}&ChanId={1}", ((DateTime)prog.StartTime).Ticks, item.ChanId),
-                            IsSeries = GeneralHelpers.ContainsWord(prog.CatType, "series", StringComparison.OrdinalIgnoreCase),
-                            IsMovie = GeneralHelpers.ContainsWord(prog.CatType, "movie", StringComparison.OrdinalIgnoreCase),
-                            IsRepeat = prog.Repeat,
-                            IsNews = GeneralHelpers.ContainsWord(prog.Category, "news",
-                            StringComparison.OrdinalIgnoreCase),
-                            IsKids = GeneralHelpers.ContainsWord(prog.Category, "animation",
-                            StringComparison.OrdinalIgnoreCase),
-                            IsSports =
-                                GeneralHelpers.ContainsWord(prog.Category, "sport",
-                                    StringComparison.OrdinalIgnoreCase) ||
-                                GeneralHelpers.ContainsWord(prog.Category, "motor sports",
-                                    StringComparison.OrdinalIgnoreCase) ||
-                                GeneralHelpers.ContainsWord(prog.Category, "football",
-                                    StringComparison.OrdinalIgnoreCase) ||
-                                GeneralHelpers.ContainsWord(prog.Category, "cricket",
-                                    StringComparison.OrdinalIgnoreCase)
-                        };
-                        val.Genres.AddRange(categories);
-                        if (!string.IsNullOrWhiteSpace(item.IconURL))
-                        {
-                            val.HasImage = true;
-                            val.ImageUrl = string.Format("{0}{1}", Plugin.Instance.Configuration.WebServiceUrl, item.IconURL);
-                        }
-                        else
-                            val.HasImage = false;
-
-                        ret.Add(val);
-                    }
-                }
+                return new GuideResponse().GetPrograms(stream, _jsonSerializer, channelId, _logger).ToList();
             }
-
-            return ret;
         }
 
         public Task RecordLiveStream(string id, CancellationToken cancellationToken)
