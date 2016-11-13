@@ -70,6 +70,8 @@
     <Compile Include="Model\ChannelInfoList.cs" />
     <Compile Include="Model\ConnectionInfo.cs" />
     <Compile Include="Model\Database.cs" />
+    <Compile Include="Model\Encoder.cs" />
+    <Compile Include="Model\EncoderList.cs" />
     <Compile Include="Model\Input.cs" />
     <Compile Include="Model\Program.cs" />
     <Compile Include="Model\ProgramGuide.cs" />
