@@ -5,9 +5,9 @@ using System.Linq;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
-using babgvant.Emby.MythTv.Model;
+using Emby.MythTv.Model;
 
-namespace babgvant.Emby.MythTv.Protocol
+namespace Emby.MythTv.Protocol
 {
     class ProtoBase
     {

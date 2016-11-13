@@ -8,10 +8,10 @@ using MediaBrowser.Controller.LiveTv;
 using MediaBrowser.Model.LiveTv;
 using MediaBrowser.Model.Logging;
 using MediaBrowser.Model.Serialization;
-using babgvant.Emby.MythTv.Helpers;
-using babgvant.Emby.MythTv.Model;
+using Emby.MythTv.Helpers;
+using Emby.MythTv.Model;
 
-namespace babgvant.Emby.MythTv.Responses
+namespace Emby.MythTv.Responses
 {
     public class GuideResponse
     {

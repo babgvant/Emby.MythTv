@@ -8,10 +8,10 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using babgvant.Emby.MythTv.Helpers;
-using babgvant.Emby.MythTv.Model;
+using Emby.MythTv.Helpers;
+using Emby.MythTv.Model;
 
-namespace babgvant.Emby.MythTv.Responses
+namespace Emby.MythTv.Responses
 {
     public class ChannelResponse
     {

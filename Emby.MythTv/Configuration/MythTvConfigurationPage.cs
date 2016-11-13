@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace babgvant.Emby.MythTv.Configuration
+namespace Emby.MythTv.Configuration
 {
     public class MythTvConfigurationPage : IPluginConfigurationPage
     {
@@ -26,7 +26,7 @@ namespace babgvant.Emby.MythTv.Configuration
         /// <returns>Stream.</returns>
         public Stream GetHtmlStream()
         {
-            return GetType().Assembly.GetManifestResourceStream("babgvant.Emby.MythTv.Configuration.configPage.html");
+            return GetType().Assembly.GetManifestResourceStream("Emby.MythTv.Configuration.configPage.html");
         }
 
         /// <summary>
