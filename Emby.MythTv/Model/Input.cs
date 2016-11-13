@@ -8,14 +8,15 @@ namespace babgvant.Emby.MythTv.Model
 {
     public class Input
     {
-        public string Id { get; set; }
-        public string CardId { get; set; }
-        public string SourceId { get; set; }
+        public int Id { get; set; }
+        public int CardId { get; set; }
+        public int SourceId { get; set; }
+        public int MplexId { get; set; }
         public string InputName { get; set; }
         public string DisplayName { get; set; }
-        public string QuickTune { get; set; }
-        public string RecPriority { get; set; }
-        public string ScheduleOrder { get; set; }
-        public string LiveTVOrder { get; set; }
+        public bool QuickTune { get; set; }
+        public int RecPriority { get; set; }
+        public int ScheduleOrder { get; set; }
+        public int LiveTVOrder { get; set; }
     }
 }

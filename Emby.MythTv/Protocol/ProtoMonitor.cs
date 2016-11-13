@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using babgvant.Emby.MythTv.Model;
 
 namespace babgvant.Emby.MythTv.Protocol
 {
@@ -44,10 +45,10 @@ namespace babgvant.Emby.MythTv.Protocol
             m_tainted = m_hang = false;
         }
 
-        public async Task<List<CardInput>> GetFreeInputs87()
+        public async Task<List<Input>> GetFreeInputs87()
         {
             var input = await SendCommand("GET_FREE_INPUT_INFO 0");
-            var output = new List<CardInput>();
+            var output = new List<Input>();
 
             if (input.Count == 0)
                 return output;
@@ -59,14 +60,14 @@ namespace babgvant.Emby.MythTv.Protocol
             for (int i = 0; i < input.Count; i += 11)
             {
                 var curr = input.GetRange(i, 11);
-                var card = new CardInput();
+                var card = new Input();
 
-                card.inputName = curr[0];
-                card.sourceId = int.Parse(curr[1]);
-                card.inputId = int.Parse(curr[2]);
-                card.cardId = int.Parse(curr[3]);
-                card.mplexId = int.Parse(curr[4]);
-                card.liveTVOrder = int.Parse(curr[5]);
+                card.InputName = curr[0];
+                card.SourceId = int.Parse(curr[1]);
+                card.Id = int.Parse(curr[2]);
+                card.CardId = int.Parse(curr[3]);
+                card.MplexId = int.Parse(curr[4]);
+                card.LiveTVOrder = int.Parse(curr[5]);
 
                 output.Add(card);
             }

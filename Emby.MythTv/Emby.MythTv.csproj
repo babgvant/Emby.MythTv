@@ -100,7 +100,6 @@
     <Compile Include="Protocol\ProtoMonitor.cs" />
     <Compile Include="Protocol\ProtoPlayback.cs" />
     <Compile Include="Protocol\ProtoRecorder.cs" />
-    <Compile Include="Protocol\Types.cs" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />

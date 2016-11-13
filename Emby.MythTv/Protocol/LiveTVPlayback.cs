@@ -42,7 +42,7 @@ namespace babgvant.Emby.MythTv.Protocol
             // just bodge it in and get the first free recorder
             var cards = await GetFreeInputs87();
 
-            var recorder = new ProtoRecorder(cards[0].cardId, Server, Port);
+            var recorder = new ProtoRecorder(cards[0].CardId, Server, Port);
             var chain = new Chain();
 
             if (await recorder.SpawnLiveTV(chain.UID, chanNum))
