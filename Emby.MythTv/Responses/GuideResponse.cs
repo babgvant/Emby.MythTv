@@ -141,13 +141,14 @@ namespace babgvant.Emby.MythTv.Responses
 		    /// Gets or sets the show identifier.
 		    ShowId = prog.ProgramId,
 
-		    /// Gets or sets the season number.
-		    SeasonNumber = prog.Season,
-
-		    /// Gets or sets the episode number.
-		    EpisodeNumber = prog.Episode
-
 		};
+
+	    if (prog.Season != null && prog.Season > 0 &&
+		prog.Episode != null && prog.Episode > 0)
+	    {
+		info.SeasonNumber = prog.Season;
+		info.EpisodeNumber = prog.Episode;
+	    }
 	    
 	    return info;
 	}
