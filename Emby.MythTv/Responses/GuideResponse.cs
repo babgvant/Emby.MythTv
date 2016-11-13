@@ -27,7 +27,7 @@ namespace babgvant.Emby.MythTv.Responses
         public IEnumerable<ProgramInfo> GetPrograms(string channelId, ILogger logger)
         {
 	    var listings = root.ProgramGuide.Channels;
-	    return listings.Where(i => string.Equals(i.ChanId.ToString(), channelId))
+	    return listings.Where(i => string.Equals(i.ChanId, channelId))
 		.SelectMany(i => i.Programs.Select(e => GetProgram(channelId, e)));
         }
 
@@ -42,7 +42,7 @@ namespace babgvant.Emby.MythTv.Responses
 		    ChannelId = channelId,
 		    EndDate = (DateTime)prog.EndTime,
 		    StartDate = (DateTime)prog.StartTime,
-		    Id = string.Format("StartTime={0}&ChanId={1}", ((DateTime)prog.StartTime).Ticks, channelId),
+		    Id = prog.ProgramId,
 		    IsSeries = GeneralHelpers.ContainsWord(prog.CatType, "series", StringComparison.OrdinalIgnoreCase),
 		    IsMovie = GeneralHelpers.ContainsWord(prog.CatType, "movie", StringComparison.OrdinalIgnoreCase),
 		    IsRepeat = prog.Repeat,
