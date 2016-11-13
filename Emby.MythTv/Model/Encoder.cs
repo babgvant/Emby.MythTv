@@ -16,6 +16,6 @@ namespace babgvant.Emby.MythTv.Model
         public string SleepStatus { get; set; }
         public string LowOnFreeSpace { get; set; }
         public List<Input> Inputs { get; set; }
-        public Recording Recording { get; set; }
+        public Program Recording { get; set; }
     }
 }

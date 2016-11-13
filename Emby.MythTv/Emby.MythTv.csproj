@@ -77,7 +77,6 @@
     <Compile Include="Model\ProgramGuide.cs" />
     <Compile Include="Model\ProgramList.cs" />
     <Compile Include="Model\Recording.cs" />
-    <Compile Include="Model\RecordingDetail.cs" />
     <Compile Include="Model\RecRule.cs" />
     <Compile Include="Model\RecRuleList.cs" />
     <Compile Include="Model\Version.cs" />
