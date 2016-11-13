@@ -592,15 +592,11 @@ namespace babgvant.Emby.MythTv
 
             var conInfoTask = _httpClient.Get(GetOptions(cancellationToken, "/Myth/GetConnectionInfo")).ConfigureAwait(false);
             var tunersTask = _httpClient.Get(GetOptions(cancellationToken, "/Dvr/GetEncoderList")).ConfigureAwait(false);
-            var encodersTask = _httpClient.Get(GetOptions(cancellationToken, "/Capture/GetCaptureCardList")).ConfigureAwait(false); 
 
 	    List<LiveTvTunerInfo> tvTunerInfos;
             using (var tunerStream = await tunersTask)
             {
-		using (var encoderStream = await encodersTask)
-		{
-		    tvTunerInfos = DvrResponse.GetTuners(tunerStream, encoderStream, _jsonSerializer, _logger);
-		}
+		tvTunerInfos = new DvrResponse().GetTuners(tunerStream, _jsonSerializer, _logger);
 	    }
 
             using (var stream = await conInfoTask)
