@@ -67,12 +67,12 @@ namespace babgvant.Emby.MythTv.Responses
 		    OriginalAirDate = prog.Airdate,
 
 		    /// Gets or sets a value indicating whether this instance is hd.
-		    // public bool? IsHD { get; set; }
+		    IsHD = (prog.VideoProps & VideoFlags.VID_HDTV) == VideoFlags.VID_HDTV,
 
-		    Is3D = false,
+		    Is3D = (prog.VideoProps & VideoFlags.VID_3DTV) == VideoFlags.VID_3DTV,
 
 		    /// Gets or sets the audio.
-		    Audio = ProgramAudio.Stereo, //Hardcode for now (ProgramAudio)item.AudioProps,
+		    Audio = ConvertAudioFlags(prog.AudioProps), //Hardcode for now (ProgramAudio)item.AudioProps,
 		    
 		    /// Gets or sets the community rating.
 		    CommunityRating = prog.Stars,
@@ -182,6 +182,43 @@ namespace babgvant.Emby.MythTv.Responses
 	    public List<ArtworkInfo> ArtworkInfos { get; set; }
 	}
 
+	[Flags]
+	private enum VideoFlags
+	{
+	    VID_UNKNOWN       = 0x00,
+	    VID_HDTV          = 0x01,
+	    VID_WIDESCREEN    = 0x02,
+	    VID_AVC           = 0x04,
+	    VID_720           = 0x08,
+	    VID_1080          = 0x10,
+	    VID_DAMAGED       = 0x20,
+	    VID_3DTV          = 0x40
+	}
+
+	[Flags]
+	private enum AudioFlags
+	{
+	    AUD_UNKNOWN       = 0x00,
+	    AUD_STEREO        = 0x01,
+	    AUD_MONO          = 0x02,
+	    AUD_SURROUND      = 0x04,
+	    AUD_DOLBY         = 0x08,
+	    AUD_HARDHEAR      = 0x10,
+	    AUD_VISUALIMPAIR  = 0x20,
+	}
+
+	private ProgramAudio ConvertAudioFlags(AudioFlags input)
+	{
+	    switch (input)
+	    {
+		case AudioFlags.AUD_STEREO:
+		    return ProgramAudio.Stereo;
+		case AudioFlags.AUD_DOLBY:
+		    return ProgramAudio.Dolby;
+	    }
+	    return ProgramAudio.Mono;
+	}
+
 	private class Program
 	{
 	    public DateTime? StartTime { get; set; }
@@ -191,8 +228,8 @@ namespace babgvant.Emby.MythTv.Responses
 	    public string Category { get; set; }
 	    public string CatType { get; set; }
 	    public bool Repeat { get; set; }
-	    public string VideoProps { get; set; }
-	    public string AudioProps { get; set; }
+	    public VideoFlags VideoProps { get; set; }
+	    public AudioFlags AudioProps { get; set; }
 	    public string SubProps { get; set; }
 	    public string SeriesId { get; set; }
 	    public string ProgramId { get; set; }
