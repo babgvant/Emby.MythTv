@@ -104,12 +104,13 @@ namespace babgvant.Emby.MythTv.Responses
 
 	    recInfo.Genres.AddRange(item.Category.Split(new char[] { '/' }, StringSplitOptions.RemoveEmptyEntries));
 
-	    if (item.Artwork.ArtworkInfos.Count() > 0)
+	    if (item.Artwork.ArtworkInfos.Count > 0)
 	    {
-		recInfo.HasImage = true;
+		var url = item.Artwork.ArtworkInfos.Where(i => i.Type.Equals("coverart")).First().URL;
 		recInfo.ImageUrl = string.Format("{0}{1}",
 						 Plugin.Instance.Configuration.WebServiceUrl,
-						 item.Artwork.ArtworkInfos[0].URL);
+						 url);
+		recInfo.HasImage = true;
 	    }
 	    else
 		recInfo.HasImage = false;
