@@ -30,7 +30,6 @@ namespace babgvant.Emby.MythTv
         private readonly CultureInfo _usCulture = new CultureInfo("en-US");
         private readonly ILogger _logger;
         //private readonly Dictionary<int, int> _heartBeat = new Dictionary<int, int>();
-        private Dictionary<string, string> _callsigns = new Dictionary<string, string>();
         private readonly AsyncLock _channelsLock = new AsyncLock();
 
 	// cache the listings data
@@ -240,38 +239,6 @@ namespace babgvant.Emby.MythTv
 		return ChannelResponse.GetVideoSourceList(sourcesstream, _jsonSerializer, _logger);
 	    }
 	}
-
-	private async Task CacheCallsigns(CancellationToken cancellationToken)
-	{
-	    _logger.Info("[MythTV] Start CacheCallsigns");
-
-	    var sources = await GetVideoSourceList(cancellationToken);
-
-	    using (var releaser = await _channelsLock.LockAsync())
-	    {
-		foreach (var sourceId in sources) {
-		    var options = GetOptions(cancellationToken,
-					     "/Channel/GetChannelInfoList?SourceID={0}&Details=true",
-					     sourceId);
-		    
-		    using (var stream = await _httpClient.Get(options).ConfigureAwait(false))
-		    {
-			var callsigns = ChannelResponse.GetCallsigns(stream, _jsonSerializer, _logger);
-			callsigns.ToList().ForEach(x => _callsigns[x.Key] = x.Value);
-		    }
-		}
-	    }
-	}
-		
-        private async Task<string> GetCallsign(string channelId, CancellationToken cancellationToken)
-        {
-	    _logger.Info("[MythTV] Start GetCallsign");
-
-	    if (_callsigns.Count == 0)
-		await CacheCallsigns(cancellationToken);
-
-	    return _callsigns[channelId];
-        }
 
         /// <summary>
         /// Create a new recording

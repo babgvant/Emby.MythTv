@@ -22,14 +22,6 @@ namespace babgvant.Emby.MythTv.Responses
             return root.VideoSourceList.VideoSources.Select(i => i.Id);
         }
 
-	public static Dictionary<string, string> GetCallsigns(Stream stream, IJsonSerializer json, ILogger logger)
-	{
-	    var root = json.DeserializeFromStream<RootChannelInfoListObject>(stream);
-	    var output = new Dictionary<string, string>();
-	    root.ChannelInfoList.ChannelInfos.ForEach(x => output.Add(x.ChanId, x.CallSign));
-	    return output;
-	}
-
 	public static IEnumerable<ChannelInfo> GetChannels(Stream stream, IJsonSerializer json, ILogger logger,
 							   bool loadChannelIcons)
 	{
