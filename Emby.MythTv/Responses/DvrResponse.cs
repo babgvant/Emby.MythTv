@@ -241,6 +241,119 @@ namespace babgvant.Emby.MythTv.Responses
 	}
 
     }
+
+    public class RuleResponse
+    {
+	public IEnumerable<SeriesTimerInfo> GetSeriesTimers(Stream stream, IJsonSerializer json, ILogger logger)
+        {
+
+            var root = json.DeserializeFromStream<RootObject>(stream);
+	    return root.RecRuleList.RecRules.Select(i => GetRecRule(i));
+
+	}
+
+	private SeriesTimerInfo GetRecRule(RecRule item)
+	{
+	    var info = new SeriesTimerInfo()
+		{
+		    Name = item.Title,
+		    ChannelId = item.ChanId,
+		    EndDate = item.EndTime,
+		    StartDate = item.StartTime,
+		    Id = item.Id,
+		    PrePaddingSeconds = item.StartOffset * 60,
+		    PostPaddingSeconds = item.EndOffset * 60,
+		    RecordAnyChannel = !((item.Filter & RecFilter.ThisChannel) == RecFilter.ThisChannel),
+		    RecordAnyTime = !((item.Filter & RecFilter.ThisDayTime) == RecFilter.ThisDayTime),
+		    RecordNewOnly = ((item.Filter & RecFilter.NewEpisode) == RecFilter.NewEpisode),
+		    ProgramId = item.ProgramId
+		};
+
+	    return info;
+
+	}
+
+    	private enum RecFilter
+	{
+	    NewEpisode = 1,
+	    IdentifiableEpisode = 2,
+	    FirstShowing = 4,
+	    PrimeTime = 8,
+	    CommercialFree = 16,
+	    HighDefinition = 32,
+	    ThisEpisode = 64,
+	    ThisSeries = 128,
+	    ThisTime = 256,
+	    ThisDayTime = 512,
+	    ThisChannel = 1024
+	}
+
+	private class RecRule
+	{
+	    public string Id { get; set; }
+	    public string ParentId { get; set; }
+	    public string Inactive { get; set; }
+	    public string Title { get; set; }
+	    public string SubTitle { get; set; }
+	    public string Description { get; set; }
+	    public string Season { get; set; }
+	    public string Episode { get; set; }
+	    public string Category { get; set; }
+	    public DateTime StartTime { get; set; }
+	    public DateTime EndTime { get; set; }
+	    public string SeriesId { get; set; }
+	    public string ProgramId { get; set; }
+	    public string Inetref { get; set; }
+	    public string ChanId { get; set; }
+	    public string CallSign { get; set; }
+	    public string FindDay { get; set; }
+	    public string FindTime { get; set; }
+	    public string Type { get; set; }
+	    public string SearchType { get; set; }
+	    public string RecPriority { get; set; }
+	    public string PreferredInput { get; set; }
+	    public int StartOffset { get; set; }
+	    public int EndOffset { get; set; }
+	    public string DupMethod { get; set; }
+	    public string DupIn { get; set; }
+	    public RecFilter Filter { get; set; }
+	    public string RecProfile { get; set; }
+	    public string RecGroup { get; set; }
+	    public string StorageGroup { get; set; }
+	    public string PlayGroup { get; set; }
+	    public string AutoExpire { get; set; }
+	    public string MaxEpisodes { get; set; }
+	    public string MaxNewest { get; set; }
+	    public string AutoCommflag { get; set; }
+	    public string AutoTranscode { get; set; }
+	    public string AutoMetaLookup { get; set; }
+	    public string AutoUserJob1 { get; set; }
+	    public string AutoUserJob2 { get; set; }
+	    public string AutoUserJob3 { get; set; }
+	    public string AutoUserJob4 { get; set; }
+	    public string Transcoder { get; set; }
+	    public DateTime? NextRecording { get; set; }
+	    public DateTime LastRecorded { get; set; }
+	    public DateTime LastDeleted { get; set; }
+	    public string AverageDelay { get; set; }
+	}
+
+	private class RecRuleList
+	{
+	    public string StartIndex { get; set; }
+	    public string Count { get; set; }
+	    public string TotalAvailable { get; set; }
+	    public string AsOf { get; set; }
+	    public string Version { get; set; }
+	    public string ProtoVer { get; set; }
+	    public List<RecRule> RecRules { get; set; }
+	}
+
+	private class RootObject
+	{
+	    public RecRuleList RecRuleList { get; set; }
+	}
+    }
     
     public class DvrResponse
     {
@@ -277,42 +390,6 @@ namespace babgvant.Emby.MythTv.Responses
             return ret;
         }
 	
-
-        public static List<SeriesTimerInfo> GetSeriesTimers(Stream stream, IJsonSerializer json, ILogger logger)
-        {
-            List<SeriesTimerInfo> ret = new List<SeriesTimerInfo>();
-
-            var root = ParseRecRules(stream, json);
-            foreach (var item in root.RecRuleList.RecRules)
-            {
-                if (!item.Inactive && string.Compare(item.Type, "Single Record", true) != 0 && string.Compare(item.Type, "Not Recording", true) != 0)
-                {
-                    SeriesTimerInfo val = new SeriesTimerInfo()
-			{
-			    Name = item.Title,
-			    //Overview = item.Description,
-			    ChannelId = item.ChanId.ToString(),
-			    EndDate = (DateTime)item.EndTime,
-			    StartDate = (DateTime)item.StartTime,
-			    //Overview = item.Description,
-			    Id = item.Id,
-			    PrePaddingSeconds = item.StartOffset * 60,
-			    PostPaddingSeconds = item.EndOffset * 60,
-			    RecordAnyChannel = !((item.Filter & RecFilter.ThisChannel) == RecFilter.ThisChannel),
-			    RecordAnyTime = !((item.Filter & RecFilter.ThisDayTime) == RecFilter.ThisDayTime),
-			    RecordNewOnly = ((item.Filter & RecFilter.NewEpisode) == RecFilter.NewEpisode),
-			    //IsPostPaddingRequired = item.EndOffset != 0,
-			    //IsPrePaddingRequired = item.StartOffset != 0,                    
-			    ProgramId = item.ProgramId
-			};
-
-                    ret.Add(val);
-                }
-            }
-
-            return ret;
-        }
-
         public static SeriesTimerInfo GetDefaultTimerInfo(Stream stream, IJsonSerializer json, ILogger logger)
         {
             SeriesTimerInfo val = null;

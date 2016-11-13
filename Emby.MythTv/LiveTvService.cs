@@ -333,7 +333,7 @@ namespace babgvant.Emby.MythTv
 
             using (var stream = await _httpClient.Get(GetOptions(cancellationToken, "/Dvr/GetRecordScheduleList")).ConfigureAwait(false))
             {
-                return  DvrResponse.GetSeriesTimers(stream, _jsonSerializer, _logger);
+                return new RuleResponse().GetSeriesTimers(stream, _jsonSerializer, _logger);
             }
         }
 
