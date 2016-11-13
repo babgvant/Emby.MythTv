@@ -161,31 +161,6 @@ namespace babgvant.Emby.MythTv.Responses
 
         }
 
-        private class Channel
-        {
-            public string ChanId { get; set; }
-            public string ChanNum { get; set; }
-            public string CallSign { get; set; }
-            public string IconURL { get; set; }
-            public string ChannelName { get; set; }
-            public string MplexId { get; set; }
-            public string ServiceId { get; set; }
-            public string ATSCMajorChan { get; set; }
-            public string ATSCMinorChan { get; set; }
-            public string Format { get; set; }
-            public string FrequencyId { get; set; }
-            public string FineTune { get; set; }
-            public string ChanFilters { get; set; }
-            public string SourceId { get; set; }
-            public string InputId { get; set; }
-            public string CommFree { get; set; }
-            public string UseEIT { get; set; }
-            public string Visible { get; set; }
-            public string XMLTVID { get; set; }
-            public string DefaultAuth { get; set; }
-            public List<object> Programs { get; set; }
-        }
-
         private class Recording
         {
             public string RecordedId { get; set; }
@@ -207,75 +182,6 @@ namespace babgvant.Emby.MythTv.Responses
             public string EncoderId { get; set; }
             public string EncoderName { get; set; }
             public string Profile { get; set; }
-        }
-
-        private class ArtworkInfo
-        {
-            public string URL { get; set; }
-            public string FileName { get; set; }
-            public string StorageGroup { get; set; }
-            public string Type { get; set; }
-        }
-
-        private class Artwork
-        {
-            public List<ArtworkInfo> ArtworkInfos { get; set; }
-        }
-
-        private class CastMember
-        {
-            public string Name { get; set; }
-            public string CharacterName { get; set; }
-            public string Role { get; set; }
-            public string TranslatedRole { get; set; }
-        }
-
-        private class Cast
-        {
-            public List<CastMember> CastMembers { get; set; }
-        }
-
-        private class Program
-        {
-            public DateTime StartTime { get; set; }
-            public DateTime EndTime { get; set; }
-            public string Title { get; set; }
-            public string SubTitle { get; set; }
-            public string Category { get; set; }
-            public string CatType { get; set; }
-            public bool Repeat { get; set; }
-            public string VideoProps { get; set; }
-            public string AudioProps { get; set; }
-            public string SubProps { get; set; }
-            public string SeriesId { get; set; }
-            public string ProgramId { get; set; }
-            public string Stars { get; set; }
-            public string LastModified { get; set; }
-            public string ProgramFlags { get; set; }
-            public string Airdate { get; set; }
-            public string Description { get; set; }
-            public string Inetref { get; set; }
-            public int? Season { get; set; }
-            public int? Episode { get; set; }
-            public string TotalEpisodes { get; set; }
-            public string FileSize { get; set; }
-            public string FileName { get; set; }
-            public string HostName { get; set; }
-            public Channel Channel { get; set; }
-            public Recording Recording { get; set; }
-            public Artwork Artwork { get; set; }
-            public Cast Cast { get; set; }
-        }
-
-        private class ProgramList
-        {
-            public string StartIndex { get; set; }
-            public string Count { get; set; }
-            public string TotalAvailable { get; set; }
-            public string AsOf { get; set; }
-            public string Version { get; set; }
-            public string ProtoVer { get; set; }
-            public List<Program> Programs { get; set; }
         }
 
         private class RootObject
@@ -397,86 +303,9 @@ namespace babgvant.Emby.MythTv.Responses
             return output;
         }
 
-        [Flags]
-        private enum RecFilter
-        {
-            NewEpisode = 1,
-            IdentifiableEpisode = 2,
-            FirstShowing = 4,
-            PrimeTime = 8,
-            CommercialFree = 16,
-            HighDefinition = 32,
-            ThisEpisode = 64,
-            ThisSeries = 128,
-            ThisTime = 256,
-            ThisDayTime = 512,
-            ThisChannel = 1024
-        }
-
-        private class RecRule
-        {
-            public string Id { get; set; }
-            public string ParentId { get; set; }
-            public string Inactive { get; set; }
-            public string Title { get; set; }
-            public string SubTitle { get; set; }
-            public string Description { get; set; }
-            public string Season { get; set; }
-            public string Episode { get; set; }
-            public string Category { get; set; }
-            public DateTime StartTime { get; set; }
-            public DateTime EndTime { get; set; }
-            public string SeriesId { get; set; }
-            public string ProgramId { get; set; }
-            public string Inetref { get; set; }
-            public string ChanId { get; set; }
-            public string CallSign { get; set; }
-            public string FindDay { get; set; }
-            public string FindTime { get; set; }
-            public string Type { get; set; }
-            public string SearchType { get; set; }
-            public string RecPriority { get; set; }
-            public string PreferredInput { get; set; }
-            public int StartOffset { get; set; }
-            public int EndOffset { get; set; }
-            public string DupMethod { get; set; }
-            public string DupIn { get; set; }
-            public RecFilter Filter { get; set; }
-            public string RecProfile { get; set; }
-            public string RecGroup { get; set; }
-            public string StorageGroup { get; set; }
-            public string PlayGroup { get; set; }
-            public bool AutoExpire { get; set; }
-            public int MaxEpisodes { get; set; }
-            public bool MaxNewest { get; set; }
-            public bool AutoCommflag { get; set; }
-            public bool AutoTranscode { get; set; }
-            public bool AutoMetaLookup { get; set; }
-            public bool AutoUserJob1 { get; set; }
-            public bool AutoUserJob2 { get; set; }
-            public bool AutoUserJob3 { get; set; }
-            public bool AutoUserJob4 { get; set; }
-            public string Transcoder { get; set; }
-            public DateTime? NextRecording { get; set; }
-            public DateTime LastRecorded { get; set; }
-            public DateTime LastDeleted { get; set; }
-            public string AverageDelay { get; set; }
-        }
-
         private class RecRuleRootObject
         {
             public RecRule RecRule { get; set; }
-        }
-
-        private class RecRuleList
-        {
-            public string StartIndex { get; set; }
-            public string Count { get; set; }
-            public string TotalAvailable { get; set; }
-            public string AsOf { get; set; }
-            public string Version { get; set; }
-            public string ProtoVer { get; set; }
-            public List<RecRule> RecRules { get; set; }
         }
 
         private class RootObject
@@ -521,103 +350,6 @@ namespace babgvant.Emby.MythTv.Responses
             }
 
             return info;
-        }
-
-        private class Input
-        {
-            public string Id { get; set; }
-            public string CardId { get; set; }
-            public string SourceId { get; set; }
-            public string InputName { get; set; }
-            public string DisplayName { get; set; }
-            public string QuickTune { get; set; }
-            public string RecPriority { get; set; }
-            public string ScheduleOrder { get; set; }
-            public string LiveTVOrder { get; set; }
-        }
-
-        private class Channel
-        {
-            public string ChanId { get; set; }
-            public string ChanNum { get; set; }
-            public string CallSign { get; set; }
-            public string IconURL { get; set; }
-            public string ChannelName { get; set; }
-            public string MplexId { get; set; }
-            public string ServiceId { get; set; }
-            public string ATSCMajorChan { get; set; }
-            public string ATSCMinorChan { get; set; }
-            public string Format { get; set; }
-            public string FrequencyId { get; set; }
-            public string FineTune { get; set; }
-            public string ChanFilters { get; set; }
-            public string SourceId { get; set; }
-            public string InputId { get; set; }
-            public string CommFree { get; set; }
-            public string UseEIT { get; set; }
-            public string Visible { get; set; }
-            public string XMLTVID { get; set; }
-            public string DefaultAuth { get; set; }
-            public List<object> Programs { get; set; }
-        }
-
-        private class Artwork
-        {
-            public List<object> ArtworkInfos { get; set; }
-        }
-
-        private class Cast
-        {
-            public List<object> CastMembers { get; set; }
-        }
-
-        private class Recording
-        {
-            public string StartTime { get; set; }
-            public string EndTime { get; set; }
-            public string Title { get; set; }
-            public string SubTitle { get; set; }
-            public string Category { get; set; }
-            public string CatType { get; set; }
-            public string Repeat { get; set; }
-            public string VideoProps { get; set; }
-            public string AudioProps { get; set; }
-            public string SubProps { get; set; }
-            public string SeriesId { get; set; }
-            public string ProgramId { get; set; }
-            public string Stars { get; set; }
-            public string LastModified { get; set; }
-            public string ProgramFlags { get; set; }
-            public string Airdate { get; set; }
-            public string Description { get; set; }
-            public string Inetref { get; set; }
-            public string Season { get; set; }
-            public string Episode { get; set; }
-            public string TotalEpisodes { get; set; }
-            public string FileSize { get; set; }
-            public string FileName { get; set; }
-            public string HostName { get; set; }
-            public Channel Channel { get; set; }
-            public Artwork Artwork { get; set; }
-            public Cast Cast { get; set; }
-        }
-
-        private class Encoder
-        {
-            public string Id { get; set; }
-            public string HostName { get; set; }
-            public string Local { get; set; }
-            public string Connected { get; set; }
-            public int State { get; set; }
-            public string SleepStatus { get; set; }
-            public string LowOnFreeSpace { get; set; }
-            public List<Input> Inputs { get; set; }
-            public Recording Recording { get; set; }
-        }
-
-        private class EncoderList
-        {
-            public List<Encoder> Encoders { get; set; }
         }
 
         private class RootObject
