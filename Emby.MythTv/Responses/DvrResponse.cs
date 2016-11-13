@@ -248,7 +248,9 @@ namespace babgvant.Emby.MythTv.Responses
         {
 
             var root = json.DeserializeFromStream<RootObject>(stream);
-	    return root.RecRuleList.RecRules.Select(i => GetRecRule(i));
+	    return root.RecRuleList.RecRules
+		.Where(rule => !rule.Type.Equals("Recording Template"))
+		.Select(i => GetRecRule(i));
 
 	}
 
