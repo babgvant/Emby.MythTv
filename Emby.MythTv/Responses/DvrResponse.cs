@@ -259,7 +259,7 @@ namespace babgvant.Emby.MythTv.Responses
 
             var root = json.DeserializeFromStream<RootObject>(stream);
 	    return root.RecRuleList.RecRules
-		.Where(rule => !rule.Type.Equals("Recording Template"))
+		.Where(rule => rule.Type.Equals("Record All"))
 		.Select(i => RecRuleToTimerInfo(i));
 
 	}
