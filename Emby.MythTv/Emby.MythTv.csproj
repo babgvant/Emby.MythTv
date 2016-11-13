@@ -94,8 +94,6 @@
     <Compile Include="Responses\ChannelResponse.cs" />
     <Compile Include="Responses\DvrResponse.cs" />
     <Compile Include="Responses\GuideResponse.cs" />
-    <Compile Include="Responses\RuleResponse.cs" />
-    <Compile Include="Responses\UpcomingResponse.cs" />
     <Compile Include="Responses\UtilityResponse.cs" />
     <Compile Include="Protocol\LiveTVPlayback.cs" />
     <Compile Include="Protocol\ProtoBase.cs" />
