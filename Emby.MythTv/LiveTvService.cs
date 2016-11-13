@@ -113,7 +113,7 @@ namespace babgvant.Emby.MythTv
             return ret;
         }
 
-        private string FormateMythDate(DateTime inDate)
+        private string FormatMythDate(DateTime inDate)
         {
             return inDate.ToString("yyyy-MM-ddTHH:mm:ss");
         }
@@ -187,7 +187,7 @@ namespace babgvant.Emby.MythTv
             //         _logger.Info(string.Format("[MythTV] Delete Recording Async chan: {0} start: {1}", chanId, start));            
             //         //await Host.DvrService.RemoveRecordedAsync(chanId, start);
 
-            //         using (var stream = await _httpClient.Get(GetOptions(cancellationToken, "/Dvr/RemoveRecorded?ChanId={0}&StartTime={1}", chanId, FormateMythDate(start))).ConfigureAwait(false))
+            //         using (var stream = await _httpClient.Get(GetOptions(cancellationToken, "/Dvr/RemoveRecorded?ChanId={0}&StartTime={1}", chanId, FormatMythDate(start))).ConfigureAwait(false))
             //         {
                         
             //         }    
@@ -337,7 +337,7 @@ namespace babgvant.Emby.MythTv
 	    if (ChanId.Equals("0"))
 		ChanId = info.ProgramId.Split('_')[0];
 
-	    var StartTime = FormateMythDate(info.StartDate);
+	    var StartTime = FormatMythDate(info.StartDate);
 
 	    //now get myth to generate the standard recording template for the program
 	    return GetOptions(cancellationToken,
@@ -353,7 +353,7 @@ namespace babgvant.Emby.MythTv
 	    if (ChanId.Equals("0"))
 		ChanId = info.ProgramId.Split('_')[0];
 
-	    var StartTime = FormateMythDate(info.StartDate);
+	    var StartTime = FormatMythDate(info.StartDate);
 
 	    //now get myth to generate the standard recording template for the program
 	    return GetOptions(cancellationToken,
@@ -577,8 +577,8 @@ namespace babgvant.Emby.MythTv
 	    
 		var options = GetOptions(cancellationToken,
 					 "/Guide/GetProgramGuide?StartTime={0}&EndTime={1}&Details=1",
-					 FormateMythDate(startDateUtc),
-					 FormateMythDate(endDateUtc));
+					 FormatMythDate(startDateUtc),
+					 FormatMythDate(endDateUtc));
 		// This can be slow so default 20 sec timeout can be too short
 		options.TimeoutMs = 60000;
 
