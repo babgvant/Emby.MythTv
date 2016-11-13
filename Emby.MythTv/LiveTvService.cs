@@ -35,6 +35,11 @@ namespace babgvant.Emby.MythTv
 	// cache the listings data
 	private readonly AsyncLock _guideLock = new AsyncLock();
 	private GuideResponse _guide;
+
+	// cache the channelId -> chanNum map for liveTV
+	private readonly AsyncLock _channelLock = new AsyncLock();
+	private Dictionary<string, string> channelNums;
+
         
         public LiveTvService(IHttpClient httpClient, IJsonSerializer jsonSerializer, ILogger logger)
         {
@@ -147,6 +152,11 @@ namespace babgvant.Emby.MythTv
 								  Plugin.Instance.Configuration.LoadChannelIcons));
 		}
 	    }
+
+	    using (var releaser = await _channelLock.LockAsync()) {
+		channelNums = channels.ToDictionary(i => i.Id, i => i.Number);
+	    }
+	    
             return channels;
         }
 
@@ -443,7 +453,11 @@ namespace babgvant.Emby.MythTv
         {
             _logger.Info($"[MythTV] Start ChannelStream for {channelId}");
 
-	    var success = await _liveTV.SpawnLiveTV("108");
+	    // await GetChannels if channelNums isn't populated
+	    if (channelNums == null)
+		await GetChannelsAsync(cancellationToken);
+	    
+	    var success = await _liveTV.SpawnLiveTV(channelNums[channelId]);
 	    var filepath = await _liveTV.GetCurrentRecording();
 
 	    _logger.Info($"[MythTV] ChannelStream at {filepath}");
