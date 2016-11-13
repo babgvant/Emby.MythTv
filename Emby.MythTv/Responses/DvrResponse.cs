@@ -268,7 +268,9 @@ namespace babgvant.Emby.MythTv.Responses
 		    RecordAnyChannel = !((item.Filter & RecFilter.ThisChannel) == RecFilter.ThisChannel),
 		    RecordAnyTime = !((item.Filter & RecFilter.ThisDayTime) == RecFilter.ThisDayTime),
 		    RecordNewOnly = ((item.Filter & RecFilter.NewEpisode) == RecFilter.NewEpisode),
-		    ProgramId = item.ProgramId
+		    ProgramId = item.ProgramId,
+		    SeriesId = item.SeriesId,
+		    KeepUpTo = item.MaxEpisodes
 		};
 
 	    return info;
@@ -334,16 +336,16 @@ namespace babgvant.Emby.MythTv.Responses
 	    public string RecGroup { get; set; }
 	    public string StorageGroup { get; set; }
 	    public string PlayGroup { get; set; }
-	    public string AutoExpire { get; set; }
-	    public string MaxEpisodes { get; set; }
-	    public string MaxNewest { get; set; }
-	    public string AutoCommflag { get; set; }
-	    public string AutoTranscode { get; set; }
-	    public string AutoMetaLookup { get; set; }
-	    public string AutoUserJob1 { get; set; }
-	    public string AutoUserJob2 { get; set; }
-	    public string AutoUserJob3 { get; set; }
-	    public string AutoUserJob4 { get; set; }
+	    public bool AutoExpire { get; set; }
+	    public int MaxEpisodes { get; set; }
+	    public bool MaxNewest { get; set; }
+	    public bool AutoCommflag { get; set; }
+	    public bool AutoTranscode { get; set; }
+	    public bool AutoMetaLookup { get; set; }
+	    public bool AutoUserJob1 { get; set; }
+	    public bool AutoUserJob2 { get; set; }
+	    public bool AutoUserJob3 { get; set; }
+	    public bool AutoUserJob4 { get; set; }
 	    public string Transcoder { get; set; }
 	    public DateTime? NextRecording { get; set; }
 	    public DateTime LastRecorded { get; set; }
