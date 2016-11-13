@@ -30,46 +30,46 @@ namespace babgvant.Emby.MythTv.Responses
             }
         }
 
-	private class Version
-	{
-	    public string Ver { get; set; }
-	    public string Branch { get; set; }
-	    public string Protocol { get; set; }
-	    public string Binary { get; set; }
-	    public string Schema { get; set; }
-	}
+        private class Version
+        {
+            public string Ver { get; set; }
+            public string Branch { get; set; }
+            public string Protocol { get; set; }
+            public string Binary { get; set; }
+            public string Schema { get; set; }
+        }
 
-	private class Database
-	{
-	    public string Host { get; set; }
-	    public string Ping { get; set; }
-	    public string Port { get; set; }
-	    public string UserName { get; set; }
-	    public string Password { get; set; }
-	    public string Name { get; set; }
-	    public string Type { get; set; }
-	    public string LocalEnabled { get; set; }
-	    public string LocalHostName { get; set; }
-	}
+        private class Database
+        {
+            public string Host { get; set; }
+            public string Ping { get; set; }
+            public string Port { get; set; }
+            public string UserName { get; set; }
+            public string Password { get; set; }
+            public string Name { get; set; }
+            public string Type { get; set; }
+            public string LocalEnabled { get; set; }
+            public string LocalHostName { get; set; }
+        }
 
-	private class WOL
-	{
-	    public string Enabled { get; set; }
-	    public string Reconnect { get; set; }
-	    public string Retry { get; set; }
-	    public string Command { get; set; }
-	}
+        private class WOL
+        {
+            public string Enabled { get; set; }
+            public string Reconnect { get; set; }
+            public string Retry { get; set; }
+            public string Command { get; set; }
+        }
 
-	private class ConnectionInfo
-	{
-	    public Version Version { get; set; }
-	    public Database Database { get; set; }
-	    public WOL WOL { get; set; }
-	}
+        private class ConnectionInfo
+        {
+            public Version Version { get; set; }
+            public Database Database { get; set; }
+            public WOL WOL { get; set; }
+        }
 
-	private class RootConnectionInfoObject
-	{
-	    public ConnectionInfo ConnectionInfo { get; set; }
-	}
+        private class RootConnectionInfoObject
+        {
+            public ConnectionInfo ConnectionInfo { get; set; }
+        }
     }
 }

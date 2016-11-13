@@ -9,7 +9,7 @@ namespace babgvant.Emby.MythTv.Configuration
 {
     public class PluginConfiguration : BasePluginConfiguration
     {
-	public string Host { get; set; }
+        public string Host { get; set; }
 
         public string WebServiceUrl
         {

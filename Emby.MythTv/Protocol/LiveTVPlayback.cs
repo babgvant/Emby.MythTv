@@ -9,11 +9,11 @@ namespace babgvant.Emby.MythTv.Protocol
     class LiveTVPlayback : ProtoMonitor
     {
         private Dictionary<int, ProtoRecorder> m_recorders;
-	private int m_idCounter = 0;
+        private int m_idCounter = 0;
 
         public LiveTVPlayback(string server, int port) : base(server, port)
         {
-	    m_recorders = new Dictionary<int, ProtoRecorder>();
+            m_recorders = new Dictionary<int, ProtoRecorder>();
         }
 
         ~LiveTVPlayback()
@@ -28,8 +28,8 @@ namespace babgvant.Emby.MythTv.Protocol
 
         public override async Task Close()
         {
-	    foreach (var recorder in m_recorders)
-		await recorder.Value.Close();
+            foreach (var recorder in m_recorders)
+                await recorder.Value.Close();
             await base.Close();
         }
 
@@ -46,9 +46,9 @@ namespace babgvant.Emby.MythTv.Protocol
 
             if (await recorder.SpawnLiveTV(chain.UID, chanNum))
             {
-		m_idCounter++;
-		m_recorders.Add(m_idCounter, recorder);
-		
+                m_idCounter++;
+                m_recorders.Add(m_idCounter, recorder);
+                
                 return m_idCounter;
             }
 
@@ -58,24 +58,24 @@ namespace babgvant.Emby.MythTv.Protocol
 
         public async Task<string> GetCurrentRecording(int id)
         {
-	    var recorder = m_recorders[id];
-	    int fileSize = 0;
-	    Program program = null;
-	    while (fileSize == 0)
-	    {
-		program = await recorder.GetCurrentRecording75();
-		fileSize = await recorder.QueryFileSize65(program.fileName.Split('/').Last(), "LiveTV");
-		System.Threading.Thread.Sleep(500);
-	    }
-	    return program.fileName;
+            var recorder = m_recorders[id];
+            int fileSize = 0;
+            Program program = null;
+            while (fileSize == 0)
+            {
+                program = await recorder.GetCurrentRecording75();
+                fileSize = await recorder.QueryFileSize65(program.fileName.Split('/').Last(), "LiveTV");
+                System.Threading.Thread.Sleep(500);
+            }
+            return program.fileName;
         }
 
         public async Task StopLiveTV(int id)
         {
-	    if (m_recorders.ContainsKey(id) && m_recorders[id].IsPlaying)
+            if (m_recorders.ContainsKey(id) && m_recorders[id].IsPlaying)
             {
                 await m_recorders[id].StopLiveTV();
-		m_recorders.Remove(id);
+                m_recorders.Remove(id);
             }
         }
 
