@@ -321,6 +321,8 @@ namespace babgvant.Emby.MythTv.Responses
 		    orgRule.Filter |= RecFilter.NewEpisode;
 		else
 		    orgRule.Filter &= RecFilter.NewEpisode;
+
+		orgRule.MaxEpisodes = info.KeepUpTo;
 	    
 	    }
 

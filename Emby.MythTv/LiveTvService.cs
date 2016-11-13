@@ -340,16 +340,18 @@ namespace babgvant.Emby.MythTv
 	private HttpRequestOptions GetRuleStreamOptions(SeriesTimerInfo info, CancellationToken cancellationToken)
 	{
 
-	    //split the program id back into channel + starttime.
-	    var progData = info.ProgramId.Split('_');
-	    var channelId = progData[0];
-	    var startTime = FormateMythDate(new DateTime(Convert.ToInt64(progData[1])));
+	    var ChanId = info.ChannelId;
+	    
+	    //split the program id back into channel + starttime if ChannelId not defined
+	    if (ChanId.Equals("0"))
+		ChanId = info.ProgramId.Split('_')[0];
+
+	    var StartTime = FormateMythDate(info.StartDate);
 
 	    //now get myth to generate the standard recording template for the program
-	    var options = GetOptions(cancellationToken,
-				     $"/Dvr/GetRecordSchedule?ChanId={channelId}&StartTime={startTime}");
-
-	    return options;
+	    return GetOptions(cancellationToken,
+			      $"/Dvr/GetRecordSchedule?ChanId={ChanId}&StartTime={StartTime}");
+	    
 	}
 
         /// <summary>
@@ -382,40 +384,18 @@ namespace babgvant.Emby.MythTv
         /// <returns></returns>
         public async Task UpdateSeriesTimerAsync(SeriesTimerInfo info, CancellationToken cancellationToken)
         {
-	    throw new NotImplementedException();
-            // _logger.Info(string.Format("[MythTV] Start UpdateSeriesTimer Async for ChannelId: {0} & Name: {1}", info.ChannelId, info.Name));
-            // EnsureSetup();
+	    var seriesTimerJson = _jsonSerializer.SerializeToString(info);
+            _logger.Info($"[MythTV] Start UpdateSeriesTimer Async for SeriesTimerInfo\n{seriesTimerJson}");
 
-            // using (var stream = await _httpClient.Get(GetOptions(cancellationToken, "/Dvr/GetRecordSchedule?RecordId={0}", info.Id)).ConfigureAwait(false))
-            // {
-            //     RecRule orgRule = DvrResponse.GetRecRule(stream, _jsonSerializer, _logger);
-            //     if (orgRule != null)
-            //     {
-            //         orgRule.Title = info.Name;
-            //         orgRule.ChanId = info.ChannelId;
-            //         orgRule.CallSign = await GetCallsign(info.ChannelId, cancellationToken);
-            //         orgRule.EndTime = info.EndDate;
-            //         orgRule.StartTime = info.StartDate;
-            //         orgRule.StartOffset = info.PrePaddingSeconds / 60;
-            //         orgRule.EndOffset = info.PostPaddingSeconds / 60;
-            //         if (info.RecordAnyChannel)
-            //             orgRule.Filter |= RecFilter.ThisChannel;
-            //         else
-            //             orgRule.Filter &= RecFilter.ThisChannel;
-            //         if (info.RecordAnyTime)
-            //             orgRule.Filter &= RecFilter.ThisDayTime;
-            //         else
-            //             orgRule.Filter |= RecFilter.ThisDayTime;
-            //         if (info.RecordNewOnly)
-            //             orgRule.Filter |= RecFilter.NewEpisode;
-            //         else
-            //             orgRule.Filter &= RecFilter.NewEpisode;
+            EnsureSetup();
 
-            //         var options = PostOptions(cancellationToken, ConvertJsonRecRuleToPost(_jsonSerializer.SerializeToString(orgRule)), "/Dvr/UpdateRecordSchedule");
+            using (var stream = await _httpClient.Get(GetRuleStreamOptions(info, cancellationToken)))
+            {
+		var json = new RuleResponse().GetNewSeriesTimerJson(info, stream, _jsonSerializer, _logger);
+		var post = PostOptions(cancellationToken, ConvertJsonRecRuleToPost(json), "/Dvr/UpdateRecordSchedule");
+		await _httpClient.Post(post).ConfigureAwait(false);
+            }          
 
-            //         using (var response = await _httpClient.Post(options).ConfigureAwait(false)) { }
-            //     }
-            // }
         }
 
         /// <summary>
