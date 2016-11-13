@@ -89,27 +89,30 @@ namespace babgvant.Emby.MythTv.Responses
 						StringComparison.OrdinalIgnoreCase)
 		};
 
-	    //             if (Plugin.Instance.RecordingUncs.Count > 0)
-            //             {
-            //                 foreach (string unc in Plugin.Instance.RecordingUncs)
-            //                 {
-            //                     string recPath = Path.Combine(unc, item.FileName);
-            //                     if (File.Exists(recPath))
-            //                     {
-            //                         val.Path = recPath;
-            //                         break;
-            //                     }
-            //                 }
-            //             }
-            //             val.Genres.AddRange(item.Category.Split(new char[] { '/' }, StringSplitOptions.RemoveEmptyEntries));
-            //             if (item.Artwork.ArtworkInfos.Count() > 0)
-            //             {
-            //                 val.HasImage = true;
-            //                 val.ImageUrl = string.Format("{0}{1}", Plugin.Instance.Configuration.WebServiceUrl, item.Artwork.ArtworkInfos[0].URL);
-            //             }
-            //             else
-            //                 val.HasImage = false;
+	    if (Plugin.Instance.RecordingUncs.Count > 0)
+	    {
+		foreach (string unc in Plugin.Instance.RecordingUncs)
+		{
+		    string recPath = Path.Combine(unc, item.FileName);
+		    if (File.Exists(recPath))
+		    {
+			recInfo.Path = recPath;
+			break;
+		    }
+		}
+	    }
 
+	    recInfo.Genres.AddRange(item.Category.Split(new char[] { '/' }, StringSplitOptions.RemoveEmptyEntries));
+
+	    if (item.Artwork.ArtworkInfos.Count() > 0)
+	    {
+		recInfo.HasImage = true;
+		recInfo.ImageUrl = string.Format("{0}{1}",
+						 Plugin.Instance.Configuration.WebServiceUrl,
+						 item.Artwork.ArtworkInfos[0].URL);
+	    }
+	    else
+		recInfo.HasImage = false;
 
 	    return recInfo;
 
