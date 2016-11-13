@@ -316,7 +316,7 @@ namespace babgvant.Emby.MythTv
                         var sources = ChannelResponse.ParseVideoSourceList(sourcesstream, _jsonSerializer, _logger);
                         foreach (var source in sources.VideoSources)
                         {
-                            using (var stream = await _httpClient.Get(GetOptions(cancellationToken, "/Channel/GetChannelInfoList?SourceID={0}", source.Id)).ConfigureAwait(false))
+                            using (var stream = await _httpClient.Get(GetOptions(cancellationToken, "/Channel/GetChannelInfoList?SourceID={0}&Details=true", source.Id)).ConfigureAwait(false))
                             {
                                 var channels = ChannelResponse.ParseChannelInfoList(stream, _jsonSerializer, _logger);
                                 foreach (var channel in channels.ChannelInfos)
