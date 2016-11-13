@@ -216,8 +216,14 @@ namespace babgvant.Emby.MythTv
 
 	    // A timer coming from a series timer will have a ficticious id
 	    // of the form xxx_yyyy
+	    // In this case we have to create a new 'do not record' rule for the program
 	    if (timerId.Contains('_'))
+	    {
+		var ChannelId = timerId.Split('_')[0];
+		var StartDate = new DateTime(Convert.ToInt64(timerId.Split('_')[1]));
+		CreateDoNotRecordTimerAsync(ChannelId, StartDate, cancellationToken);
 		return;
+	    }
 
 	    // We are cancelling a legitimate single timer
             EnsureSetup();
@@ -264,6 +270,24 @@ namespace babgvant.Emby.MythTv
 
         }
 
+	private async Task CreateDoNotRecordTimerAsync(string ChannelId, DateTime StartDate,
+						       CancellationToken cancellationToken)
+        {
+
+            _logger.Info($"[MythTV] Start CreateDoNotRecordTimer Async for Channel {ChannelId} at {StartDate}");
+
+            EnsureSetup();
+
+	    var options = GetRuleStreamOptions(ChannelId, StartDate, null, cancellationToken, true);
+            using (var stream = await _httpClient.Get(options))
+            {
+		var json = new RuleResponse().GetNewDoNotRecordTimerJson(stream, _jsonSerializer, _logger);
+		var post = PostOptions(cancellationToken, ConvertJsonRecRuleToPost(json), "/Dvr/AddRecordSchedule");
+		await _httpClient.Post(post).ConfigureAwait(false);
+            }
+
+        }
+
         /// <summary>
         /// Get the pending Recordings.
         /// </summary>
@@ -297,7 +321,8 @@ namespace babgvant.Emby.MythTv
         }
 
 	private HttpRequestOptions GetRuleStreamOptions(string ChanId, DateTime StartDate, string ProgramId,
-							CancellationToken cancellationToken)
+							CancellationToken cancellationToken,
+							bool MakeOverride = false)
 	{
 	    //split the program id back into channel + starttime if ChannelId not defined
 	    if (ChanId.Equals("0"))
@@ -305,9 +330,12 @@ namespace babgvant.Emby.MythTv
 
 	    var StartTime = FormatMythDate(StartDate);
 
+	    var url = $"/Dvr/GetRecordSchedule?ChanId={ChanId}&StartTime={StartTime}";
+	    if (MakeOverride)
+		url = url + "&MakeOverride=true";
+
 	    //now get myth to generate the standard recording template for the program
-	    return GetOptions(cancellationToken,
-			      $"/Dvr/GetRecordSchedule?ChanId={ChanId}&StartTime={StartTime}");
+	    return GetOptions(cancellationToken, url);
 	}
 
         /// <summary>

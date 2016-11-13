@@ -365,6 +365,17 @@ namespace babgvant.Emby.MythTv.Responses
 	    return output;
 	}
 
+	public string GetNewDoNotRecordTimerJson(Stream stream, IJsonSerializer json, ILogger logger)
+	{
+
+	    RecRule rule = GetOneRecRule(stream, json, logger);
+	    rule.Type = "Do not Record";
+
+	    var output = json.SerializeToString(rule);
+	    logger.Info($"[MythTV RuleResponse: generated new timer json:\n{output}");
+
+	    return output;
+	}
 
 	[Flags]
 	private enum RecFilter
