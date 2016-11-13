@@ -409,28 +409,18 @@ namespace babgvant.Emby.MythTv
         /// <returns></returns>
         public async Task UpdateTimerAsync(TimerInfo info, CancellationToken cancellationToken)
         {
-	    throw new NotImplementedException();
-            // _logger.Info(string.Format("[MythTV] Start UpdateTimer Async for ChannelId: {0} & Name: {1}", info.ChannelId, info.Name));
-            // EnsureSetup();
+	    var timerJson = _jsonSerializer.SerializeToString(info);
+            _logger.Info($"[MythTV] Start UpdateTimer Async for TimerInfo\n{timerJson}");
 
-            // using (var stream = await _httpClient.Get(GetOptions(cancellationToken, "/Dvr/GetRecordSchedule?RecordId={0}", info.Id)).ConfigureAwait(false))
-            // {
-            //     RecRule orgRule = DvrResponse.GetRecRule(stream, _jsonSerializer, _logger);
-            //     if (orgRule != null)
-            //     {
-            //         orgRule.Title = info.Name;
-            //         orgRule.ChanId = info.ChannelId;
-            //         orgRule.CallSign = await GetCallsign(info.ChannelId, cancellationToken);
-            //         orgRule.EndTime = info.EndDate;
-            //         orgRule.StartTime = info.StartDate;
-            //         orgRule.StartOffset = info.PrePaddingSeconds / 60;
-            //         orgRule.EndOffset = info.PostPaddingSeconds / 60;
+            EnsureSetup();
 
-            //         var options = PostOptions(cancellationToken, ConvertJsonRecRuleToPost(_jsonSerializer.SerializeToString(orgRule)), "/Dvr/UpdateRecordSchedule");
+            using (var stream = await _httpClient.Get(GetSingleRuleStreamOptions(info, cancellationToken)))
+            {
+		var json = new RuleResponse().GetNewTimerJson(info, stream, _jsonSerializer, _logger);
+		var post = PostOptions(cancellationToken, ConvertJsonRecRuleToPost(json), "/Dvr/UpdateRecordSchedule");
+		await _httpClient.Post(post).ConfigureAwait(false);
+            }          
 
-            //         using (var response = await _httpClient.Post(options).ConfigureAwait(false)) { }
-            //     }
-            // }
         }
 
         /// <summary>
