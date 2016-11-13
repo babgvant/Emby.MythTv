@@ -66,11 +66,15 @@
     <Compile Include="Model\ArtworkInfo.cs" />
     <Compile Include="Model\Channel.cs" />
     <Compile Include="Model\ChannelInfoList.cs" />
+    <Compile Include="Model\ConnectionInfo.cs" />
+    <Compile Include="Model\Database.cs" />
     <Compile Include="Model\Program.cs" />
     <Compile Include="Model\ProgramGuide.cs" />
     <Compile Include="Model\RecordingDetail.cs" />
+    <Compile Include="Model\Version.cs" />
     <Compile Include="Model\VideoSource.cs" />
     <Compile Include="Model\VideoSourceList.cs" />
+    <Compile Include="Model\WOL.cs" />
     <Compile Include="Plugin.cs" />
     <Compile Include="Configuration\PluginConfiguration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
