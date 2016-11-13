@@ -472,6 +472,7 @@ namespace babgvant.Emby.MythTv.Responses
 	    public Program Program { get; set; }
 	}
 
+	[Flags]
 	private enum RecFilter
 	{
 	    NewEpisode = 1,
