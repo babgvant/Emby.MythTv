@@ -56,10 +56,10 @@ namespace babgvant.Emby.MythTv
         {
             var config = Plugin.Instance.Configuration;
 
-            if (string.IsNullOrEmpty(config.WebServiceUrl))
+            if (string.IsNullOrEmpty(config.Host))
             {
-                _logger.Error("[MythTV] Web service url must be configured.");
-                throw new InvalidOperationException("MythTV web service url must be configured.");
+                _logger.Error("[MythTV] Host must be configured.");
+                throw new InvalidOperationException("MythTV host must be configured.");
             }
 
             //if (string.IsNullOrEmpty(config.UncPath))

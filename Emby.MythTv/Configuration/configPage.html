@@ -12,12 +12,12 @@
 
                     <ul class="ulForm" data-role="listview">
                         <li>
-                            <label for="txtWebServiceUrl">
-                                MythTv base url:
+                            <label for="txtHost">
+                                MythTv host:
                             </label>
-                            <input type="text" id="txtWebServiceUrl" name="txtWebServiceUrl" />
+                            <input type="text" id="txtHost" name="txtHost" />
                             <div class="fieldDescription">
-                                MythTv backend url (format --> http://{hostname}:{port}, usually port 6544 ).
+                                MythTv backend host IP.
                             </div>
                         </li>
                         <li>
@@ -89,7 +89,7 @@
 
                 ApiClient.getPluginConfiguration(MythTvConfigurationPage.pluginUniqueId).then(function (config) {
 
-                    $('#txtWebServiceUrl', page).val(config.WebServiceUrl || "");
+                    $('#txtHost', page).val(config.Host || "");
                     $('#txtUncPath', page).val(config.UncPath || "");
                     $('#txtRecExclude', page).val(config.RecGroupExclude || "");
                     //$('#txtUserName', page).val(config.UserName || "");
@@ -109,7 +109,7 @@
 
                 ApiClient.getPluginConfiguration(MythTvConfigurationPage.pluginUniqueId).then(function (config) {
 
-                    config.WebServiceUrl = $('#txtWebServiceUrl', form).val();
+                    config.Host = $('#txtHost', form).val();
                     config.UncPath = $('#txtUncPath', form).val();
                     config.RecGroupExclude = $('#txtRecExclude', form).val();
                     //config.UserName = $('#txtUserName', form).val();

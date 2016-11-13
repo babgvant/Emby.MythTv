@@ -9,20 +9,13 @@ namespace babgvant.Emby.MythTv.Configuration
 {
     public class PluginConfiguration : BasePluginConfiguration
     {
-        private string _webServiceUrl;
+	public string Host { get; set; }
 
         public string WebServiceUrl
         {
             get
             {
-                return _webServiceUrl;
-            }
-            set
-            {
-                if (!string.IsNullOrWhiteSpace(value) && value.EndsWith("/"))
-                    _webServiceUrl = value.Remove(value.Length - 1);
-                else
-                    _webServiceUrl = value;
+                return $"http://{Host}:6544";
             }
         }
         public string UncPath { get; set; }
@@ -38,7 +31,7 @@ namespace babgvant.Emby.MythTv.Configuration
         {
             UserName = string.Empty;
             Password = string.Empty;
-            WebServiceUrl = "";
+            Host = "";
             UncPath = "";
             TimeShift = false;
             EnableDebugLogging = false;
