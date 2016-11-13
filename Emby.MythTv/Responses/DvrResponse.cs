@@ -322,6 +322,8 @@ namespace babgvant.Emby.MythTv.Responses
 		    orgRule.Filter &= ~RecFilter.NewEpisode;
 
 		orgRule.MaxEpisodes = info.KeepUpTo;
+		orgRule.StartOffset = info.PrePaddingSeconds / 60;
+		orgRule.EndOffset = info.PostPaddingSeconds / 60;
 	    
 	    }
 
