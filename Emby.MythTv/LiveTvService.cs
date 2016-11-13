@@ -213,15 +213,19 @@ namespace babgvant.Emby.MythTv
         public async Task CancelTimerAsync(string timerId, CancellationToken cancellationToken)
         {
 
-	    throw new NotImplementedException();
-	    
-            // _logger.Info(string.Format("[MythTV] Start Cancel Recording Async for recordingId: {0}", timerId));
-            // EnsureSetup();
+            _logger.Info($"[MythTV] Start Cancel Recording Async for recordingId: {timerId}");
 
-            // using (var stream = await _httpClient.Post(PostOptions(cancellationToken, string.Format("RecordId={0}", timerId), "/Dvr/RemoveRecordSchedule")).ConfigureAwait(false))
-            // {
-            //     //return new RecordingResponse().GetSeriesTimers(stream, _jsonSerializer, _logger);
-            // }
+	    // A timer coming from a series timer will have a ficticious id
+	    // of the form xxx_yyyy
+	    if (timerId.Contains('_'))
+		return;
+
+	    // We are cancelling a legitimate single timer
+            EnsureSetup();
+
+	    var options = PostOptions(cancellationToken, $"RecordId={timerId}", "/Dvr/RemoveRecordSchedule");
+            await _httpClient.Post(options).ConfigureAwait(false);
+	
         }
 
 	private async Task<IEnumerable<string>> GetVideoSourceList(CancellationToken cancellationToken)
