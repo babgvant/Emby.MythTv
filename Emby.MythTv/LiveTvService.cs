@@ -1,5 +1,6 @@
 ﻿using babgvant.Emby.MythTv.Helpers;
 using babgvant.Emby.MythTv.Responses;
+using babgvant.Emby.MythTv.Protocol;
 using MediaBrowser.Common.Extensions;
 using MediaBrowser.Common.Net;
 using MediaBrowser.Controller.Drawing;
@@ -29,6 +30,7 @@ namespace babgvant.Emby.MythTv
         private readonly IJsonSerializer _jsonSerializer;
         private readonly CultureInfo _usCulture = new CultureInfo("en-US");
         private readonly ILogger _logger;
+	private LiveTVPlayback _liveTV;
 
 	// cache the listings data
 	private readonly AsyncLock _guideLock = new AsyncLock();
@@ -67,6 +69,13 @@ namespace babgvant.Emby.MythTv
             //    _logger.Error("[MythTV] UncPath must be configured.");
             //    throw new InvalidOperationException("[MythTV] UncPath must be configured.");
             //}
+
+	    if (_liveTV == null)
+	    {
+		_logger.Info("[MythTV] Initiating MythProtocol connection");
+		_liveTV = new LiveTVPlayback(config.Host, 6543);
+		_liveTV.Open();
+	    }
         }
 
         private HttpRequestOptions PostOptions(CancellationToken cancellationToken, string requestContent, string uriPathQuery, params object[] plist) 
@@ -430,13 +439,49 @@ namespace babgvant.Emby.MythTv
             throw new NotImplementedException();
         }
 
-        public async Task<MediaSourceInfo> GetChannelStream(string channelOid, string mediaSourceId, CancellationToken cancellationToken)
+        public async Task<MediaSourceInfo> GetChannelStream(string channelId, string mediaSourceId, CancellationToken cancellationToken)
         {
-            _logger.Info("[MythTV] Start ChannelStream");
+            _logger.Info($"[MythTV] Start ChannelStream for {channelId}");
 
-            throw new NotImplementedException();
+	    var success = await _liveTV.SpawnLiveTV("108");
+	    var filepath = await _liveTV.GetCurrentRecording();
 
-        }
+	    var filename = filepath.Split('/').Last();
+	    var url = $"{Plugin.Instance.Configuration.WebServiceUrl}/Content/GetFile?StorageGroup=LiveTV&FileName={filename}";
+
+	    _logger.Info($"[MythTV] ChannelStream at {url}");
+
+	    var output = new MediaSourceInfo
+	    {
+		Id = channelId,
+		Path = url,
+		Protocol = MediaProtocol.Http,
+		MediaStreams = new List<MediaStream>
+		{
+		    new MediaStream
+		    {
+			Type = MediaStreamType.Video,
+			// Set the index to -1 because we don't know the exact index of the video stream within the container
+			Index = -1,
+
+			// Set to true if unknown to enable deinterlacing
+			IsInterlaced = true
+		    },
+		    new MediaStream
+		    {
+			Type = MediaStreamType.Audio,
+			// Set the index to -1 because we don't know the exact index of the audio stream within the container
+			Index = -1,
+
+			// Set to true if unknown to enable deinterlacing
+			IsInterlaced = true
+		    }
+		},
+		SupportsProbing = false
+	    };
+
+	    return output;
+	}
 
         public async Task<MediaSourceInfo> GetRecordingStream(string recordingId, string mediaSourceId, CancellationToken cancellationToken)
         {
@@ -494,8 +539,7 @@ namespace babgvant.Emby.MythTv
         public async Task CloseLiveStream(string id, CancellationToken cancellationToken)
         {
             _logger.Info("[MythTV] Closing " + id);
-
-            throw new NotImplementedException();
+	    _liveTV.StopLiveTV();
         }
 
         public async Task CopyFilesAsync(StreamReader source, StreamWriter destination)

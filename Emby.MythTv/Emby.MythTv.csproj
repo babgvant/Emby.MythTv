@@ -74,6 +74,12 @@
     <Compile Include="Responses\DvrResponse.cs" />
     <Compile Include="Responses\GuideResponse.cs" />
     <Compile Include="Responses\UtilityResponse.cs" />
+    <Compile Include="Protocol\LiveTVPlayback.cs" />
+    <Compile Include="Protocol\ProtoBase.cs" />
+    <Compile Include="Protocol\ProtoMonitor.cs" />
+    <Compile Include="Protocol\ProtoPlayback.cs" />
+    <Compile Include="Protocol\ProtoRecorder.cs" />
+    <Compile Include="Protocol\Types.cs" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
