@@ -73,11 +73,11 @@ namespace babgvant.Emby.MythTv.Responses
 	{
 
 	    var root = json.DeserializeFromStream<RootObject>(stream);
-	    return root.ProgramList.Programs.Select(i => GetRecording(i));
+	    return root.ProgramList.Programs.Select(i => ProgramToRecordingInfo(i));
 
 	}
 	
-	private RecordingInfo GetRecording(Program item) {
+	private RecordingInfo ProgramToRecordingInfo(Program item) {
 
 	    RecordingInfo recInfo = new RecordingInfo()
 		{
