@@ -7,7 +7,7 @@
     <ProjectGuid>{408C3F73-7432-4522-9BE4-C302F260DAED}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>babgvant.Emby.MythTv</RootNamespace>
+    <RootNamespace>Emby.MythTv</RootNamespace>
     <AssemblyName>Emby.MythTv</AssemblyName>
     <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
