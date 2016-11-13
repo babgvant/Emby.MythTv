@@ -8,8 +8,8 @@ namespace babgvant.Emby.MythTv.Model
 {
     public class Program
     {
-        public DateTime? StartTime { get; set; }
-        public DateTime? EndTime { get; set; }
+        public DateTime StartTime { get; set; }
+        public DateTime EndTime { get; set; }
         public string Title { get; set; }
         public string SubTitle { get; set; }
         public string Category { get; set; }
