@@ -278,31 +278,18 @@ namespace babgvant.Emby.MythTv
         public async Task CreateTimerAsync(TimerInfo info, CancellationToken cancellationToken)
         {
 
-	    throw new NotImplementedException();
-            // _logger.Info(string.Format("[MythTV] Start CreateTimer Async for ChannelId: {0} & Name: {1}", info.ChannelId, info.Name));
-            // EnsureSetup();            
+	    var timerJson = _jsonSerializer.SerializeToString(info);
+            _logger.Info($"[MythTV] Start CreateTimer Async for TimerInfo\n{timerJson}");
 
-            // using (var stream = await _httpClient.Get(GetOptions(cancellationToken, "/Dvr/GetRecordSchedule?Template=Default")).ConfigureAwait(false))
-            // {
-            //     RecRule orgRule = DvrResponse.GetRecRule(stream, _jsonSerializer, _logger);
-            //     if (orgRule != null)
-            //     {
-            //         orgRule.Title = info.Name;
-            //         orgRule.ChanId = info.ChannelId;
-            //         orgRule.CallSign = await GetCallsign(info.ChannelId, cancellationToken);
-            //         orgRule.EndTime = info.EndDate;
-            //         orgRule.StartTime = info.StartDate;
-            //         orgRule.StartOffset = info.PrePaddingSeconds / 60;
-            //         orgRule.EndOffset = info.PostPaddingSeconds / 60;
-            //         orgRule.Type = "Single Record";
+            EnsureSetup();
 
-            //         var postContent = ConvertJsonRecRuleToPost(_jsonSerializer.SerializeToString(orgRule));
+            using (var stream = await _httpClient.Get(GetSingleRuleStreamOptions(info, cancellationToken)))
+            {
+		var json = new RuleResponse().GetNewTimerJson(info, stream, _jsonSerializer, _logger);
+		var post = PostOptions(cancellationToken, ConvertJsonRecRuleToPost(json), "/Dvr/AddRecordSchedule");
+		await _httpClient.Post(post).ConfigureAwait(false);
+            }          
 
-            //         var options = PostOptions(cancellationToken, postContent, "/Dvr/AddRecordSchedule");
-
-            //         using (var response = await _httpClient.Post(options).ConfigureAwait(false)) { }
-            //     }
-            // }
         }
 
         /// <summary>
@@ -337,11 +324,27 @@ namespace babgvant.Emby.MythTv
             }
         }
 
-	private HttpRequestOptions GetRuleStreamOptions(SeriesTimerInfo info, CancellationToken cancellationToken)
+	private HttpRequestOptions GetSeriesRuleStreamOptions(SeriesTimerInfo info, CancellationToken cancellationToken)
 	{
 
 	    var ChanId = info.ChannelId;
 	    
+	    //split the program id back into channel + starttime if ChannelId not defined
+	    if (ChanId.Equals("0"))
+		ChanId = info.ProgramId.Split('_')[0];
+
+	    var StartTime = FormateMythDate(info.StartDate);
+
+	    //now get myth to generate the standard recording template for the program
+	    return GetOptions(cancellationToken,
+			      $"/Dvr/GetRecordSchedule?ChanId={ChanId}&StartTime={StartTime}");
+	    
+	}
+
+	private HttpRequestOptions GetSingleRuleStreamOptions(TimerInfo info, CancellationToken cancellationToken)
+	{
+
+	    var ChanId = info.ChannelId;
 	    //split the program id back into channel + starttime if ChannelId not defined
 	    if (ChanId.Equals("0"))
 		ChanId = info.ProgramId.Split('_')[0];
@@ -368,7 +371,7 @@ namespace babgvant.Emby.MythTv
 
             EnsureSetup();
 
-            using (var stream = await _httpClient.Get(GetRuleStreamOptions(info, cancellationToken)))
+            using (var stream = await _httpClient.Get(GetSeriesRuleStreamOptions(info, cancellationToken)))
             {
 		var json = new RuleResponse().GetNewSeriesTimerJson(info, stream, _jsonSerializer, _logger);
 		var post = PostOptions(cancellationToken, ConvertJsonRecRuleToPost(json), "/Dvr/AddRecordSchedule");
@@ -389,7 +392,7 @@ namespace babgvant.Emby.MythTv
 
             EnsureSetup();
 
-            using (var stream = await _httpClient.Get(GetRuleStreamOptions(info, cancellationToken)))
+            using (var stream = await _httpClient.Get(GetSeriesRuleStreamOptions(info, cancellationToken)))
             {
 		var json = new RuleResponse().GetNewSeriesTimerJson(info, stream, _jsonSerializer, _logger);
 		var post = PostOptions(cancellationToken, ConvertJsonRecRuleToPost(json), "/Dvr/UpdateRecordSchedule");

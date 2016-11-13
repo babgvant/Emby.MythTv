@@ -333,6 +333,21 @@ namespace babgvant.Emby.MythTv.Responses
 	    return output;
 	}
 
+	public string GetNewTimerJson(TimerInfo info, Stream stream, IJsonSerializer json, ILogger logger)
+	{
+
+	    RecRule rule = GetOneRecRule(stream, json, logger);
+	    rule.Type = "Single Record";
+	    rule.StartOffset = info.PrePaddingSeconds / 60;
+	    rule.EndOffset = info.PostPaddingSeconds / 60;
+
+	    var output = json.SerializeToString(rule);
+	    logger.Info($"[MythTV RuleResponse: generated new timer json:\n{output}");
+
+	    return output;
+	}
+
+
 	[Flags]
 	private enum RecFilter
 	{
