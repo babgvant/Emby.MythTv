@@ -66,6 +66,7 @@
     <Compile Include="Model\ArtworkInfo.cs" />
     <Compile Include="Model\Cast.cs" />
     <Compile Include="Model\CastMember.cs" />
+    <Compile Include="Model\Chain.cs" />
     <Compile Include="Model\Channel.cs" />
     <Compile Include="Model\ChannelInfoList.cs" />
     <Compile Include="Model\ConnectionInfo.cs" />
