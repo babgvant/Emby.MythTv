@@ -21,11 +21,11 @@ namespace babgvant.Emby.MythTv.Responses
         {
 
             var root = json.DeserializeFromStream<RootObject>(stream);
-	    return root.ProgramList.Programs.Select(i => GetUpcomingRecording(i)).ToList();
+	    return root.ProgramList.Programs.Select(i => ProgramToTimerInfo(i)).ToList();
 
 	}
 
-	private TimerInfo GetUpcomingRecording(Program item) {
+	private TimerInfo ProgramToTimerInfo(Program item) {
 
 	    string id = $"{item.Channel.ChanId}_{((DateTime)item.StartTime).Ticks}";
 	    
