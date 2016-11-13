@@ -38,8 +38,6 @@ namespace babgvant.Emby.MythTv.Responses
 		    StartDate = (DateTime)item.StartTime,
 		    EndDate = (DateTime)item.EndTime,
 		    Status = RecordingStatus.New,
-		    IsPostPaddingRequired = false,
-		    IsPrePaddingRequired = false,
 		    SeasonNumber = item.Season,
 		    EpisodeNumber = item.Episode,
 		    EpisodeTitle = item.Title,
