@@ -115,7 +115,7 @@ namespace babgvant.Emby.MythTv
 
         private string FormateMythDate(DateTime inDate)
         {
-            return inDate.ToString("yyyy-MM-ddThh:mm:ss");
+            return inDate.ToString("yyyy-MM-ddTHH:mm:ss");
         }
 
         /// <summary>
