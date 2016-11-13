@@ -422,66 +422,47 @@ namespace babgvant.Emby.MythTv
             var recordings = await GetRecordingsAsync(cancellationToken).ConfigureAwait(false);
             var recording = recordings.First(i => string.Equals(i.Id, recordingId, StringComparison.OrdinalIgnoreCase));
 
+	    var output = new MediaSourceInfo
+                {
+                    MediaStreams = new List<MediaStream>
+		    {
+			new MediaStream
+			{
+			    Type = MediaStreamType.Video,
+			    // Set the index to -1 because we don't know the exact index of the video stream within the container
+			    Index = -1,
+
+			    // Set to true if unknown to enable deinterlacing
+			    IsInterlaced = true
+			},
+			new MediaStream
+			{
+			    Type = MediaStreamType.Audio,
+			    // Set the index to -1 because we don't know the exact index of the audio stream within the container
+			    Index = -1,
+
+			    // Set to true if unknown to enable deinterlacing
+			    IsInterlaced = true
+			}
+		    }
+                };
+
             if (!string.IsNullOrEmpty(recording.Url))
             {
                 _logger.Info("[MythTV] RecordingUrl: {0}", recording.Url);
-                return new MediaSourceInfo
-                {
-                    Path = recording.Url,
-                    Protocol = MediaProtocol.Http,
-                    MediaStreams = new List<MediaStream>
-                        {
-                            new MediaStream
-                            {
-                                Type = MediaStreamType.Video,
-                                // Set the index to -1 because we don't know the exact index of the video stream within the container
-                                Index = -1,
+		output.Path = recording.Url;
+		output.Protocol = MediaProtocol.Http;
 
-                                // Set to true if unknown to enable deinterlacing
-                                IsInterlaced = true
-                            },
-                            new MediaStream
-                            {
-                                Type = MediaStreamType.Audio,
-                                // Set the index to -1 because we don't know the exact index of the audio stream within the container
-                                Index = -1,
-
-                                // Set to true if unknown to enable deinterlacing
-                                IsInterlaced = true
-                            }
-                        }
-                };
+                return output;
             }
 
             if (!string.IsNullOrEmpty(recording.Path) && File.Exists(recording.Path))
             {
                 _logger.Info("[MythTV] RecordingPath: {0}", recording.Path);
-                return new MediaSourceInfo
-                {
-                    Path = recording.Path,
-                    Protocol = MediaProtocol.File,
-                    MediaStreams = new List<MediaStream>
-                        {
-                            new MediaStream
-                            {
-                                Type = MediaStreamType.Video,
-                                // Set the index to -1 because we don't know the exact index of the video stream within the container
-                                Index = -1,
+		output.Path = recording.Path;
+		output.Protocol = MediaProtocol.File;
 
-                                // Set to true if unknown to enable deinterlacing
-                                IsInterlaced = true
-                            },
-                            new MediaStream
-                            {
-                                Type = MediaStreamType.Audio,
-                                // Set the index to -1 because we don't know the exact index of the audio stream within the container
-                                Index = -1,
-
-                                // Set to true if unknown to enable deinterlacing
-                                IsInterlaced = true
-                            }
-                        }
-                };
+		return output;
             }
 
             _logger.Error("[MythTV] No stream exists for recording {0}", recording);
