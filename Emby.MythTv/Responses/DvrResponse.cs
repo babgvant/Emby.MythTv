@@ -329,7 +329,8 @@ namespace babgvant.Emby.MythTv.Responses
 
 	    return output;
 	}
-	    
+
+	[Flags]
 	private enum RecFilter
 	{
 	    NewEpisode = 1,
