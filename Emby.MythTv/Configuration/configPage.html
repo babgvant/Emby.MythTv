@@ -87,7 +87,7 @@
 
                 var page = this;
 
-                ApiClient.getPluginConfiguration(MythTvConfigurationPage.pluginUniqueId).done(function (config) {
+                ApiClient.getPluginConfiguration(MythTvConfigurationPage.pluginUniqueId).then(function (config) {
 
                     $('#txtWebServiceUrl', page).val(config.WebServiceUrl || "");
                     $('#txtUncPath', page).val(config.UncPath || "");
@@ -107,7 +107,7 @@
 
                 var form = this;
 
-                ApiClient.getPluginConfiguration(MythTvConfigurationPage.pluginUniqueId).done(function (config) {
+                ApiClient.getPluginConfiguration(MythTvConfigurationPage.pluginUniqueId).then(function (config) {
 
                     config.WebServiceUrl = $('#txtWebServiceUrl', form).val();
                     config.UncPath = $('#txtUncPath', form).val();
@@ -117,7 +117,7 @@
                     //config.EnableDebugLogging = $('#chkDebugLogging', form).checked();
                     config.LoadChannelIcons = $('#chkLoadChannelIcons', form).checked();
 
-                    ApiClient.updatePluginConfiguration(MythTvConfigurationPage.pluginUniqueId, config).done(Dashboard.processPluginConfigurationUpdateResult);
+                    ApiClient.updatePluginConfiguration(MythTvConfigurationPage.pluginUniqueId, config).then(Dashboard.processPluginConfigurationUpdateResult);
                 });
 
                 // Disable default form submission
