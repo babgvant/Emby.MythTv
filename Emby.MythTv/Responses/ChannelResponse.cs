@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using babgvant.Emby.MythTv.Helpers;
 
 namespace babgvant.Emby.MythTv.Responses
 {
@@ -32,8 +33,10 @@ namespace babgvant.Emby.MythTv.Responses
 	public static IEnumerable<ChannelInfo> GetChannels(Stream stream, IJsonSerializer json, ILogger logger,
 							   bool loadChannelIcons)
 	{
-	    var root = json.DeserializeFromStream<RootChannelInfoListObject>(stream);
-	    return root.ChannelInfoList.ChannelInfos.Select(x => GetChannel(x, loadChannelIcons));
+	    var root = json.DeserializeFromStream<RootChannelInfoListObject>(stream).ChannelInfoList.ChannelInfos;
+	    UtilsHelper.DebugInformation(logger, string.Format("[MythTV] GetChannels Response: {0}",
+							       json.SerializeToString(root)));
+	    return root.Select(x => GetChannel(x, loadChannelIcons));
 	}
 
 	private static ChannelInfo GetChannel(Channel channel, bool loadChannelIcons)
