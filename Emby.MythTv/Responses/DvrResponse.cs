@@ -489,14 +489,7 @@ namespace babgvant.Emby.MythTv.Responses
 	public static List<LiveTvTunerInfo> GetTuners(Stream tunerStream, Stream encoderStream,
 						      IJsonSerializer json, ILogger logger)
 	{
-	    EncoderList tuners;
-	    using (var reader = new StreamReader(tunerStream, new UTF8Encoding()))
-            {
-                string resptext = reader.ReadToEnd();
-                UtilsHelper.DebugInformation(logger, string.Format("[MythTV] ParseEncoderList Response: {0}", resptext));
-            
-                tuners = json.DeserializeFromString<RootEncoderObject>(resptext).EncoderList;
-            }
+	    var tuners = json.DeserializeFromStream<RootEncoderObject>(tunerStream).EncoderList;
 
 	    var encoders = CaptureResponse.GetCaptureCards(encoderStream, json, logger);
 
