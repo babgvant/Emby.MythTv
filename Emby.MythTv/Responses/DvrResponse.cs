@@ -70,7 +70,7 @@ namespace babgvant.Emby.MythTv.Responses
 					Plugin.Instance.Configuration.WebServiceUrl,
 					string.Format("/Content/GetFile?StorageGroup={0}&FileName={1}",
 						      item.Recording.StorageGroup, item.FileName)),
-		    Id = string.Format("StartTime={0}&ChanId={1}", item.StartTime.Ticks, item.Channel.ChanId),
+		    Id = item.Recording.RecordedId,
 		    IsSeries = GeneralHelpers.ContainsWord(item.CatType, "series", StringComparison.OrdinalIgnoreCase),
 		    IsMovie = GeneralHelpers.ContainsWord(item.CatType, "movie", StringComparison.OrdinalIgnoreCase),
 		    IsRepeat = item.Repeat,
