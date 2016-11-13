@@ -45,6 +45,76 @@ namespace babgvant.Emby.MythTv.Responses
 	    return timer;
         }
 
+	public IEnumerable<RecordingInfo> GetRecordings(Stream stream, IJsonSerializer json, ILogger logger)
+	{
+
+	    var root = json.DeserializeFromStream<RootObject>(stream);
+	    return root.ProgramList.Programs.Select(i => GetRecording(i));
+
+	}
+	
+	private RecordingInfo GetRecording(Program item) {
+
+	    RecordingInfo recInfo = new RecordingInfo()
+		{
+		    Name = item.Title,
+		    EpisodeTitle = item.SubTitle,
+		    Overview = item.Description,
+		    Audio = ProgramAudio.Stereo, //Hardcode for now (ProgramAudio)item.AudioProps,
+		    ChannelId = item.Channel.ChanId,
+		    ProgramId = item.ProgramId,
+		    SeriesTimerId = item.Recording.RecordId,
+		    EndDate = item.EndTime,
+		    StartDate = item.StartTime,
+		    Url = string.Format("{0}{1}",
+					Plugin.Instance.Configuration.WebServiceUrl,
+					string.Format("/Content/GetFile?StorageGroup={0}&FileName={1}",
+						      item.Recording.StorageGroup, item.FileName)),
+		    Id = string.Format("StartTime={0}&ChanId={1}", item.StartTime.Ticks, item.Channel.ChanId),
+		    IsSeries = GeneralHelpers.ContainsWord(item.CatType, "series", StringComparison.OrdinalIgnoreCase),
+		    IsMovie = GeneralHelpers.ContainsWord(item.CatType, "movie", StringComparison.OrdinalIgnoreCase),
+		    IsRepeat = item.Repeat,
+		    IsNews = GeneralHelpers.ContainsWord(item.Category, "news",
+							 StringComparison.OrdinalIgnoreCase),
+		    IsKids = GeneralHelpers.ContainsWord(item.Category, "animation",
+							 StringComparison.OrdinalIgnoreCase),
+		    IsSports =
+		    GeneralHelpers.ContainsWord(item.Category, "sport",
+						StringComparison.OrdinalIgnoreCase) ||
+		    GeneralHelpers.ContainsWord(item.Category, "motor sports",
+						StringComparison.OrdinalIgnoreCase) ||
+		    GeneralHelpers.ContainsWord(item.Category, "football",
+						StringComparison.OrdinalIgnoreCase) ||
+		    GeneralHelpers.ContainsWord(item.Category, "cricket",
+						StringComparison.OrdinalIgnoreCase)
+		};
+
+	    //             if (Plugin.Instance.RecordingUncs.Count > 0)
+            //             {
+            //                 foreach (string unc in Plugin.Instance.RecordingUncs)
+            //                 {
+            //                     string recPath = Path.Combine(unc, item.FileName);
+            //                     if (File.Exists(recPath))
+            //                     {
+            //                         val.Path = recPath;
+            //                         break;
+            //                     }
+            //                 }
+            //             }
+            //             val.Genres.AddRange(item.Category.Split(new char[] { '/' }, StringSplitOptions.RemoveEmptyEntries));
+            //             if (item.Artwork.ArtworkInfos.Count() > 0)
+            //             {
+            //                 val.HasImage = true;
+            //                 val.ImageUrl = string.Format("{0}{1}", Plugin.Instance.Configuration.WebServiceUrl, item.Artwork.ArtworkInfos[0].URL);
+            //             }
+            //             else
+            //                 val.HasImage = false;
+
+
+	    return recInfo;
+
+	}
+
 	private class Channel
 	{
 	    public string ChanId { get; set; }
@@ -127,7 +197,7 @@ namespace babgvant.Emby.MythTv.Responses
 	    public string SubTitle { get; set; }
 	    public string Category { get; set; }
 	    public string CatType { get; set; }
-	    public string Repeat { get; set; }
+	    public bool Repeat { get; set; }
 	    public string VideoProps { get; set; }
 	    public string AudioProps { get; set; }
 	    public string SubProps { get; set; }

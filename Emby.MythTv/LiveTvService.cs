@@ -152,78 +152,14 @@ namespace babgvant.Emby.MythTv
         public async Task<IEnumerable<RecordingInfo>> GetRecordingsAsync(CancellationToken cancellationToken)
         {
 
-	    throw new NotImplementedException();
-            // List<RecordingInfo> ret = new List<RecordingInfo>();
+            _logger.Info("[MythTV] Start GetRecordings Async, retrieve all 'Pending', 'Inprogress' and 'Completed' recordings ");
+            EnsureSetup();
 
-            // _logger.Info("[MythTV] Start GetRecordings Async, retrieve all 'Pending', 'Inprogress' and 'Completed' recordings ");
-            // EnsureSetup();
+            using (var stream = await _httpClient.Get(GetOptions(cancellationToken, "/Dvr/GetRecordedList")).ConfigureAwait(false))
+            {
+                return new UpcomingResponse().GetRecordings(stream, _jsonSerializer, _logger);
+	    }
 
-            // using (var stream = await _httpClient.Get(GetOptions(cancellationToken, "/Dvr/GetRecordedList")).ConfigureAwait(false))
-            // {
-            //     var recordings = DvrResponse.ParseProgramList(stream, _jsonSerializer, _logger);
-
-            //     foreach (var item in recordings.Programs)
-            //     {
-            //         if (!Plugin.Instance.RecGroupExclude.Contains(item.Recording.RecGroup))
-            //         {
-            //             RecordingInfo val = new RecordingInfo()
-            //             {
-            //                 Name = item.Title,
-            //                 EpisodeTitle = item.SubTitle,
-            //                 Overview = item.Description,
-            //                 Audio = ProgramAudio.Stereo, //Hardcode for now (ProgramAudio)item.AudioProps,
-            //                 ChannelId = item.Channel.ChanId.ToString(),
-            //                 ProgramId = item.ProgramId,
-            //                 SeriesTimerId = item.Recording.RecordId.ToString(),
-            //                 EndDate = (DateTime)item.EndTime,
-            //                 StartDate = (DateTime)item.StartTime,
-            //                 Url = string.Format("{0}{1}", Plugin.Instance.Configuration.WebServiceUrl, string.Format("/Content/GetFile?StorageGroup={0}&FileName={1}", item.Recording.StorageGroup, item.FileName)),
-            //                 Id = string.Format("StartTime={0}&ChanId={1}", ((DateTime)item.StartTime).Ticks, item.Channel.ChanId),
-            //                 IsSeries = GeneralHelpers.ContainsWord(item.CatType, "series", StringComparison.OrdinalIgnoreCase),
-            //                 IsMovie = GeneralHelpers.ContainsWord(item.CatType, "movie", StringComparison.OrdinalIgnoreCase),
-            //                 IsRepeat = item.Repeat,
-            //                 IsNews = GeneralHelpers.ContainsWord(item.Category, "news",
-            //                 StringComparison.OrdinalIgnoreCase),
-            //                 IsKids = GeneralHelpers.ContainsWord(item.Category, "animation",
-            //                 StringComparison.OrdinalIgnoreCase),
-            //                 IsSports =
-            //                     GeneralHelpers.ContainsWord(item.Category, "sport",
-            //                         StringComparison.OrdinalIgnoreCase) ||
-            //                     GeneralHelpers.ContainsWord(item.Category, "motor sports",
-            //                         StringComparison.OrdinalIgnoreCase) ||
-            //                     GeneralHelpers.ContainsWord(item.Category, "football",
-            //                         StringComparison.OrdinalIgnoreCase) ||
-            //                     GeneralHelpers.ContainsWord(item.Category, "cricket",
-            //                         StringComparison.OrdinalIgnoreCase)
-            //             };
-
-            //             if (Plugin.Instance.RecordingUncs.Count > 0)
-            //             {
-            //                 foreach (string unc in Plugin.Instance.RecordingUncs)
-            //                 {
-            //                     string recPath = Path.Combine(unc, item.FileName);
-            //                     if (File.Exists(recPath))
-            //                     {
-            //                         val.Path = recPath;
-            //                         break;
-            //                     }
-            //                 }
-            //             }
-            //             val.Genres.AddRange(item.Category.Split(new char[] { '/' }, StringSplitOptions.RemoveEmptyEntries));
-            //             if (item.Artwork.ArtworkInfos.Count() > 0)
-            //             {
-            //                 val.HasImage = true;
-            //                 val.ImageUrl = string.Format("{0}{1}", Plugin.Instance.Configuration.WebServiceUrl, item.Artwork.ArtworkInfos[0].URL);
-            //             }
-            //             else
-            //                 val.HasImage = false;
-
-            //             ret.Add(val);
-            //         }
-            //     }
-            // }
-
-            // return ret;
         }
 
         /// <summary>
