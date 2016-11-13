@@ -8,24 +8,33 @@ namespace babgvant.Emby.MythTv.Model
 {
     public class Recording
     {
-        public string RecordedId { get; set; }
-        public string Status { get; set; }
-        public string Priority { get; set; }
-        public DateTime StartTs { get; set; }
-        public DateTime EndTs { get; set; }
+        public string StartTime { get; set; }
+        public string EndTime { get; set; }
+        public string Title { get; set; }
+        public string SubTitle { get; set; }
+        public string Category { get; set; }
+        public string CatType { get; set; }
+        public string Repeat { get; set; }
+        public string VideoProps { get; set; }
+        public string AudioProps { get; set; }
+        public string SubProps { get; set; }
+        public string SeriesId { get; set; }
+        public string ProgramId { get; set; }
+        public string Stars { get; set; }
+        public string LastModified { get; set; }
+        public string ProgramFlags { get; set; }
+        public string Airdate { get; set; }
+        public string Description { get; set; }
+        public string Inetref { get; set; }
+        public string Season { get; set; }
+        public string Episode { get; set; }
+        public string TotalEpisodes { get; set; }
         public string FileSize { get; set; }
         public string FileName { get; set; }
         public string HostName { get; set; }
-        public string LastModified { get; set; }
-        public string RecordId { get; set; }
-        public string RecGroup { get; set; }
-        public string PlayGroup { get; set; }
-        public string StorageGroup { get; set; }
-        public int RecType { get; set; }
-        public string DupInType { get; set; }
-        public string DupMethod { get; set; }
-        public string EncoderId { get; set; }
-        public string EncoderName { get; set; }
-        public string Profile { get; set; }
+        public Channel Channel { get; set; }
+        public RecordingDetail RecordingDetail { get; set; }
+        public Artwork Artwork { get; set; }
+        public Cast Cast { get; set; }
     }
 }
