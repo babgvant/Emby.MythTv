@@ -254,7 +254,8 @@ namespace babgvant.Emby.MythTv
 
             EnsureSetup();
 
-            using (var stream = await _httpClient.Get(GetSingleRuleStreamOptions(info, cancellationToken)))
+	    var options = GetRuleStreamOptions(info.ChannelId, info.StartDate, info.ProgramId, cancellationToken);
+            using (var stream = await _httpClient.Get(options))
             {
 		var json = new RuleResponse().GetNewTimerJson(info, stream, _jsonSerializer, _logger);
 		var post = PostOptions(cancellationToken, ConvertJsonRecRuleToPost(json), "/Dvr/AddRecordSchedule");
@@ -295,37 +296,18 @@ namespace babgvant.Emby.MythTv
             }
         }
 
-	private HttpRequestOptions GetSeriesRuleStreamOptions(SeriesTimerInfo info, CancellationToken cancellationToken)
+	private HttpRequestOptions GetRuleStreamOptions(string ChanId, DateTime StartDate, string ProgramId,
+							CancellationToken cancellationToken)
 	{
-
-	    var ChanId = info.ChannelId;
-	    
 	    //split the program id back into channel + starttime if ChannelId not defined
 	    if (ChanId.Equals("0"))
-		ChanId = info.ProgramId.Split('_')[0];
+		ChanId = ProgramId.Split('_')[0];
 
-	    var StartTime = FormatMythDate(info.StartDate);
+	    var StartTime = FormatMythDate(StartDate);
 
 	    //now get myth to generate the standard recording template for the program
 	    return GetOptions(cancellationToken,
 			      $"/Dvr/GetRecordSchedule?ChanId={ChanId}&StartTime={StartTime}");
-	    
-	}
-
-	private HttpRequestOptions GetSingleRuleStreamOptions(TimerInfo info, CancellationToken cancellationToken)
-	{
-
-	    var ChanId = info.ChannelId;
-	    //split the program id back into channel + starttime if ChannelId not defined
-	    if (ChanId.Equals("0"))
-		ChanId = info.ProgramId.Split('_')[0];
-
-	    var StartTime = FormatMythDate(info.StartDate);
-
-	    //now get myth to generate the standard recording template for the program
-	    return GetOptions(cancellationToken,
-			      $"/Dvr/GetRecordSchedule?ChanId={ChanId}&StartTime={StartTime}");
-	    
 	}
 
         /// <summary>
@@ -342,7 +324,8 @@ namespace babgvant.Emby.MythTv
 
             EnsureSetup();
 
-            using (var stream = await _httpClient.Get(GetSeriesRuleStreamOptions(info, cancellationToken)))
+	    var options = GetRuleStreamOptions(info.ChannelId, info.StartDate, info.ProgramId, cancellationToken);
+            using (var stream = await _httpClient.Get(options))
             {
 		var json = new RuleResponse().GetNewSeriesTimerJson(info, stream, _jsonSerializer, _logger);
 		var post = PostOptions(cancellationToken, ConvertJsonRecRuleToPost(json), "/Dvr/AddRecordSchedule");
@@ -363,7 +346,8 @@ namespace babgvant.Emby.MythTv
 
             EnsureSetup();
 
-            using (var stream = await _httpClient.Get(GetSeriesRuleStreamOptions(info, cancellationToken)))
+	    var options = GetRuleStreamOptions(info.ChannelId, info.StartDate, info.ProgramId, cancellationToken);
+            using (var stream = await _httpClient.Get(options))
             {
 		var json = new RuleResponse().GetNewSeriesTimerJson(info, stream, _jsonSerializer, _logger);
 		var post = PostOptions(cancellationToken, ConvertJsonRecRuleToPost(json), "/Dvr/UpdateRecordSchedule");
@@ -385,7 +369,8 @@ namespace babgvant.Emby.MythTv
 
             EnsureSetup();
 
-            using (var stream = await _httpClient.Get(GetSingleRuleStreamOptions(info, cancellationToken)))
+	    var options = GetRuleStreamOptions(info.ChannelId, info.StartDate, info.ProgramId, cancellationToken);
+            using (var stream = await _httpClient.Get(options))
             {
 		var json = new RuleResponse().GetNewTimerJson(info, stream, _jsonSerializer, _logger);
 		var post = PostOptions(cancellationToken, ConvertJsonRecRuleToPost(json), "/Dvr/UpdateRecordSchedule");
