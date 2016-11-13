@@ -170,28 +170,14 @@ namespace babgvant.Emby.MythTv
         public async Task DeleteRecordingAsync(string recordingId, CancellationToken cancellationToken)
         {
 
-	    throw new NotImplementedException();
-            // _logger.Info(string.Format("[MythTV] Start Delete Recording Async for recordingId: {0}", recordingId));
-            // EnsureSetup();
+            _logger.Info(string.Format("[MythTV] Start Delete Recording Async for recordingId: {0}", recordingId));
+            EnsureSetup();
 
-            // int chanId = 0;
-            // long ticks = 0;
+	    var options = PostOptions(cancellationToken,
+				      $"RecordedId={recordingId}",
+				      "/Dvr/DeleteRecording");
+	    await _httpClient.Post(options).ConfigureAwait(false);
 
-            // Match m = Regex.Match(recordingId, @"StartTime=(?<start>\d+)&ChanId=(?<chan>\d+)");
-            // if(m.Success)
-            // {
-            //     if (int.TryParse(m.Groups["chan"].Value, out chanId) && long.TryParse(m.Groups["start"].Value, out ticks))
-            //     {
-            //         DateTime start = new DateTime(ticks);
-            //         _logger.Info(string.Format("[MythTV] Delete Recording Async chan: {0} start: {1}", chanId, start));            
-            //         //await Host.DvrService.RemoveRecordedAsync(chanId, start);
-
-            //         using (var stream = await _httpClient.Get(GetOptions(cancellationToken, "/Dvr/RemoveRecorded?ChanId={0}&StartTime={1}", chanId, FormatMythDate(start))).ConfigureAwait(false))
-            //         {
-                        
-            //         }    
-            //     }
-            // }
         }
 
         /// <summary>
