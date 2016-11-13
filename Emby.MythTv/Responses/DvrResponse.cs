@@ -84,8 +84,11 @@ namespace babgvant.Emby.MythTv.Responses
 	public IEnumerable<RecordingInfo> GetRecordings(Stream stream, IJsonSerializer json, ILogger logger)
 	{
 
+	    var excluded = Plugin.Instance.RecGroupExclude;
 	    var root = json.DeserializeFromStream<RootObject>(stream);
-	    return root.ProgramList.Programs.Select(i => ProgramToRecordingInfo(i));
+	    return root.ProgramList.Programs
+		.Where(i => !excluded.Contains(i.Recording.RecGroup))
+		.Select(i => ProgramToRecordingInfo(i));
 
 	}
 	
