@@ -259,28 +259,42 @@ namespace Emby.MythTv.Responses
 
         }
 
+        private RecordingStatus RecStatusToRecordingStatus(RecStatus item)
+        {
+            switch (item)
+            {
+                case RecStatus.Recorded:
+                    return RecordingStatus.Completed;
+                case RecStatus.Recording:
+                    return RecordingStatus.InProgress;
+                case RecStatus.Cancelled:
+                    return RecordingStatus.Cancelled;
+            }
+
+            return RecordingStatus.Error;
+        }
+
         private RecordingInfo ProgramToRecordingInfo(Program item)
         {
 
             RecordingInfo recInfo = new RecordingInfo()
             {
-                Name = item.Title,
-                EpisodeTitle = item.SubTitle,
-                Overview = item.Description,
-                Audio = ProgramAudio.Stereo, //Hardcode for now (ProgramAudio)item.AudioProps,
-                ChannelId = item.Channel.ChanId,
-                ProgramId = string.Format("{1}_{0}", ((DateTime)item.StartTime).Ticks, item.Channel.ChanId),
-                SeriesTimerId = item.Recording.RecordId,
-                EndDate = item.EndTime,
-                StartDate = item.StartTime,
                 Id = item.Recording.RecordedId,
-                IsSeries = GeneralHelpers.ContainsWord(item.CatType, "series", StringComparison.OrdinalIgnoreCase),
-                IsMovie = GeneralHelpers.ContainsWord(item.CatType, "movie", StringComparison.OrdinalIgnoreCase),
+                SeriesTimerId = item.Recording.RecordId,
+                ChannelId = item.Channel.ChanId,
+                ChannelType = ChannelType.TV,
+                Name = item.Title,
+                Overview = item.Description,
+                StartDate = item.StartTime,
+                EndDate = item.EndTime,
+                ProgramId = $"{item.Channel.ChanId}_{item.StartTime.Ticks}",
+                Status = RecStatusToRecordingStatus(item.Recording.Status),
                 IsRepeat = item.Repeat,
-                IsNews = GeneralHelpers.ContainsWord(item.Category, "news",
-                                                         StringComparison.OrdinalIgnoreCase),
-                IsKids = GeneralHelpers.ContainsWord(item.Category, "animation",
-                                                         StringComparison.OrdinalIgnoreCase),
+                EpisodeTitle = item.SubTitle,
+                IsHD = (item.VideoProps & VideoFlags.VID_HDTV) == VideoFlags.VID_HDTV,
+                Audio = ProgramAudio.Stereo,
+                OriginalAirDate = item.Airdate,
+                IsMovie = GeneralHelpers.ContainsWord(item.CatType, "movie", StringComparison.OrdinalIgnoreCase),
                 IsSports =
                     GeneralHelpers.ContainsWord(item.Category, "sport",
                                                 StringComparison.OrdinalIgnoreCase) ||
@@ -290,7 +304,11 @@ namespace Emby.MythTv.Responses
                                                 StringComparison.OrdinalIgnoreCase) ||
                     GeneralHelpers.ContainsWord(item.Category, "cricket",
                                                 StringComparison.OrdinalIgnoreCase),
-
+                IsSeries = GeneralHelpers.ContainsWord(item.CatType, "series", StringComparison.OrdinalIgnoreCase),
+                IsNews = GeneralHelpers.ContainsWord(item.Category, "news",
+                                                         StringComparison.OrdinalIgnoreCase),
+                IsKids = GeneralHelpers.ContainsWord(item.Category, "animation",
+                                                         StringComparison.OrdinalIgnoreCase),
                 ShowId = item.ProgramId,
 
             };
