@@ -446,16 +446,14 @@ namespace babgvant.Emby.MythTv
 	    var success = await _liveTV.SpawnLiveTV("108");
 	    var filepath = await _liveTV.GetCurrentRecording();
 
-	    var filename = filepath.Split('/').Last();
-	    var url = $"{Plugin.Instance.Configuration.WebServiceUrl}/Content/GetFile?StorageGroup=LiveTV&FileName={filename}";
-
-	    _logger.Info($"[MythTV] ChannelStream at {url}");
+	    _logger.Info($"[MythTV] ChannelStream at {filepath}");
 
 	    var output = new MediaSourceInfo
 	    {
 		Id = channelId,
-		Path = url,
-		Protocol = MediaProtocol.Http,
+		Path = filepath,
+		Protocol = MediaProtocol.File,
+		ReadAtNativeFramerate = true,
 		MediaStreams = new List<MediaStream>
 		{
 		    new MediaStream
@@ -477,7 +475,8 @@ namespace babgvant.Emby.MythTv
 			IsInterlaced = true
 		    }
 		},
-		SupportsProbing = false
+		SupportsProbing = false,
+		IsInfiniteStream = true
 	    };
 
 	    return output;
