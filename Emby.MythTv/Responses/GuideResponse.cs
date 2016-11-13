@@ -16,10 +16,12 @@ namespace babgvant.Emby.MythTv.Responses
     {
 
 	RootObject root;
+	public DateTime FetchTime { get; set; }
 	
 	public GuideResponse(Stream stream, IJsonSerializer json)
 	{
             root = json.DeserializeFromStream<RootObject>(stream);
+	    FetchTime = DateTime.Now;
 	}
 	
         public IEnumerable<ProgramInfo> GetPrograms(string channelId, ILogger logger)

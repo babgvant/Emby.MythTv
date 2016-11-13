@@ -740,7 +740,7 @@ namespace babgvant.Emby.MythTv
 	{
 	    using (var releaser = await _guideLock.LockAsync()) {
 	    
-		if (_guide != null)
+		if (_guide != null && (DateTime.Now - _guide.FetchTime).Hours < 1)
 		    return;
 
 		_logger.Info("[MythTV] Start CacheGuideResponse");
