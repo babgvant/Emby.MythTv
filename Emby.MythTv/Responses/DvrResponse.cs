@@ -29,15 +29,21 @@ namespace babgvant.Emby.MythTv.Responses
 	    
 	    TimerInfo timer = new TimerInfo()
 		{
+		    Id = item.Recording.RecordedId, // this is always zero, might break for multiple upcoming
+		    SeriesTimerId = item.Recording.RecordId,
+		    ChannelId = item.Channel.ChanId,
+		    ProgramId = string.Format("{1}_{0}", ((DateTime)item.StartTime).Ticks, item.Channel.ChanId),
 		    Name = item.Title,
 		    Overview = item.Description,
-		    ChannelId = item.Channel.ChanId,
-		    EndDate = (DateTime)item.EndTime,
 		    StartDate = (DateTime)item.StartTime,
-		    Id = item.Recording.RecordedId,
+		    EndDate = (DateTime)item.EndTime,
+		    Status = RecordingStatus.New,
 		    IsPostPaddingRequired = false,
 		    IsPrePaddingRequired = false,
-		    ProgramId = string.Format("{1}_{0}", ((DateTime)item.StartTime).Ticks, item.Channel.ChanId)
+		    SeasonNumber = item.Season,
+		    EpisodeNumber = item.Episode,
+		    EpisodeTitle = item.Title,
+		    IsRepeat = item.Repeat
 		};
 	    timer.PrePaddingSeconds = (timer.StartDate - item.Recording.StartTs).Seconds;
 	    timer.PostPaddingSeconds = (item.Recording.EndTs - timer.EndDate).Seconds;
@@ -86,7 +92,10 @@ namespace babgvant.Emby.MythTv.Responses
 		    GeneralHelpers.ContainsWord(item.Category, "football",
 						StringComparison.OrdinalIgnoreCase) ||
 		    GeneralHelpers.ContainsWord(item.Category, "cricket",
-						StringComparison.OrdinalIgnoreCase)
+						StringComparison.OrdinalIgnoreCase),
+
+		    ShowId = item.ProgramId,
+		    
 		};
 
 	    if (Plugin.Instance.RecordingUncs.Count > 0)
@@ -213,8 +222,8 @@ namespace babgvant.Emby.MythTv.Responses
 	    public string Airdate { get; set; }
 	    public string Description { get; set; }
 	    public string Inetref { get; set; }
-	    public string Season { get; set; }
-	    public string Episode { get; set; }
+	    public int? Season { get; set; }
+	    public int? Episode { get; set; }
 	    public string TotalEpisodes { get; set; }
 	    public string FileSize { get; set; }
 	    public string FileName { get; set; }
