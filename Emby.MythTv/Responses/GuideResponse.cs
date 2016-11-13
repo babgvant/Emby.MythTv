@@ -9,6 +9,7 @@ using MediaBrowser.Model.LiveTv;
 using MediaBrowser.Model.Logging;
 using MediaBrowser.Model.Serialization;
 using babgvant.Emby.MythTv.Helpers;
+using babgvant.Emby.MythTv.Model;
 
 namespace babgvant.Emby.MythTv.Responses
 {
@@ -153,61 +154,6 @@ namespace babgvant.Emby.MythTv.Responses
             return info;
         }
 
-        private class RecordingDetail
-        {
-            public string Status { get; set; }
-            public string Priority { get; set; }
-            public string StartTs { get; set; }
-            public string EndTs { get; set; }
-            public string RecordId { get; set; }
-            public string RecGroup { get; set; }
-            public string PlayGroup { get; set; }
-            public string StorageGroup { get; set; }
-            public string RecType { get; set; }
-            public string DupInType { get; set; }
-            public string DupMethod { get; set; }
-            public string EncoderId { get; set; }
-            public string Profile { get; set; }
-        }
-
-        private class ArtworkInfo
-        {
-            public string URL { get; set; }
-            public string FileName { get; set; }
-            public string StorageGroup { get; set; }
-            public string Type { get; set; }
-        }
-
-        private class Artwork
-        {
-            public List<ArtworkInfo> ArtworkInfos { get; set; }
-        }
-
-        [Flags]
-        private enum VideoFlags
-        {
-            VID_UNKNOWN       = 0x00,
-            VID_HDTV          = 0x01,
-            VID_WIDESCREEN    = 0x02,
-            VID_AVC           = 0x04,
-            VID_720           = 0x08,
-            VID_1080          = 0x10,
-            VID_DAMAGED       = 0x20,
-            VID_3DTV          = 0x40
-        }
-
-        [Flags]
-        private enum AudioFlags
-        {
-            AUD_UNKNOWN       = 0x00,
-            AUD_STEREO        = 0x01,
-            AUD_MONO          = 0x02,
-            AUD_SURROUND      = 0x04,
-            AUD_DOLBY         = 0x08,
-            AUD_HARDHEAR      = 0x10,
-            AUD_VISUALIMPAIR  = 0x20,
-        }
-
         private ProgramAudio ConvertAudioFlags(AudioFlags input)
         {
             switch (input)
@@ -218,75 +164,6 @@ namespace babgvant.Emby.MythTv.Responses
                     return ProgramAudio.Dolby;
             }
             return ProgramAudio.Mono;
-        }
-
-        private class Program
-        {
-            public DateTime? StartTime { get; set; }
-            public DateTime? EndTime { get; set; }
-            public string Title { get; set; }
-            public string SubTitle { get; set; }
-            public string Category { get; set; }
-            public string CatType { get; set; }
-            public bool Repeat { get; set; }
-            public VideoFlags VideoProps { get; set; }
-            public AudioFlags AudioProps { get; set; }
-            public string SubProps { get; set; }
-            public string SeriesId { get; set; }
-            public string ProgramId { get; set; }
-            public float Stars { get; set; }
-            public string FileSize { get; set; }
-            public string LastModified { get; set; }
-            public string ProgramFlags { get; set; }
-            public string FileName { get; set; }
-            public string HostName { get; set; }
-            public DateTime? Airdate { get; set; }
-            public string Description { get; set; }
-            public string Inetref { get; set; }
-            public int? Season { get; set; }
-            public int? Episode { get; set; }
-            public Channel Channel { get; set; }
-            public RecordingDetail Recording { get; set; }
-            public Artwork Artwork { get; set; }
-        }
-
-        private class Channel
-        {
-            public string ChanId { get; set; }
-            public string ChanNum { get; set; }
-            public string CallSign { get; set; }
-            public string IconURL { get; set; }
-            public string ChannelName { get; set; }
-            public string MplexId { get; set; }
-            public string ServiceId { get; set; }
-            public string ATSCMajorChan { get; set; }
-            public string ATSCMinorChan { get; set; }
-            public string Format { get; set; }
-            public string FrequencyId { get; set; }
-            public string FineTune { get; set; }
-            public string ChanFilters { get; set; }
-            public string SourceId { get; set; }
-            public string InputId { get; set; }
-            public string CommFree { get; set; }
-            public string UseEIT { get; set; }
-            public string Visible { get; set; }
-            public string XMLTVID { get; set; }
-            public string DefaultAuth { get; set; }
-            public List<Program> Programs { get; set; }
-        }
-
-        private class ProgramGuide
-        {
-            public string StartTime { get; set; }
-            public string EndTime { get; set; }
-            public string Details { get; set; }
-            public string StartIndex { get; set; }
-            public string Count { get; set; }
-            public string TotalAvailable { get; set; }
-            public string AsOf { get; set; }
-            public string Version { get; set; }
-            public string ProtoVer { get; set; }
-            public List<Channel> Channels { get; set; }
         }
 
         private class RootObject
