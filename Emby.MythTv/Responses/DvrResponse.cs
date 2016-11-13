@@ -14,6 +14,161 @@ using System.Threading.Tasks;
 
 namespace babgvant.Emby.MythTv.Responses
 {
+    public class UpcomingResponse
+    {
+
+	public List<TimerInfo> GetUpcomingList(Stream stream, IJsonSerializer json, ILogger logger)
+        {
+
+            var root = json.DeserializeFromStream<RootObject>(stream);
+	    return root.ProgramList.Programs.Select(i => GetUpcomingRecording(i)).ToList();
+
+	}
+
+	private TimerInfo GetUpcomingRecording(Program item) {
+	    
+	    TimerInfo timer = new TimerInfo()
+		{
+		    Name = item.Title,
+		    Overview = item.Description,
+		    ChannelId = item.Channel.ChanId,
+		    EndDate = (DateTime)item.EndTime,
+		    StartDate = (DateTime)item.StartTime,
+		    Id = item.Recording.RecordedId,
+		    IsPostPaddingRequired = false,
+		    IsPrePaddingRequired = false,
+		    ProgramId = item.ProgramId
+		};
+	    timer.PrePaddingSeconds = (timer.StartDate - item.Recording.StartTs).Seconds;
+	    timer.PostPaddingSeconds = (item.Recording.EndTs - timer.EndDate).Seconds;
+
+	    return timer;
+        }
+
+	private class Channel
+	{
+	    public string ChanId { get; set; }
+	    public string ChanNum { get; set; }
+	    public string CallSign { get; set; }
+	    public string IconURL { get; set; }
+	    public string ChannelName { get; set; }
+	    public string MplexId { get; set; }
+	    public string ServiceId { get; set; }
+	    public string ATSCMajorChan { get; set; }
+	    public string ATSCMinorChan { get; set; }
+	    public string Format { get; set; }
+	    public string FrequencyId { get; set; }
+	    public string FineTune { get; set; }
+	    public string ChanFilters { get; set; }
+	    public string SourceId { get; set; }
+	    public string InputId { get; set; }
+	    public string CommFree { get; set; }
+	    public string UseEIT { get; set; }
+	    public string Visible { get; set; }
+	    public string XMLTVID { get; set; }
+	    public string DefaultAuth { get; set; }
+	    public List<object> Programs { get; set; }
+	}
+
+	private class Recording
+	{
+	    public string RecordedId { get; set; }
+	    public string Status { get; set; }
+	    public string Priority { get; set; }
+	    public DateTime StartTs { get; set; }
+	    public DateTime EndTs { get; set; }
+	    public string FileSize { get; set; }
+	    public string FileName { get; set; }
+	    public string HostName { get; set; }
+	    public string LastModified { get; set; }
+	    public string RecordId { get; set; }
+	    public string RecGroup { get; set; }
+	    public string PlayGroup { get; set; }
+	    public string StorageGroup { get; set; }
+	    public string RecType { get; set; }
+	    public string DupInType { get; set; }
+	    public string DupMethod { get; set; }
+	    public string EncoderId { get; set; }
+	    public string EncoderName { get; set; }
+	    public string Profile { get; set; }
+	}
+
+	private class ArtworkInfo
+	{
+	    public string URL { get; set; }
+	    public string FileName { get; set; }
+	    public string StorageGroup { get; set; }
+	    public string Type { get; set; }
+	}
+
+	private class Artwork
+	{
+	    public List<ArtworkInfo> ArtworkInfos { get; set; }
+	}
+
+	private class CastMember
+	{
+	    public string Name { get; set; }
+	    public string CharacterName { get; set; }
+	    public string Role { get; set; }
+	    public string TranslatedRole { get; set; }
+	}
+
+	private class Cast
+	{
+	    public List<CastMember> CastMembers { get; set; }
+	}
+
+	private class Program
+	{
+	    public DateTime StartTime { get; set; }
+	    public DateTime EndTime { get; set; }
+	    public string Title { get; set; }
+	    public string SubTitle { get; set; }
+	    public string Category { get; set; }
+	    public string CatType { get; set; }
+	    public string Repeat { get; set; }
+	    public string VideoProps { get; set; }
+	    public string AudioProps { get; set; }
+	    public string SubProps { get; set; }
+	    public string SeriesId { get; set; }
+	    public string ProgramId { get; set; }
+	    public string Stars { get; set; }
+	    public string LastModified { get; set; }
+	    public string ProgramFlags { get; set; }
+	    public string Airdate { get; set; }
+	    public string Description { get; set; }
+	    public string Inetref { get; set; }
+	    public string Season { get; set; }
+	    public string Episode { get; set; }
+	    public string TotalEpisodes { get; set; }
+	    public string FileSize { get; set; }
+	    public string FileName { get; set; }
+	    public string HostName { get; set; }
+	    public Channel Channel { get; set; }
+	    public Recording Recording { get; set; }
+	    public Artwork Artwork { get; set; }
+	    public Cast Cast { get; set; }
+	}
+
+	private class ProgramList
+	{
+	    public string StartIndex { get; set; }
+	    public string Count { get; set; }
+	    public string TotalAvailable { get; set; }
+	    public string AsOf { get; set; }
+	    public string Version { get; set; }
+	    public string ProtoVer { get; set; }
+	    public List<Program> Programs { get; set; }
+	}
+
+	private class RootObject
+	{
+	    public ProgramList ProgramList { get; set; }
+	}
+
+    }
+    
     public class DvrResponse
     {
         private static readonly CultureInfo _usCulture = new CultureInfo("en-US");
@@ -49,37 +204,6 @@ namespace babgvant.Emby.MythTv.Responses
             return ret;
         }
 	
-	// public List<TimerInfo> GetUpcomingList(Stream stream, IJsonSerializer json, ILogger logger)
-        // {
-
-        //     var root = json.DeserializeFromStream<RootProgramListObject>(stream);
-	    
-	    
-        //     foreach (var item in root.RecRuleList.RecRules)
-        //     {
-        //         if (!item.Inactive && string.Compare(item.Type, "Not Recording", true) != 0)
-        //         {
-        //             TimerInfo val = new TimerInfo()
-	// 		{
-	// 		    Name = item.Title,
-	// 		    Overview = item.Description,
-	// 		    ChannelId = item.ChanId.ToString(),
-	// 		    EndDate = (DateTime)item.EndTime,
-	// 		    StartDate = (DateTime)item.StartTime,
-	// 		    Id = item.Id,
-	// 		    PrePaddingSeconds = item.StartOffset * 60,
-	// 		    PostPaddingSeconds = item.EndOffset * 60,
-	// 		    IsPostPaddingRequired = item.EndOffset != 0,
-	// 		    IsPrePaddingRequired = item.StartOffset != 0,
-	// 		    ProgramId = item.ProgramId
-	// 		};
-
-        //             ret.Add(val);
-        //         }
-        //     }
-
-        //     return ret;
-        // }
 
         public static List<SeriesTimerInfo> GetSeriesTimers(Stream stream, IJsonSerializer json, ILogger logger)
         {

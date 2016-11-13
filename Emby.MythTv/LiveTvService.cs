@@ -374,9 +374,9 @@ namespace babgvant.Emby.MythTv
             _logger.Info("[MythTV] Start GetTimer Async, retrieve the 'Pending' recordings");
             EnsureSetup();
 
-            using (var stream = await _httpClient.Get(GetOptions(cancellationToken, "/Dvr/GetRecordScheduleList")).ConfigureAwait(false))
+            using (var stream = await _httpClient.Get(GetOptions(cancellationToken, "/Dvr/GetUpcomingList?ShowAll=false")).ConfigureAwait(false))
             {
-                return  DvrResponse.GetTimers(stream, _jsonSerializer, _logger);
+                return  new UpcomingResponse().GetUpcomingList(stream, _jsonSerializer, _logger);
             }
         }
 
