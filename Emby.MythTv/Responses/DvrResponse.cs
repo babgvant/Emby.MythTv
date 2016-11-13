@@ -309,17 +309,17 @@ namespace babgvant.Emby.MythTv.Responses
 		orgRule.Type = "Record All";
 
 		if (info.RecordAnyChannel)
-		    orgRule.Filter |= RecFilter.ThisChannel;
+		    orgRule.Filter &= ~RecFilter.ThisChannel;
 		else
-		    orgRule.Filter &= RecFilter.ThisChannel;
+		    orgRule.Filter |= RecFilter.ThisChannel;
 		if (info.RecordAnyTime)
-		    orgRule.Filter &= RecFilter.ThisDayTime;
+		    orgRule.Filter &= ~RecFilter.ThisDayTime;
 		else
 		    orgRule.Filter |= RecFilter.ThisDayTime;
 		if (info.RecordNewOnly)
 		    orgRule.Filter |= RecFilter.NewEpisode;
 		else
-		    orgRule.Filter &= RecFilter.NewEpisode;
+		    orgRule.Filter &= ~RecFilter.NewEpisode;
 
 		orgRule.MaxEpisodes = info.KeepUpTo;
 	    
