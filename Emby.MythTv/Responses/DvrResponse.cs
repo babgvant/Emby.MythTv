@@ -147,6 +147,7 @@ namespace Emby.MythTv.Responses
                     orgRule.Filter &= ~RecFilter.NewEpisode;
 
                 orgRule.MaxEpisodes = info.KeepUpTo;
+                orgRule.MaxNewest = info.KeepUpTo > 0;
                 orgRule.StartOffset = info.PrePaddingSeconds / 60;
                 orgRule.EndOffset = info.PostPaddingSeconds / 60;
 
