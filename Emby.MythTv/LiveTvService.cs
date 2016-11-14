@@ -348,6 +348,15 @@ namespace Emby.MythTv
             return GetOptions(cancellationToken, url);
         }
 
+        private HttpRequestOptions GetRuleStreamOptions(string Id, CancellationToken cancellationToken)
+        {
+            var url = $"/Dvr/GetRecordSchedule?RecordId={Id}";
+
+            //now get myth to generate the standard recording template for the program
+            return GetOptions(cancellationToken, url);
+        }
+
+
         /// <summary>
         /// Create a recurrent recording
         /// </summary>
@@ -384,7 +393,7 @@ namespace Emby.MythTv
 
             await EnsureSetup();
 
-            var options = GetRuleStreamOptions(info.ChannelId, info.StartDate, info.ProgramId, cancellationToken);
+            var options = GetRuleStreamOptions(info.Id, cancellationToken);
             using (var stream = await _httpClient.Get(options))
             {
                 var json = new DvrResponse().GetNewSeriesTimerJson(info, stream, _jsonSerializer, _logger);
@@ -407,7 +416,7 @@ namespace Emby.MythTv
 
             await EnsureSetup();
 
-            var options = GetRuleStreamOptions(info.ChannelId, info.StartDate, info.ProgramId, cancellationToken);
+            var options = GetRuleStreamOptions(info.Id, cancellationToken);
             using (var stream = await _httpClient.Get(options))
             {
                 var json = new DvrResponse().GetNewTimerJson(info, stream, _jsonSerializer, _logger);
