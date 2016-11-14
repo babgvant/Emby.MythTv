@@ -334,8 +334,7 @@ namespace Emby.MythTv
         }
 
         private HttpRequestOptions GetRuleStreamOptions(string ChanId, DateTime StartDate, string ProgramId,
-                                                        CancellationToken cancellationToken,
-                                                        bool MakeOverride = false)
+                                                        CancellationToken cancellationToken)
         {
             //split the program id back into channel + starttime if ChannelId not defined
             if (ChanId.Equals("0"))
@@ -344,8 +343,6 @@ namespace Emby.MythTv
             var StartTime = FormatMythDate(StartDate);
 
             var url = $"/Dvr/GetRecordSchedule?ChanId={ChanId}&StartTime={StartTime}";
-            if (MakeOverride)
-                url = url + "&MakeOverride=true";
 
             //now get myth to generate the standard recording template for the program
             return GetOptions(cancellationToken, url);
