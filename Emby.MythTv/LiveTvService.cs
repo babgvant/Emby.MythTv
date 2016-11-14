@@ -290,12 +290,13 @@ namespace Emby.MythTv
 
             await EnsureSetup();
 
-            var options = GetRuleStreamOptions(ChannelId, StartDate, null, cancellationToken, true);
+            var StartTime = FormatMythDate(StartDate);
+            var url = $"/Dvr/AddDontRecordSchedule?ChanId={ChannelId}&StartTime={StartTime}&NeverRecord=False";
+
+            var options = GetOptions(cancellationToken, url);
             using (var stream = await _httpClient.Get(options))
             {
-                var json = new DvrResponse().GetNewDoNotRecordTimerJson(stream, _jsonSerializer, _logger);
-                var post = PostOptions(cancellationToken, ConvertJsonRecRuleToPost(json), "/Dvr/AddRecordSchedule");
-                await _httpClient.Post(post).ConfigureAwait(false);
+                //nothing to do
             }
 
         }
