@@ -491,7 +491,6 @@ namespace Emby.MythTv
                         IsInterlaced = true
                     }
                 },
-                SupportsProbing = false,
                 IsInfiniteStream = true
             };
 
