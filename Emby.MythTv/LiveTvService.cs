@@ -262,7 +262,7 @@ namespace Emby.MythTv
 
             await EnsureSetup();
 
-            var options = GetRuleStreamOptions(info.ChannelId, info.StartDate, info.ProgramId, cancellationToken);
+            var options = GetRuleStreamOptions(info.ProgramId, info.StartDate, cancellationToken);
             using (var stream = await _httpClient.Get(options))
             {
                 try
@@ -290,12 +290,13 @@ namespace Emby.MythTv
 
             await EnsureSetup();
 
-            var options = GetRuleStreamOptions(ChannelId, StartDate, null, cancellationToken, true);
+            var StartTime = FormatMythDate(StartDate);
+            var url = $"/Dvr/AddDontRecordSchedule?ChanId={ChannelId}&StartTime={StartTime}&NeverRecord=False";
+
+            var options = GetOptions(cancellationToken, url);
             using (var stream = await _httpClient.Get(options))
             {
-                var json = new DvrResponse().GetNewDoNotRecordTimerJson(stream, _jsonSerializer, _logger);
-                var post = PostOptions(cancellationToken, ConvertJsonRecRuleToPost(json), "/Dvr/AddRecordSchedule");
-                await _httpClient.Post(post).ConfigureAwait(false);
+                //nothing to do
             }
 
         }
@@ -332,23 +333,27 @@ namespace Emby.MythTv
             }
         }
 
-        private HttpRequestOptions GetRuleStreamOptions(string ChanId, DateTime StartDate, string ProgramId,
-                                                        CancellationToken cancellationToken,
-                                                        bool MakeOverride = false)
+        private HttpRequestOptions GetRuleStreamOptions(string ProgramId, DateTime StartDate,
+                                                        CancellationToken cancellationToken)
         {
             //split the program id back into channel + starttime if ChannelId not defined
-            if (ChanId.Equals("0"))
-                ChanId = ProgramId.Split('_')[0];
-
+            var ChanId = ProgramId.Split('_')[0];
             var StartTime = FormatMythDate(StartDate);
 
             var url = $"/Dvr/GetRecordSchedule?ChanId={ChanId}&StartTime={StartTime}";
-            if (MakeOverride)
-                url = url + "&MakeOverride=true";
 
             //now get myth to generate the standard recording template for the program
             return GetOptions(cancellationToken, url);
         }
+
+        private HttpRequestOptions GetRuleStreamOptions(string Id, CancellationToken cancellationToken)
+        {
+            var url = $"/Dvr/GetRecordSchedule?RecordId={Id}";
+
+            //now get myth to generate the standard recording template for the program
+            return GetOptions(cancellationToken, url);
+        }
+
 
         /// <summary>
         /// Create a recurrent recording
@@ -364,7 +369,7 @@ namespace Emby.MythTv
 
             await EnsureSetup();
 
-            var options = GetRuleStreamOptions(info.ChannelId, info.StartDate, info.ProgramId, cancellationToken);
+            var options = GetRuleStreamOptions(info.ProgramId, info.StartDate, cancellationToken);
             using (var stream = await _httpClient.Get(options))
             {
                 var json = new DvrResponse().GetNewSeriesTimerJson(info, stream, _jsonSerializer, _logger);
@@ -386,7 +391,7 @@ namespace Emby.MythTv
 
             await EnsureSetup();
 
-            var options = GetRuleStreamOptions(info.ChannelId, info.StartDate, info.ProgramId, cancellationToken);
+            var options = GetRuleStreamOptions(info.Id, cancellationToken);
             using (var stream = await _httpClient.Get(options))
             {
                 var json = new DvrResponse().GetNewSeriesTimerJson(info, stream, _jsonSerializer, _logger);
@@ -409,7 +414,7 @@ namespace Emby.MythTv
 
             await EnsureSetup();
 
-            var options = GetRuleStreamOptions(info.ChannelId, info.StartDate, info.ProgramId, cancellationToken);
+            var options = GetRuleStreamOptions(info.Id, cancellationToken);
             using (var stream = await _httpClient.Get(options))
             {
                 var json = new DvrResponse().GetNewTimerJson(info, stream, _jsonSerializer, _logger);
@@ -528,20 +533,20 @@ namespace Emby.MythTv
                     }
                 };
 
-            if (!string.IsNullOrEmpty(recording.Url))
-            {
-                _logger.Info("[MythTV] RecordingUrl: {0}", recording.Url);
-                output.Path = recording.Url;
-                output.Protocol = MediaProtocol.Http;
-
-                return output;
-            }
-
             if (!string.IsNullOrEmpty(recording.Path) && File.Exists(recording.Path))
             {
                 _logger.Info("[MythTV] RecordingPath: {0}", recording.Path);
                 output.Path = recording.Path;
                 output.Protocol = MediaProtocol.File;
+
+                return output;
+            }
+
+            if (!string.IsNullOrEmpty(recording.Url))
+            {
+                _logger.Info("[MythTV] RecordingUrl: {0}", recording.Url);
+                output.Path = recording.Url;
+                output.Protocol = MediaProtocol.Http;
 
                 return output;
             }
