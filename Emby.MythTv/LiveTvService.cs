@@ -533,20 +533,20 @@ namespace Emby.MythTv
                     }
                 };
 
-            if (!string.IsNullOrEmpty(recording.Url))
-            {
-                _logger.Info("[MythTV] RecordingUrl: {0}", recording.Url);
-                output.Path = recording.Url;
-                output.Protocol = MediaProtocol.Http;
-
-                return output;
-            }
-
             if (!string.IsNullOrEmpty(recording.Path) && File.Exists(recording.Path))
             {
                 _logger.Info("[MythTV] RecordingPath: {0}", recording.Path);
                 output.Path = recording.Path;
                 output.Protocol = MediaProtocol.File;
+
+                return output;
+            }
+
+            if (!string.IsNullOrEmpty(recording.Url))
+            {
+                _logger.Info("[MythTV] RecordingUrl: {0}", recording.Url);
+                output.Path = recording.Url;
+                output.Protocol = MediaProtocol.Http;
 
                 return output;
             }

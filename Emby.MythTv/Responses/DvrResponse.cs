@@ -273,10 +273,6 @@ namespace Emby.MythTv.Responses
                 SeriesTimerId = item.Recording.RecordId,
                 EndDate = item.EndTime,
                 StartDate = item.StartTime,
-                Url = string.Format("{0}{1}",
-                                        Plugin.Instance.Configuration.WebServiceUrl,
-                                        string.Format("/Content/GetFile?StorageGroup={0}&FileName={1}",
-                                                      item.Recording.StorageGroup, item.FileName)),
                 Id = item.Recording.RecordedId,
                 IsSeries = GeneralHelpers.ContainsWord(item.CatType, "series", StringComparison.OrdinalIgnoreCase),
                 IsMovie = GeneralHelpers.ContainsWord(item.CatType, "movie", StringComparison.OrdinalIgnoreCase),
@@ -312,6 +308,16 @@ namespace Emby.MythTv.Responses
                 }
             }
 
+            // only set the URL if the path is null
+            // using the URL seems to prevent direct streaming
+            if (recInfo.Path == null)
+            {
+                recInfo.Url = string.Format("{0}{1}",
+                                            Plugin.Instance.Configuration.WebServiceUrl,
+                                            string.Format("/Content/GetFile?StorageGroup={0}&FileName={1}",
+                                                          item.Recording.StorageGroup, item.FileName));
+            }
+            
             recInfo.Genres.AddRange(item.Category.Split(new char[] { '/' }, StringSplitOptions.RemoveEmptyEntries));
 
             if (item.Artwork.ArtworkInfos.Count > 0)
