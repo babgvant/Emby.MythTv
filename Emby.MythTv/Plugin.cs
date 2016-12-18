@@ -21,8 +21,6 @@ namespace Emby.MythTv
             Instance = this;
             RecordingUncs = new List<string>();
             RecGroupExclude = new List<string>();
-
-            BuildLists();
         }
 
         public IEnumerable<PluginPageInfo> GetPages()
