@@ -67,16 +67,13 @@ namespace Emby.MythTv
 
             if (!string.IsNullOrWhiteSpace(this.Configuration.UncPath))
             {
-                string[] uncs = this.Configuration.UncPath.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
-                RecordingUncs.AddRange(uncs);
+                RecordingUncs = this.Configuration.UncPath.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries).ToList();
             }
 
             RecGroupExclude.Clear();
             if (!string.IsNullOrWhiteSpace(this.Configuration.RecGroupExclude))
             {
-                string[] recex = this.Configuration.RecGroupExclude.Split(new string[] { ";","," }, StringSplitOptions.RemoveEmptyEntries);
-                foreach(var r in recex)
-                    RecGroupExclude.Add(r.Trim());
+                RecGroupExclude = this.Configuration.RecGroupExclude.Split(new string[] { ";","," }, StringSplitOptions.RemoveEmptyEntries).Select(r => r.Trim()).ToList();
             }
         }
 
