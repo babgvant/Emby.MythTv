@@ -54,7 +54,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Configuration\MythTvConfigurationPage.cs" />
     <Compile Include="Helpers\AsyncLock.cs" />
     <Compile Include="Helpers\AsyncSemaphore.cs" />
     <Compile Include="Helpers\GeneralHelpers.cs" />

@@ -1,6 +1,7 @@
 ﻿using Emby.MythTv.Configuration;
 using MediaBrowser.Common.Configuration;
 using MediaBrowser.Common.Plugins;
+using MediaBrowser.Model.Plugins;
 using MediaBrowser.Model.Serialization;
 using System;
 using System.Collections.Generic;
@@ -10,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Emby.MythTv
 {
-    public class Plugin : BasePlugin<PluginConfiguration>
+    public class Plugin : BasePlugin<PluginConfiguration>, IHasWebPages
     {
         public EventHandler ConfigurationChanged;
 
@@ -22,6 +23,18 @@ namespace Emby.MythTv
             RecGroupExclude = new List<string>();
 
             BuildLists();
+        }
+
+        public IEnumerable<PluginPageInfo> GetPages()
+        {
+            return new[]
+            {
+                new PluginPageInfo
+                {
+                    Name = Name,
+                    EmbeddedResourcePath = GetType().Namespace + ".Configuration.configPage.html"
+                }
+            };
         }
 
         /// <summary>
