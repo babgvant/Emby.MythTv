@@ -13,14 +13,10 @@ namespace Emby.MythTv
 {
     public class Plugin : BasePlugin<PluginConfiguration>, IHasWebPages
     {
-        public EventHandler ConfigurationChanged;
-
         public Plugin(IApplicationPaths applicationPaths, IXmlSerializer xmlSerializer)
             : base(applicationPaths, xmlSerializer)
         {
             Instance = this;
-            RecordingUncs = new List<string>();
-            RecGroupExclude = new List<string>();
         }
 
         public IEnumerable<PluginPageInfo> GetPages()
@@ -56,34 +52,35 @@ namespace Emby.MythTv
             }
         }
 
-        public List<string> RecordingUncs { get; private set; }
-        public List<string> RecGroupExclude { get; private set; }
-
-        private void BuildLists()
+        public List<string> RecordingUncs
         {
-            RecordingUncs.Clear();
-
-            if (!string.IsNullOrWhiteSpace(this.Configuration.UncPath))
+            get
             {
-                RecordingUncs = this.Configuration.UncPath.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries).ToList();
-            }
+                if (!string.IsNullOrWhiteSpace(this.Configuration.UncPath))
+                {
+                    return this.Configuration.UncPath
+                        .Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries)
+                        .ToList();
+                }
 
-            RecGroupExclude.Clear();
-            if (!string.IsNullOrWhiteSpace(this.Configuration.RecGroupExclude))
-            {
-                RecGroupExclude = this.Configuration.RecGroupExclude.Split(new string[] { ";","," }, StringSplitOptions.RemoveEmptyEntries).Select(r => r.Trim()).ToList();
+                return new List<string>();
             }
         }
 
-        public override void SaveConfiguration()
+
+        public List<string> RecGroupExclude
         {
-            base.SaveConfiguration();
+            get
+            {
+                if (!string.IsNullOrWhiteSpace(this.Configuration.RecGroupExclude))
+                {
+                    return this.Configuration.RecGroupExclude
+                        .Split(new string[] { ";","," }, StringSplitOptions.RemoveEmptyEntries)
+                        .Select(r => r.Trim()).ToList();
+                }
 
-            BuildLists();
-
-            EventHandler eh = ConfigurationChanged;
-            if (eh != null)
-                eh(this, new EventArgs());
+                return new List<string>();
+            }
         }
 
         /// <summary>
