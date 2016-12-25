@@ -45,7 +45,6 @@ namespace Emby.MythTv
             _httpClient = httpClient;
             _jsonSerializer = jsonSerializer;
             _logger = logger;
-            Plugin.Instance.ConfigurationChanged += OnPluginConfigChange;
         }
 
         private async void OnPluginConfigChange(object sender, EventArgs e)
