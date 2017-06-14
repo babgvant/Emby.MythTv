@@ -141,7 +141,7 @@ namespace Emby.MythTv
             foreach (var sourceId in sources) {
                 
                 var options = GetOptions(cancellationToken,
-                                         "/Channel/GetChannelInfoList?SourceID={0}&Details=true",
+                                         "/Channel/GetChannelInfoList?SourceID={0}&Details=true&OnlyVisible=true",
                                          sourceId);
                     
                 using (var stream = await _httpClient.Get(options).ConfigureAwait(false))
