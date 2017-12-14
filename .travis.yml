@@ -1,0 +1,11 @@
+language: csharp
+solution: Emby.MythTv.sln
+deploy:
+  provider: releases
+  api_key:
+    secure: 1NFMtfLMHq/uElxl8WQrIhdBNjw4mFOYkI9p3oBeUg+XSjb8QWVLwfnw5cRao/6aLnPh9r1em9gEYe2QQ/iQTM2hYbrachtdGlyFf4ulUCyTknH9Bjfd95IkmI5CXkQn5xOVZdSLwCNcH4rUUo1FJ/bS+QjlCfQccUUROeDmIRUruip7CZf8b64i718PQHH+72AkH0MTBmHVroSPZJjqxKC1r4sj/9MX/HbcrVtknhfTm6jRCSJUUrM/JdWG+wR5wqj9/rVvkqz2lxSjgUCN4Ibl9vGaBgcRTY/qTD4ZinqrnV5pK4bvr3BMelhED2JkJSPKH9/L9l+rwmS5Wb82rlpYQA4+0EkTB1PVQULyC5yKOtM6I9OZjQK+kKGteGD9bSLOJNFnFW2QT91HToNDm4ZKVWl6ipe7BixLRN8KO9B3BPU6twVBTE4v6Dfti9KB2HvhnZTvJVpRBE8GZM+2D5BuI07Y3aD74mdws3StGN5eCS5SYRR0i7k4sqeiOyadwSBv2s/CtcZHBvnLxJESeofbhNMap9TpaA1yUP9bNCMKIlrXp+OpIPQA4acRVgZpT5KkU0xOqzhfTltOCuWF1Qke64rw4Cn4JhZ9/LWIdAoL27f8cWqsZr1gh8Sp6Gbn6s6m7VYi0RU4jYt222s+7oA51YDoWLRV4bpHumudk/A=
+  file: Emby.MythTv/bin/Release/Emby.MythTv.dll
+  skip_cleanup: true
+  on:
+    repo: ta264/Emby.MythTv
+    tags: true

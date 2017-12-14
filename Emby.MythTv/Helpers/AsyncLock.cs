@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace babgvant.Emby.MythTv.Helpers
+namespace Emby.MythTv.Helpers
 {
     public class AsyncLock
     {

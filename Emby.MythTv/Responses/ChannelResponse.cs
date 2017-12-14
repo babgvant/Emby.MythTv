@@ -1,78 +1,64 @@
 ﻿using MediaBrowser.Model.Logging;
 using MediaBrowser.Model.Serialization;
+using MediaBrowser.Controller.LiveTv;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Emby.MythTv.Helpers;
+using Emby.MythTv.Model;
 
-namespace babgvant.Emby.MythTv.Responses
+namespace Emby.MythTv.Responses
 {
     public class ChannelResponse
     {
-        public static VideoSourceList ParseVideoSourceList(Stream stream, IJsonSerializer json, ILogger logger)
+        private static readonly CultureInfo _usCulture = new CultureInfo("en-US");
+        
+        public static IEnumerable<string> GetVideoSourceList(Stream stream, IJsonSerializer json, ILogger logger)
         {
             var root = json.DeserializeFromStream<RootVideoSourceObject>(stream);
-            return root.VideoSourceList;
+            return root.VideoSourceList.VideoSources.Select(i => i.Id);
         }
 
-        public static ChannelInfoList ParseChannelInfoList(Stream stream, IJsonSerializer json, ILogger logger)
+        public static IEnumerable<ChannelInfo> GetChannels(Stream stream, IJsonSerializer json, ILogger logger,
+                                                           bool loadChannelIcons)
         {
-            try
-            {
-                var root = json.DeserializeFromStream<RootChannelInfoListObject>(stream);
-                return root.ChannelInfoList;
-            } catch(Exception ex)
-            {
-                logger.Error("ParseChannelInfoList: {0}", ex.Message);
-                return null;
-            }
+            var root = json.DeserializeFromStream<RootChannelInfoListObject>(stream).ChannelInfoList.ChannelInfos;
+            UtilsHelper.DebugInformation(logger, string.Format("[MythTV] GetChannels Response: {0}",
+                                                               json.SerializeToString(root)));
+            return root.Select(x => GetChannel(x, loadChannelIcons));
         }
-    }
 
-    public class VideoSource
-    {
-        public string Id { get; set; }
-        public string SourceName { get; set; }
-        public string Grabber { get; set; }
-        public string UserId { get; set; }
-        public string FreqTable { get; set; }
-        public string LineupId { get; set; }
-        public bool Password { get; set; }
-        public string UseEIT { get; set; }
-        public string ConfigPath { get; set; }
-        public string NITId { get; set; }
-    }
+        private static ChannelInfo GetChannel(Channel channel, bool loadChannelIcons)
+        {
+            ChannelInfo ci = new ChannelInfo()
+                {
+                    Name = channel.ChannelName,
+                    Number = channel.ChanNum,
+                    Id = channel.ChanId.ToString(_usCulture),
+                    HasImage = false
+                };
 
-    public class VideoSourceList
-    {
-        public DateTime? AsOf { get; set; }
-        public string Version { get; set; }
-        public string ProtoVer { get; set; }
-        public List<VideoSource> VideoSources { get; set; }
-    }
+            if (!string.IsNullOrWhiteSpace(channel.IconURL) && loadChannelIcons)
+            {
+                ci.HasImage = true;
+                ci.ImageUrl = string.Format("{0}/Guide/GetChannelIcon?ChanId={1}", Plugin.Instance.Configuration.WebServiceUrl, channel.ChanId);
+            }
 
-    public class RootVideoSourceObject
-    {
-        public VideoSourceList VideoSourceList { get; set; }
-    }
+            return ci;
+        }
 
-    public class ChannelInfoList
-    {
-        public string StartIndex { get; set; }
-        public int Count { get; set; }
-        public int CurrentPage { get; set; }
-        public int TotalPages { get; set; }
-        public int TotalAvailable { get; set; }
-        public DateTime? AsOf { get; set; }
-        public string Version { get; set; }
-        public string ProtoVer { get; set; }
-        public List<Channel> ChannelInfos { get; set; }
-    }
+        private class RootVideoSourceObject
+        {
+            public VideoSourceList VideoSourceList { get; set; }
+        }
 
-    public class RootChannelInfoListObject
-    {
-        public ChannelInfoList ChannelInfoList { get; set; }
+        private class RootChannelInfoListObject
+        {
+            public ChannelInfoList ChannelInfoList { get; set; }
+        }
     }
 }

@@ -7,16 +7,17 @@
     <ProjectGuid>{408C3F73-7432-4522-9BE4-C302F260DAED}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>babgvant.Emby.MythTv</RootNamespace>
+    <RootNamespace>Emby.MythTv</RootNamespace>
     <AssemblyName>Emby.MythTv</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\..\MediaBrowser\ProgramData-Server\plugins\</OutputPath>
+    <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -30,21 +31,17 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Interfaces.IO, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Interfaces.IO.1.0.0.5\lib\portable-net45+sl4+wp71+win8+wpa81\Interfaces.IO.dll</HintPath>
-      <Private>False</Private>
+    <Reference Include="MediaBrowser.Common, Version=3.1.6161.23127, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MediaBrowser.Common.3.0.691\lib\portable-net45+win8+wpa81\MediaBrowser.Common.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="MediaBrowser.Common, Version=3.0.5692.23493, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\MediaBrowser.Common.3.0.631\lib\net45\MediaBrowser.Common.dll</HintPath>
-      <Private>False</Private>
+    <Reference Include="MediaBrowser.Controller, Version=3.1.6161.23125, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MediaBrowser.Server.Core.3.0.691\lib\net45\MediaBrowser.Controller.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="MediaBrowser.Controller, Version=3.0.5692.23492, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\MediaBrowser.Server.Core.3.0.631\lib\net45\MediaBrowser.Controller.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="MediaBrowser.Model, Version=3.0.5692.23495, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\MediaBrowser.Common.3.0.631\lib\net45\MediaBrowser.Model.dll</HintPath>
-      <Private>False</Private>
+    <Reference Include="MediaBrowser.Model, Version=3.1.6161.23126, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MediaBrowser.Common.3.0.691\lib\portable-net45+win8+wpa81\MediaBrowser.Model.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -57,11 +54,32 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Configuration\MythTvConfigurationPage.cs" />
     <Compile Include="Helpers\AsyncLock.cs" />
     <Compile Include="Helpers\AsyncSemaphore.cs" />
     <Compile Include="Helpers\GeneralHelpers.cs" />
     <Compile Include="LiveTvService.cs" />
+    <Compile Include="Model\Artwork.cs" />
+    <Compile Include="Model\ArtworkInfo.cs" />
+    <Compile Include="Model\Cast.cs" />
+    <Compile Include="Model\CastMember.cs" />
+    <Compile Include="Model\Chain.cs" />
+    <Compile Include="Model\Channel.cs" />
+    <Compile Include="Model\ChannelInfoList.cs" />
+    <Compile Include="Model\ConnectionInfo.cs" />
+    <Compile Include="Model\Database.cs" />
+    <Compile Include="Model\Encoder.cs" />
+    <Compile Include="Model\EncoderList.cs" />
+    <Compile Include="Model\Input.cs" />
+    <Compile Include="Model\Program.cs" />
+    <Compile Include="Model\ProgramGuide.cs" />
+    <Compile Include="Model\ProgramList.cs" />
+    <Compile Include="Model\Recording.cs" />
+    <Compile Include="Model\RecRule.cs" />
+    <Compile Include="Model\RecRuleList.cs" />
+    <Compile Include="Model\Version.cs" />
+    <Compile Include="Model\VideoSource.cs" />
+    <Compile Include="Model\VideoSourceList.cs" />
+    <Compile Include="Model\WOL.cs" />
     <Compile Include="Plugin.cs" />
     <Compile Include="Configuration\PluginConfiguration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -70,11 +88,15 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="Responses\CaptureResponse.cs" />
     <Compile Include="Responses\ChannelResponse.cs" />
     <Compile Include="Responses\DvrResponse.cs" />
     <Compile Include="Responses\GuideResponse.cs" />
     <Compile Include="Responses\UtilityResponse.cs" />
+    <Compile Include="Protocol\LiveTVPlayback.cs" />
+    <Compile Include="Protocol\ProtoBase.cs" />
+    <Compile Include="Protocol\ProtoMonitor.cs" />
+    <Compile Include="Protocol\ProtoPlayback.cs" />
+    <Compile Include="Protocol\ProtoRecorder.cs" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />

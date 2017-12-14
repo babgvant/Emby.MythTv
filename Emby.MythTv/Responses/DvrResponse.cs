@@ -1,7 +1,8 @@
-﻿using babgvant.Emby.MythTv.Helpers;
+﻿
 using MediaBrowser.Controller.LiveTv;
 using MediaBrowser.Model.Logging;
 using MediaBrowser.Model.Serialization;
+using MediaBrowser.Model.LiveTv;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -10,380 +11,349 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Emby.MythTv.Helpers;
+using Emby.MythTv.Model;
 
-namespace babgvant.Emby.MythTv.Responses
+namespace Emby.MythTv.Responses
 {
+    public class ExistingTimerException : Exception
+    {
+        public string id { get; private set; }
+
+        public ExistingTimerException(string id)
+            : base($"Existing timer {id}")
+        {
+            this.id = id;
+        }
+    }
+
     public class DvrResponse
     {
-        private static readonly CultureInfo _usCulture = new CultureInfo("en-US");
 
-        public static List<TimerInfo> GetTimers(Stream stream, IJsonSerializer json, ILogger logger)
+        public List<LiveTvTunerInfo> GetTuners(Stream tunerStream, IJsonSerializer json, ILogger logger)
         {
-            List<TimerInfo> ret = new List<TimerInfo>();
+            var root = json.DeserializeFromStream<EncoderListRoot>(tunerStream);
+            return root.EncoderList.Encoders.Select(i => EncoderToTunerInfo(i)).ToList();
+        }
 
-            var root = ParseRecRules(stream, json);
-            foreach (var item in root.RecRuleList.RecRules)
-            {
-                if (!item.Inactive && string.Compare(item.Type, "Not Recording", true) != 0)
+        private LiveTvTunerInfo EncoderToTunerInfo(Model.Encoder tuner)
+        {
+            var info = new LiveTvTunerInfo()
                 {
-                    TimerInfo val = new TimerInfo()
-                    {
-                        Name = item.Title,
-                        Overview = item.Description,
-                        ChannelId = item.ChanId.ToString(),
-                        EndDate = (DateTime)item.EndTime,
-                        StartDate = (DateTime)item.StartTime,
-                        Id = item.Id,
-                        PrePaddingSeconds = item.StartOffset * 60,
-                        PostPaddingSeconds = item.EndOffset * 60,
-                        IsPostPaddingRequired = item.EndOffset != 0,
-                        IsPrePaddingRequired = item.StartOffset != 0,
-                        ProgramId = item.ProgramId
-                    };
+                    Id = tuner.Id,
+                    Status = (LiveTvTunerStatus)tuner.State,
+                    SourceType = tuner.Inputs[0].InputName,
+                    Name = $"{tuner.Inputs[0].DisplayName}: {tuner.Id}"
+                };
 
-                    ret.Add(val);
-                }
+            switch (tuner.State)
+            {
+                case 0:
+                    info.Status = LiveTvTunerStatus.Available;
+                    break;
+                case 7:
+                    info.Status = LiveTvTunerStatus.RecordingTv;
+                    break;
             }
 
-            return ret;
-        }
-
-        public static List<SeriesTimerInfo> GetSeriesTimers(Stream stream, IJsonSerializer json, ILogger logger)
-        {
-            List<SeriesTimerInfo> ret = new List<SeriesTimerInfo>();
-
-            var root = ParseRecRules(stream, json);
-            foreach (var item in root.RecRuleList.RecRules)
-            {
-                if (!item.Inactive && string.Compare(item.Type, "Single Record", true) != 0 && string.Compare(item.Type, "Not Recording", true) != 0)
-                {
-                    SeriesTimerInfo val = new SeriesTimerInfo()
-                    {
-                        Name = item.Title,
-                        //Overview = item.Description,
-                        ChannelId = item.ChanId.ToString(),
-                        EndDate = (DateTime)item.EndTime,
-                        StartDate = (DateTime)item.StartTime,
-                        //Overview = item.Description,
-                        Id = item.Id,
-                        PrePaddingSeconds = item.StartOffset * 60,
-                        PostPaddingSeconds = item.EndOffset * 60,
-                        RecordAnyChannel = !((item.Filter & RecFilter.ThisChannel) == RecFilter.ThisChannel),
-                        RecordAnyTime = !((item.Filter & RecFilter.ThisDayTime) == RecFilter.ThisDayTime),
-                        RecordNewOnly = ((item.Filter & RecFilter.NewEpisode) == RecFilter.NewEpisode),
-                        //IsPostPaddingRequired = item.EndOffset != 0,
-                        //IsPrePaddingRequired = item.StartOffset != 0,                    
-                        ProgramId = item.ProgramId
-                    };
-
-                    ret.Add(val);
-                }
+            if(!string.IsNullOrWhiteSpace(tuner.Recording.Title)){
+                info.RecordingId = tuner.Recording.ProgramId;
+                info.ProgramName = $"{tuner.Recording.Title} : {tuner.Recording.SubTitle}";
             }
 
-            return ret;
+            return info;
         }
 
-        public static SeriesTimerInfo GetDefaultTimerInfo(Stream stream, IJsonSerializer json, ILogger logger)
+        private class EncoderListRoot
         {
-            SeriesTimerInfo val = null;
-
-            var root = ParseRecRule(stream, json);
-            UtilsHelper.DebugInformation(logger, string.Format("[MythTV] GetDefaultTimerInfo Response: {0}", json.SerializeToString(root)));
-            
-
-            //var root = ParseRecRules(stream, json);
-
-            //foreach (var item in root.RecRuleList.RecRules)
-            //{
-            //    if (!item.Inactive && item.ChanId == "0")
-            //    {
-                    val = new SeriesTimerInfo()
-                    {
-                        PrePaddingSeconds = root.RecRule.StartOffset * 60,
-                        PostPaddingSeconds = root.RecRule.EndOffset * 60,
-                        RecordAnyChannel = !((root.RecRule.Filter & RecFilter.ThisChannel) == RecFilter.ThisChannel),
-                        RecordAnyTime = !((root.RecRule.Filter & RecFilter.ThisDayTime) == RecFilter.ThisDayTime),
-                        RecordNewOnly = ((root.RecRule.Filter & RecFilter.NewEpisode) == RecFilter.NewEpisode),
-                        //IsPostPaddingRequired = root.RecRule.EndOffset != 0,
-                        //IsPrePaddingRequired = root.RecRule.StartOffset != 0,
-                    };
-            //        break;
-            //    }
-            //}
-
-            return val;
+            public EncoderList EncoderList { get; set; }
         }
 
-        public static RecRule GetRecRule(Stream stream, IJsonSerializer json, ILogger logger)
+        public IEnumerable<SeriesTimerInfo> GetSeriesTimers(Stream stream, IJsonSerializer json, ILogger logger)
         {
-            var root = ParseRecRule(stream, json);
-            UtilsHelper.DebugInformation(logger, string.Format("[MythTV] GetRecRule Response: {0}", json.SerializeToString(root)));
+
+            var root = json.DeserializeFromStream<RecRuleListRoot>(stream);
+            return root.RecRuleList.RecRules
+                .Where(rule => rule.Type.Equals("Record All"))
+                .Select(i => RecRuleToSeriesTimerInfo(i));
+
+        }
+
+        private class RecRuleListRoot
+        {
+            public RecRuleList RecRuleList { get; set; }
+        }
+
+        private SeriesTimerInfo RecRuleToSeriesTimerInfo(RecRule item)
+        {
+            var info = new SeriesTimerInfo()
+            {
+                Name = item.Title,
+                ChannelId = item.ChanId,
+                EndDate = item.EndTime,
+                StartDate = item.StartTime,
+                Id = item.Id,
+                PrePaddingSeconds = item.StartOffset * 60,
+                PostPaddingSeconds = item.EndOffset * 60,
+                RecordAnyChannel = !((item.Filter & RecFilter.ThisChannel) == RecFilter.ThisChannel),
+                RecordAnyTime = !((item.Filter & RecFilter.ThisDayTime) == RecFilter.ThisDayTime),
+                RecordNewOnly = ((item.Filter & RecFilter.NewEpisode) == RecFilter.NewEpisode),
+                ProgramId = item.ProgramId,
+                SeriesId = item.SeriesId,
+                KeepUpTo = item.MaxEpisodes
+            };
+
+            return info;
+
+        }
+
+        private RecRule GetOneRecRule(Stream stream, IJsonSerializer json, ILogger logger)
+        {
+            var root = json.DeserializeFromStream<RecRuleRoot>(stream);
+            UtilsHelper.DebugInformation(logger, string.Format("[MythTV] GetOneRecRule Response: {0}",
+                                                               json.SerializeToString(root)));
             return root.RecRule;
         }
 
-        public static EncoderList ParseEncoderList(Stream stream, IJsonSerializer json, ILogger logger)
+        private class RecRuleRoot
         {
-            using (var reader = new StreamReader(stream, new UTF8Encoding()))
+            public RecRule RecRule { get; set; }
+        }
+
+        public SeriesTimerInfo GetDefaultTimerInfo(Stream stream, IJsonSerializer json, ILogger logger)
+        {
+            return RecRuleToSeriesTimerInfo(GetOneRecRule(stream, json, logger));
+        }
+
+        public string GetNewSeriesTimerJson(SeriesTimerInfo info, Stream stream, IJsonSerializer json, ILogger logger)
+        {
+
+            RecRule orgRule = GetOneRecRule(stream, json, logger);
+            if (orgRule != null)
             {
-                string resptext = reader.ReadToEnd();
-                UtilsHelper.DebugInformation(logger, string.Format("[MythTV] ParseEncoderList Response: {0}", resptext));
+                orgRule.Type = "Record All";
+
+                if (info.RecordAnyChannel)
+                    orgRule.Filter &= ~RecFilter.ThisChannel;
+                else
+                    orgRule.Filter |= RecFilter.ThisChannel;
+                if (info.RecordAnyTime)
+                    orgRule.Filter &= ~RecFilter.ThisDayTime;
+                else
+                    orgRule.Filter |= RecFilter.ThisDayTime;
+                if (info.RecordNewOnly)
+                    orgRule.Filter |= RecFilter.NewEpisode;
+                else
+                    orgRule.Filter &= ~RecFilter.NewEpisode;
+
+                orgRule.MaxEpisodes = info.KeepUpTo;
+                orgRule.MaxNewest = info.KeepUpTo > 0;
+                orgRule.StartOffset = info.PrePaddingSeconds / 60;
+                orgRule.EndOffset = info.PostPaddingSeconds / 60;
+
+            }
+
+            var output = json.SerializeToString(orgRule);
+            logger.Info($"[MythTV RuleResponse: generated new timer json:\n{output}");
+
+            return output;
+        }
+
+        public string GetNewTimerJson(TimerInfo info, Stream stream, IJsonSerializer json, ILogger logger)
+        {
+
+            RecRule rule = GetOneRecRule(stream, json, logger);
+
+            // check if there is an existing rule that is going to cause grief
+            if (rule.Type != "Not Recording")
+                throw new ExistingTimerException(rule.Id);
+
+            rule.Type = "Single Record";
+            rule.StartOffset = info.PrePaddingSeconds / 60;
+            rule.EndOffset = info.PostPaddingSeconds / 60;
+
+            var output = json.SerializeToString(rule);
+            logger.Info($"[MythTV RuleResponse: generated new timer json:\n{output}");
+
+            return output;
+        }
+
+        public string GetNewDoNotRecordTimerJson(Stream stream, IJsonSerializer json, ILogger logger)
+        {
+
+            RecRule rule = GetOneRecRule(stream, json, logger);
+            rule.Type = "Do not Record";
+
+            var output = json.SerializeToString(rule);
+            logger.Info($"[MythTV RuleResponse: generated new timer json:\n{output}");
+
+            return output;
+        }
+
+        public List<TimerInfo> GetUpcomingList(Stream stream, IJsonSerializer json, ILogger logger)
+        {
+
+            var root = json.DeserializeFromStream<ProgramListRoot>(stream);
+            return root.ProgramList.Programs.Select(i => ProgramToTimerInfo(i)).ToList();
+
+        }
+
+        private class ProgramListRoot
+        {
+            public ProgramList ProgramList { get; set; }
+        }
+
+        private TimerInfo ProgramToTimerInfo(Program item)
+        {
+
+            string id = $"{item.Channel.ChanId}_{((DateTime)item.StartTime).Ticks}";
+
+            TimerInfo timer = new TimerInfo()
+            {
+                ChannelId = item.Channel.ChanId,
+                ProgramId = id,
+                Name = item.Title,
+                Overview = item.Description,
+                StartDate = (DateTime)item.StartTime,
+                EndDate = (DateTime)item.EndTime,
+                Status = RecordingStatus.New,
+                SeasonNumber = item.Season,
+                EpisodeNumber = item.Episode,
+                EpisodeTitle = item.Title,
+                IsRepeat = item.Repeat
+            };
+
+
+            // see https://code.mythtv.org/doxygen/recordingtypes_8h_source.html#l00022
+            if (item.Recording.RecType == 4)
+            {
+                // Only add on SeriesTimerId if a "Record All" rule
+                timer.SeriesTimerId = item.Recording.RecordId;
+
+                // Also set a unique id for this instance
+                timer.Id = id;
+            }
+            else
+            {
+                // Use the mythtv rule ID for single recordings
+                timer.Id = item.Recording.RecordId;
+            }
+
+            timer.PrePaddingSeconds = (int)(timer.StartDate - item.Recording.StartTs).TotalSeconds;
+            timer.PostPaddingSeconds = (int)(item.Recording.EndTs - timer.EndDate).TotalSeconds;
+
+            timer.IsPrePaddingRequired = timer.PrePaddingSeconds > 0;
+            timer.IsPostPaddingRequired = timer.PostPaddingSeconds > 0;
+
+            return timer;
+        }
+
+        public IEnumerable<RecordingInfo> GetRecordings(Stream stream, IJsonSerializer json, ILogger logger)
+        {
+
+            var excluded = Plugin.Instance.RecGroupExclude;
+            var root = json.DeserializeFromStream<ProgramListRoot>(stream);
+            return root.ProgramList.Programs
+                .Where(i => !excluded.Contains(i.Recording.RecGroup))
+                .Select(i => ProgramToRecordingInfo(i));
+
+        }
+
+        private RecordingStatus RecStatusToRecordingStatus(RecStatus item)
+        {
+            switch (item)
+            {
+                case RecStatus.Recorded:
+                    return RecordingStatus.Completed;
+                case RecStatus.Recording:
+                    return RecordingStatus.InProgress;
+                case RecStatus.Cancelled:
+                    return RecordingStatus.Cancelled;
+            }
+
+            return RecordingStatus.Error;
+        }
+
+        private RecordingInfo ProgramToRecordingInfo(Program item)
+        {
+
+            RecordingInfo recInfo = new RecordingInfo()
+            {
+                Id = item.Recording.RecordedId,
+                SeriesTimerId = item.Recording.RecordId,
+                ChannelId = item.Channel.ChanId,
+                ChannelType = ChannelType.TV,
+                Name = item.Title,
+                Overview = item.Description,
+                StartDate = item.StartTime,
+                EndDate = item.EndTime,
+                ProgramId = $"{item.Channel.ChanId}_{item.StartTime.Ticks}",
+                Status = RecStatusToRecordingStatus(item.Recording.Status),
+                IsRepeat = item.Repeat,
+                EpisodeTitle = item.SubTitle,
+                IsHD = (item.VideoProps & VideoFlags.VID_HDTV) == VideoFlags.VID_HDTV,
+                Audio = ProgramAudio.Stereo,
+                OriginalAirDate = item.Airdate,
+                IsMovie = GeneralHelpers.ContainsWord(item.CatType, "movie", StringComparison.OrdinalIgnoreCase),
+                IsSports =
+                    GeneralHelpers.ContainsWord(item.Category, "sport",
+                                                StringComparison.OrdinalIgnoreCase) ||
+                    GeneralHelpers.ContainsWord(item.Category, "motor sports",
+                                                StringComparison.OrdinalIgnoreCase) ||
+                    GeneralHelpers.ContainsWord(item.Category, "football",
+                                                StringComparison.OrdinalIgnoreCase) ||
+                    GeneralHelpers.ContainsWord(item.Category, "cricket",
+                                                StringComparison.OrdinalIgnoreCase),
+                IsSeries = GeneralHelpers.ContainsWord(item.CatType, "series", StringComparison.OrdinalIgnoreCase),
+                IsNews = GeneralHelpers.ContainsWord(item.Category, "news",
+                                                         StringComparison.OrdinalIgnoreCase),
+                IsKids = GeneralHelpers.ContainsWord(item.Category, "animation",
+                                                         StringComparison.OrdinalIgnoreCase),
+                ShowId = item.ProgramId,
+
+            };
+
+            if (Plugin.Instance.RecordingUncs.Count > 0)
+            {
+                foreach (string unc in Plugin.Instance.RecordingUncs)
+                {
+                    string recPath = Path.Combine(unc, item.FileName);
+                    if (File.Exists(recPath))
+                    {
+                        recInfo.Path = recPath;
+                        break;
+                    }
+                }
+            }
+
+            // only set the URL if the path is null
+            // using the URL seems to prevent direct streaming
+            if (recInfo.Path == null)
+            {
+                recInfo.Url = string.Format("{0}{1}",
+                                            Plugin.Instance.Configuration.WebServiceUrl,
+                                            string.Format("/Content/GetFile?StorageGroup={0}&FileName={1}",
+                                                          item.Recording.StorageGroup, item.FileName));
+            }
             
-                //resptext = Regex.Replace(resptext, "{\"Version\": {\"Version\"", "{\"Version\": {\"Ver\"");
-                var root = json.DeserializeFromString<RootEncoderObject>(resptext);
-                return root.EncoderList;
-            }           
+            recInfo.Genres.AddRange(item.Category.Split(new char[] { '/' }, StringSplitOptions.RemoveEmptyEntries));
+
+            if (item.Artwork.ArtworkInfos.Count > 0)
+            {
+                var url = item.Artwork.ArtworkInfos.Where(i => i.Type.Equals("coverart")).First().URL;
+                recInfo.ImageUrl = string.Format("{0}{1}",
+                                                 Plugin.Instance.Configuration.WebServiceUrl,
+                                                 url);
+                recInfo.HasImage = true;
+            }
+            else
+                recInfo.HasImage = false;
+
+            return recInfo;
+
         }
 
-        private static RecRuleRoot ParseRecRule(Stream stream, IJsonSerializer json)
-        {
-            return json.DeserializeFromStream<RecRuleRoot>(stream);
-        }
 
-        private static RecRuleListRoot ParseRecRules(Stream stream, IJsonSerializer json)
-        {
-            return json.DeserializeFromStream<RecRuleListRoot>(stream);
-        }
 
-        public static RecordId ParseRecordId(Stream stream, IJsonSerializer json)
-        {
-            return json.DeserializeFromStream<RecordId>(stream);
-        }
-
-        public static ProgramList ParseProgramList(Stream stream, IJsonSerializer json, ILogger logger)
-        {
-            var root = json.DeserializeFromStream<RootProgramListObject>(stream);
-            return root.ProgramList;
-        }
-
-        internal static Program ParseRecorded(Stream stream, IJsonSerializer json, ILogger logger)
-        {
-            var root = json.DeserializeFromStream<RootProgramObject>(stream);
-            return root.Program;
-        }
-    }
-
-    public class RootProgramObject
-    {
-        public Program Program { get; set; }
-    }
-
-    public enum RecFilter
-    {
-        NewEpisode = 1,
-        IdentifiableEpisode = 2,
-        FirstShowing = 4,
-        PrimeTime = 8,
-        CommercialFree = 16,
-        HighDefinition = 32,
-        ThisEpisode = 64,
-        ThisSeries = 128,
-        ThisTime = 256,
-        ThisDayTime = 512,
-        ThisChannel = 1024
-    }
-
-    public class RecRule
-    {
-        public string Id { get; set; }
-        public string ParentId { get; set; }
-        public bool Inactive { get; set; }
-        public string Title { get; set; }
-        public string SubTitle { get; set; }
-        public string Description { get; set; }
-        public string Season { get; set; }
-        public string Episode { get; set; }
-        public string Category { get; set; }
-        public DateTime? StartTime { get; set; }
-        public DateTime? EndTime { get; set; }
-        public string SeriesId { get; set; }
-        public string ProgramId { get; set; }
-        public string Inetref { get; set; }
-        public string ChanId { get; set; }
-        public string CallSign { get; set; }
-        public string FindDay { get; set; }
-        public string FindTime { get; set; }
-        public string Type { get; set; }
-        public string SearchType { get; set; }
-        public string RecPriority { get; set; }
-        public string PreferredInput { get; set; }
-        public int StartOffset { get; set; }
-        public int EndOffset { get; set; }
-        public string DupMethod { get; set; }
-        public string DupIn { get; set; }
-        public RecFilter Filter { get; set; }
-        public string RecProfile { get; set; }
-        public string RecGroup { get; set; }
-        public string StorageGroup { get; set; }
-        public string PlayGroup { get; set; }
-        public bool AutoExpire { get; set; }
-        public int MaxEpisodes { get; set; }
-        public bool MaxNewest { get; set; }
-        public bool AutoCommflag { get; set; }
-        public bool AutoTranscode { get; set; }
-        public bool AutoMetaLookup { get; set; }
-        public bool AutoUserJob1 { get; set; }
-        public bool AutoUserJob2 { get; set; }
-        public bool AutoUserJob3 { get; set; }
-        public bool AutoUserJob4 { get; set; }
-        public int Transcoder { get; set; }
-        public string NextRecording { get; set; }
-        public string LastRecorded { get; set; }
-        public string LastDeleted { get; set; }
-        public string AverageDelay { get; set; }
-    }
-
-    public class RecRuleList
-    {
-        public string StartIndex { get; set; }
-        public string Count { get; set; }
-        public string TotalAvailable { get; set; }
-        public string AsOf { get; set; }
-        public string Version { get; set; }
-        public string ProtoVer { get; set; }
-        public List<RecRule> RecRules { get; set; }
-    }
-
-    public class RecRuleListRoot
-    {
-        public RecRuleList RecRuleList { get; set; }
-    }
-
-    public class RecRuleRoot
-    {
-        public RecRule RecRule { get; set; }
-    }
-
-    public class RecordId
-    {
-        public string @uint { get; set; }
-    }
-
-    public class Channel
-    {
-        public string ChanId { get; set; }
-        public string ChanNum { get; set; }
-        public string CallSign { get; set; }
-        public string IconURL { get; set; }
-        public string ChannelName { get; set; }
-        public string MplexId { get; set; }
-        public string TransportId { get; set; }
-        public string ServiceId { get; set; }
-        public string NetworkId { get; set; }
-        public string ATSCMajorChan { get; set; }
-        public string ATSCMinorChan { get; set; }
-        public string Format { get; set; }
-        public string Modulation { get; set; }
-        public string Frequency { get; set; }
-        public string FrequencyId { get; set; }
-        public string FrequencyTable { get; set; }
-        public string FineTune { get; set; }
-        public string SIStandard { get; set; }
-        public string ChanFilters { get; set; }
-        public string SourceId { get; set; }
-        public string InputId { get; set; }
-        public string CommFree { get; set; }
-        public bool UseEIT { get; set; }
-        public bool Visible { get; set; }
-        public string XMLTVID { get; set; }
-        public string DefaultAuth { get; set; }
-        public List<Program> Programs { get; set; }
-    }
-
-    public class RecordingDetail
-    {
-        public string Status { get; set; }
-        public string Priority { get; set; }
-        public string StartTs { get; set; }
-        public string EndTs { get; set; }
-        public string RecordId { get; set; }
-        public string RecGroup { get; set; }
-        public string PlayGroup { get; set; }
-        public string StorageGroup { get; set; }
-        public string RecType { get; set; }
-        public string DupInType { get; set; }
-        public string DupMethod { get; set; }
-        public string EncoderId { get; set; }
-        public string Profile { get; set; }
-    }
-
-    public class ArtworkInfo
-    {
-        public string URL { get; set; }
-        public string FileName { get; set; }
-        public string StorageGroup { get; set; }
-        public string Type { get; set; }
-    }
-
-    public class Artwork
-    {
-        public List<ArtworkInfo> ArtworkInfos { get; set; }
-    }
-
-    public class Recording
-    {
-        public DateTime? StartTime { get; set; }
-        public DateTime? EndTime { get; set; }
-        public string Title { get; set; }
-        public string SubTitle { get; set; }
-        public string Category { get; set; }
-        public string CatType { get; set; }
-        public string Repeat { get; set; }
-        public string VideoProps { get; set; }
-        public string AudioProps { get; set; }
-        public string SubProps { get; set; }
-        public string SeriesId { get; set; }
-        public string ProgramId { get; set; }
-        public string Stars { get; set; }
-        public string FileSize { get; set; }
-        public string LastModified { get; set; }
-        public string ProgramFlags { get; set; }
-        public string FileName { get; set; }
-        public string HostName { get; set; }
-        public string Airdate { get; set; }
-        public string Description { get; set; }
-        public string Inetref { get; set; }
-        public string Season { get; set; }
-        public string Episode { get; set; }
-        public Channel Channel { get; set; }
-        public RecordingDetail Rec { get; set; }
-        public Artwork Artwork { get; set; }
-    }
-
-    public class Encoder
-    {
-        public string Id { get; set; }
-        public string HostName { get; set; }
-        public string Local { get; set; }
-        public string Connected { get; set; }
-        public int State { get; set; }
-        public string SleepStatus { get; set; }
-        public string LowOnFreeSpace { get; set; }
-        public Recording Recording { get; set; }
-    }
-
-    public class EncoderList
-    {
-        public List<Encoder> Encoders { get; set; }
-    }
-
-    public class RootEncoderObject
-    {
-        public EncoderList EncoderList { get; set; }
-    }
-
-    public class ProgramList
-    {
-        public string StartIndex { get; set; }
-        public string Count { get; set; }
-        public string TotalAvailable { get; set; }
-        public string AsOf { get; set; }
-        public string Version { get; set; }
-        public string ProtoVer { get; set; }
-        public List<Program> Programs { get; set; }
-    }
-
-    public class RootProgramListObject
-    {
-        public ProgramList ProgramList { get; set; }
     }
 }

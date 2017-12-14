@@ -1,5 +1,7 @@
-Emby "LiveTV" plugin for MythTV. LiveTV is not currently supported because the MythTV service API does not support it.
+[![Build Status](https://travis-ci.org/ta264/Emby.MythTv.svg?branch=master)](https://travis-ci.org/ta264/Emby.MythTv)
+
+Emby "LiveTV" plugin for MythTV.
 
 To install, build and place in the Emby server plugins folder.
 
-Binary can be downloaded from http://babgvant.com/downloads/emby/Emby.MythTv.dll.zip
+Binary can be downloaded from https://github.com/ta264/Emby.MythTv/releases
