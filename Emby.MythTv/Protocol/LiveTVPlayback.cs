@@ -40,7 +40,7 @@ namespace Emby.MythTv.Protocol
                 return 0;
 
             // just bodge it in and get the first free recorder
-            var cards = await GetFreeInputs87();
+            var cards = await GetFreeInputs();
 
             var recorder = new ProtoRecorder(cards[0].CardId, Server, Port);
             var chain = new Chain();

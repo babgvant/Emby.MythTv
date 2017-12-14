@@ -78,6 +78,7 @@ namespace Emby.MythTv
                 _logger.Info("[MythTV] Initiating MythProtocol connection");
                 _liveTV = new LiveTVPlayback(config.Host, 6543);
                 await _liveTV.Open();
+                _logger.Info($"[MythTV] MythProtocol connection opened, protocol version {_liveTV.ProtoVersion}");
             }
         }
 

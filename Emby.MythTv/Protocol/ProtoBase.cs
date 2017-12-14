@@ -32,9 +32,16 @@ namespace Emby.MythTv.Protocol
 
         private TcpClient m_socket;
 
+        private Dictionary<uint, string> protomap = new Dictionary<uint, string>()
+        {
+            {91, "BuzzOff"},
+            {90, "BuzzCut"},
+            {89, "BuzzKill"},
+            {88, "XmasGift"}
+        };
+
         public ProtoBase(string server, int port)
         {
-            ProtoVersion = 88;
             Server = server;
             Port = port;
             IsOpen = false;
@@ -105,8 +112,31 @@ namespace Emby.MythTv.Protocol
         public async Task<bool> OpenConnection()
         {
             m_socket = new TcpClient(Server, Port);
-            var result = await SendCommand("MYTH_PROTO_VERSION 88 XmasGift");
+            uint max_version = protomap.Keys.Max();
+            var result = await SendCommand($"MYTH_PROTO_VERSION {max_version} {protomap[max_version]}");
             IsOpen = result[0] == "ACCEPT";
+            if(IsOpen)
+            {
+                ProtoVersion = max_version;
+                return true;
+            }
+
+            // Rejected, close socket
+            await Close();
+
+            // Got rejected, so see if we speak the required version
+            uint server_version = Convert.ToUInt32(result[1]);
+            if (!protomap.ContainsKey(server_version))
+                throw new Exception($"Unknown version {server_version}");
+
+            m_socket = new TcpClient(Server, Port);
+            result = await SendCommand($"MYTH_PROTO_VERSION {server_version} {protomap[server_version]}");
+            IsOpen = result[0] == "ACCEPT";
+            if(IsOpen)
+            {
+                ProtoVersion = server_version;
+            }
+            
             return IsOpen;
         }
 
